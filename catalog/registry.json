@@ -1,0 +1,156 @@
+{
+  "schemaVersion": 1,
+  "source": "evedirectory",
+  "agents": [
+    {
+      "name": "PR Review Sentinel",
+      "slug": "pr-review-sentinel",
+      "path": "agents/pr-review-sentinel",
+      "summary": "Review pull requests against team conventions, flag risky changes, and post structured, actionable feedback.",
+      "version": "1.0.0",
+      "license": "MIT",
+      "category": {
+        "name": "Engineering",
+        "slug": "engineering"
+      },
+      "integrations": ["github", "linear", "sentry", "notion", "slack"]
+    },
+    {
+      "name": "Browser QA Runner",
+      "slug": "browser-qa-runner",
+      "path": "agents/browser-qa-runner",
+      "summary": "Walk critical user flows in a real browser, capture evidence, and file reproducible bug reports.",
+      "version": "1.0.0",
+      "license": "MIT",
+      "category": {
+        "name": "QA",
+        "slug": "qa"
+      },
+      "integrations": [
+        "agent-browser",
+        "kernel",
+        "browser-use",
+        "linear",
+        "slack"
+      ]
+    },
+    {
+      "name": "API Contract Guardian",
+      "slug": "api-contract-guardian",
+      "path": "agents/api-contract-guardian",
+      "summary": "Detect drift between API specs, real behavior, and docs; draft changelogs, migration notes, and fixes.",
+      "version": "1.0.0",
+      "license": "MIT",
+      "category": {
+        "name": "Engineering",
+        "slug": "engineering"
+      },
+      "integrations": ["postman", "github", "notion", "slack"]
+    },
+    {
+      "name": "Competitive Intel Scout",
+      "slug": "competitive-intel-scout",
+      "path": "agents/competitive-intel-scout",
+      "summary": "Track competitors' pricing, changelogs, and traffic; report evidence-cited changes since the last check.",
+      "version": "1.0.0",
+      "license": "MIT",
+      "category": {
+        "name": "Research",
+        "slug": "research"
+      },
+      "integrations": ["similarweb", "browser-use", "kernel", "notion", "slack"]
+    },
+    {
+      "name": "Churn Risk Sentinel",
+      "slug": "churn-risk-sentinel",
+      "path": "agents/churn-risk-sentinel",
+      "summary": "Correlate usage drop-off with billing events, remember account history, and propose specific save plays.",
+      "version": "1.0.0",
+      "license": "MIT",
+      "category": {
+        "name": "Customer Success",
+        "slug": "customer-success"
+      },
+      "integrations": ["stripe", "posthog", "mixpanel", "mem0", "slack"]
+    },
+    {
+      "name": "Inbound Lead Qualifier",
+      "slug": "inbound-lead-qualifier",
+      "path": "agents/inbound-lead-qualifier",
+      "summary": "Qualify site visitors conversationally, score fit against your ICP, and hand sales a context-rich lead.",
+      "version": "1.0.0",
+      "license": "MIT",
+      "category": {
+        "name": "Sales",
+        "slug": "sales"
+      },
+      "integrations": ["eve", "airtable", "mem0", "slack", "chat-sdk-messenger"]
+    },
+    {
+      "name": "AI Search Visibility Analyst",
+      "slug": "ai-search-visibility-analyst",
+      "path": "agents/ai-search-visibility-analyst",
+      "summary": "Measure how your brand appears in AI answers and search, diagnose citation gaps, and prioritize content fixes.",
+      "version": "1.0.0",
+      "license": "MIT",
+      "category": {
+        "name": "Marketing",
+        "slug": "marketing"
+      },
+      "integrations": [
+        "local-falcon",
+        "similarweb",
+        "notion",
+        "webflow",
+        "slack"
+      ]
+    },
+    {
+      "name": "Spend & Subscription Controller",
+      "slug": "spend-subscription-controller",
+      "path": "agents/spend-subscription-controller",
+      "summary": "Flag card-spend anomalies, upcoming SaaS renewals, and duplicate subscriptions with owner-ready actions.",
+      "version": "1.0.0",
+      "license": "MIT",
+      "category": {
+        "name": "Finance",
+        "slug": "finance"
+      },
+      "integrations": ["brex", "embat", "airtable", "slack"]
+    },
+    {
+      "name": "Chief of Staff (WhatsApp)",
+      "slug": "whatsapp-chief-of-staff",
+      "path": "agents/whatsapp-chief-of-staff",
+      "summary": "A pocket chief of staff: captures tasks from quick messages, tracks commitments, and remembers what matters across weeks.",
+      "version": "1.0.0",
+      "license": "MIT",
+      "category": {
+        "name": "Productivity",
+        "slug": "productivity"
+      },
+      "integrations": [
+        "chat-sdk-whatsapp",
+        "telegram",
+        "todoist",
+        "ticktick",
+        "notion",
+        "mem0"
+      ]
+    },
+    {
+      "name": "Developer Community Manager",
+      "slug": "developer-community-manager",
+      "path": "agents/developer-community-manager",
+      "summary": "Triage community questions, escalate real bugs with reproductions, and turn recurring pain into roadmap signal.",
+      "version": "1.0.0",
+      "license": "MIT",
+      "category": {
+        "name": "Community",
+        "slug": "community"
+      },
+      "integrations": ["discord", "chat-sdk-x", "github", "notion", "slack"]
+    }
+  ],
+  "extensions": []
+}

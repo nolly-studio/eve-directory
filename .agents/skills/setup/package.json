@@ -1,0 +1,6 @@
+{
+  "name": "setup",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The entry point: one interview, one config doc, dispatch to the engines."
+}

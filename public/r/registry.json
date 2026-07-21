@@ -1,0 +1,1353 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "evedirectory",
+  "homepage": "https://evedirectory.com",
+  "items": [
+    {
+      "name": "pr-review-sentinel",
+      "type": "registry:block",
+      "title": "PR Review Sentinel",
+      "description": "Review pull requests against team conventions, flag risky changes, and post structured, actionable feedback.",
+      "dependencies": ["@vercel/connect@^0.2.2", "eve@^0.24.4", "zod@^4.4.3"],
+      "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+      "files": [
+        {
+          "path": "catalog/agents/pr-review-sentinel/.env.example",
+          "type": "registry:file",
+          "target": ".env.example"
+        },
+        {
+          "path": "catalog/agents/pr-review-sentinel/.gitignore",
+          "type": "registry:file",
+          "target": ".gitignore"
+        },
+        {
+          "path": "catalog/agents/pr-review-sentinel/README.md",
+          "type": "registry:file",
+          "target": "README.md"
+        },
+        {
+          "path": "catalog/agents/pr-review-sentinel/SETUP.md",
+          "type": "registry:file",
+          "target": "SETUP.md"
+        },
+        {
+          "path": "catalog/agents/pr-review-sentinel/agent/agent.ts",
+          "type": "registry:file",
+          "target": "agent/agent.ts"
+        },
+        {
+          "path": "catalog/agents/pr-review-sentinel/agent/channels/github.ts",
+          "type": "registry:file",
+          "target": "agent/channels/github.ts"
+        },
+        {
+          "path": "catalog/agents/pr-review-sentinel/agent/connections/linear.ts",
+          "type": "registry:file",
+          "target": "agent/connections/linear.ts"
+        },
+        {
+          "path": "catalog/agents/pr-review-sentinel/agent/connections/notion.ts",
+          "type": "registry:file",
+          "target": "agent/connections/notion.ts"
+        },
+        {
+          "path": "catalog/agents/pr-review-sentinel/agent/connections/sentry.ts",
+          "type": "registry:file",
+          "target": "agent/connections/sentry.ts"
+        },
+        {
+          "path": "catalog/agents/pr-review-sentinel/agent/instructions.md",
+          "type": "registry:file",
+          "target": "agent/instructions.md"
+        },
+        {
+          "path": "catalog/agents/pr-review-sentinel/agent/sandbox/sandbox.ts",
+          "type": "registry:file",
+          "target": "agent/sandbox/sandbox.ts"
+        },
+        {
+          "path": "catalog/agents/pr-review-sentinel/agent/sandbox/workspace/conventions.md",
+          "type": "registry:file",
+          "target": "agent/sandbox/workspace/conventions.md"
+        },
+        {
+          "path": "catalog/agents/pr-review-sentinel/agent/schedules/open-pr-sweep.md",
+          "type": "registry:file",
+          "target": "agent/schedules/open-pr-sweep.md"
+        },
+        {
+          "path": "catalog/agents/pr-review-sentinel/agent/skills/pr-review-sentinel.md",
+          "type": "registry:file",
+          "target": "agent/skills/pr-review-sentinel.md"
+        },
+        {
+          "path": "catalog/agents/pr-review-sentinel/agent/tools/post_review.ts",
+          "type": "registry:file",
+          "target": "agent/tools/post_review.ts"
+        },
+        {
+          "path": "catalog/agents/pr-review-sentinel/evals/evals.config.ts",
+          "type": "registry:file",
+          "target": "evals/evals.config.ts"
+        },
+        {
+          "path": "catalog/agents/pr-review-sentinel/evals/post-review-requires-approval.eval.ts",
+          "type": "registry:file",
+          "target": "evals/post-review-requires-approval.eval.ts"
+        },
+        {
+          "path": "catalog/agents/pr-review-sentinel/examples/sample-input.md",
+          "type": "registry:file",
+          "target": "examples/sample-input.md"
+        },
+        {
+          "path": "catalog/agents/pr-review-sentinel/package.json",
+          "type": "registry:file",
+          "target": "package.json"
+        },
+        {
+          "path": "catalog/agents/pr-review-sentinel/tsconfig.json",
+          "type": "registry:file",
+          "target": "tsconfig.json"
+        }
+      ],
+      "categories": ["engineering"],
+      "meta": {
+        "runtime": "eve",
+        "layout": "eve-app",
+        "version": "1.0.0",
+        "license": "MIT",
+        "category": "engineering",
+        "integrations": ["github", "linear", "sentry", "notion", "slack"]
+      }
+    },
+    {
+      "name": "browser-qa-runner",
+      "type": "registry:block",
+      "title": "Browser QA Runner",
+      "description": "Walk critical user flows in a real browser, capture evidence, and file reproducible bug reports.",
+      "dependencies": ["@vercel/connect@^0.2.2", "eve@^0.24.4", "zod@^4.4.3"],
+      "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+      "files": [
+        {
+          "path": "catalog/agents/browser-qa-runner/.env.example",
+          "type": "registry:file",
+          "target": ".env.example"
+        },
+        {
+          "path": "catalog/agents/browser-qa-runner/.gitignore",
+          "type": "registry:file",
+          "target": ".gitignore"
+        },
+        {
+          "path": "catalog/agents/browser-qa-runner/README.md",
+          "type": "registry:file",
+          "target": "README.md"
+        },
+        {
+          "path": "catalog/agents/browser-qa-runner/SETUP.md",
+          "type": "registry:file",
+          "target": "SETUP.md"
+        },
+        {
+          "path": "catalog/agents/browser-qa-runner/agent/agent.ts",
+          "type": "registry:file",
+          "target": "agent/agent.ts"
+        },
+        {
+          "path": "catalog/agents/browser-qa-runner/agent/channels/slack.ts",
+          "type": "registry:file",
+          "target": "agent/channels/slack.ts"
+        },
+        {
+          "path": "catalog/agents/browser-qa-runner/agent/connections/browser-use.ts",
+          "type": "registry:file",
+          "target": "agent/connections/browser-use.ts"
+        },
+        {
+          "path": "catalog/agents/browser-qa-runner/agent/connections/kernel.ts",
+          "type": "registry:file",
+          "target": "agent/connections/kernel.ts"
+        },
+        {
+          "path": "catalog/agents/browser-qa-runner/agent/connections/linear.ts",
+          "type": "registry:file",
+          "target": "agent/connections/linear.ts"
+        },
+        {
+          "path": "catalog/agents/browser-qa-runner/agent/instructions.md",
+          "type": "registry:file",
+          "target": "agent/instructions.md"
+        },
+        {
+          "path": "catalog/agents/browser-qa-runner/agent/sandbox/sandbox.ts",
+          "type": "registry:file",
+          "target": "agent/sandbox/sandbox.ts"
+        },
+        {
+          "path": "catalog/agents/browser-qa-runner/agent/sandbox/workspace/flows.md",
+          "type": "registry:file",
+          "target": "agent/sandbox/workspace/flows.md"
+        },
+        {
+          "path": "catalog/agents/browser-qa-runner/agent/schedules/nightly-smoke.md",
+          "type": "registry:file",
+          "target": "agent/schedules/nightly-smoke.md"
+        },
+        {
+          "path": "catalog/agents/browser-qa-runner/agent/skills/browser-qa-runner.md",
+          "type": "registry:file",
+          "target": "agent/skills/browser-qa-runner.md"
+        },
+        {
+          "path": "catalog/agents/browser-qa-runner/agent/tools/file_bug_report.ts",
+          "type": "registry:file",
+          "target": "agent/tools/file_bug_report.ts"
+        },
+        {
+          "path": "catalog/agents/browser-qa-runner/evals/evals.config.ts",
+          "type": "registry:file",
+          "target": "evals/evals.config.ts"
+        },
+        {
+          "path": "catalog/agents/browser-qa-runner/evals/file-bug-requires-approval.eval.ts",
+          "type": "registry:file",
+          "target": "evals/file-bug-requires-approval.eval.ts"
+        },
+        {
+          "path": "catalog/agents/browser-qa-runner/examples/sample-input.md",
+          "type": "registry:file",
+          "target": "examples/sample-input.md"
+        },
+        {
+          "path": "catalog/agents/browser-qa-runner/package.json",
+          "type": "registry:file",
+          "target": "package.json"
+        },
+        {
+          "path": "catalog/agents/browser-qa-runner/tsconfig.json",
+          "type": "registry:file",
+          "target": "tsconfig.json"
+        }
+      ],
+      "categories": ["qa"],
+      "meta": {
+        "runtime": "eve",
+        "layout": "eve-app",
+        "version": "1.0.0",
+        "license": "MIT",
+        "category": "qa",
+        "integrations": [
+          "agent-browser",
+          "kernel",
+          "browser-use",
+          "linear",
+          "slack"
+        ]
+      }
+    },
+    {
+      "name": "api-contract-guardian",
+      "type": "registry:block",
+      "title": "API Contract Guardian",
+      "description": "Detect drift between API specs, real behavior, and docs; draft changelogs, migration notes, and fixes.",
+      "dependencies": ["@vercel/connect@^0.2.2", "eve@^0.24.4", "zod@^4.4.3"],
+      "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+      "files": [
+        {
+          "path": "catalog/agents/api-contract-guardian/.env.example",
+          "type": "registry:file",
+          "target": ".env.example"
+        },
+        {
+          "path": "catalog/agents/api-contract-guardian/.gitignore",
+          "type": "registry:file",
+          "target": ".gitignore"
+        },
+        {
+          "path": "catalog/agents/api-contract-guardian/README.md",
+          "type": "registry:file",
+          "target": "README.md"
+        },
+        {
+          "path": "catalog/agents/api-contract-guardian/SETUP.md",
+          "type": "registry:file",
+          "target": "SETUP.md"
+        },
+        {
+          "path": "catalog/agents/api-contract-guardian/agent/agent.ts",
+          "type": "registry:file",
+          "target": "agent/agent.ts"
+        },
+        {
+          "path": "catalog/agents/api-contract-guardian/agent/channels/slack.ts",
+          "type": "registry:file",
+          "target": "agent/channels/slack.ts"
+        },
+        {
+          "path": "catalog/agents/api-contract-guardian/agent/connections/notion.ts",
+          "type": "registry:file",
+          "target": "agent/connections/notion.ts"
+        },
+        {
+          "path": "catalog/agents/api-contract-guardian/agent/connections/postman.ts",
+          "type": "registry:file",
+          "target": "agent/connections/postman.ts"
+        },
+        {
+          "path": "catalog/agents/api-contract-guardian/agent/instructions.md",
+          "type": "registry:file",
+          "target": "agent/instructions.md"
+        },
+        {
+          "path": "catalog/agents/api-contract-guardian/agent/lib/drift-store.ts",
+          "type": "registry:file",
+          "target": "agent/lib/drift-store.ts"
+        },
+        {
+          "path": "catalog/agents/api-contract-guardian/agent/sandbox/sandbox.ts",
+          "type": "registry:file",
+          "target": "agent/sandbox/sandbox.ts"
+        },
+        {
+          "path": "catalog/agents/api-contract-guardian/agent/sandbox/workspace/contracts.md",
+          "type": "registry:file",
+          "target": "agent/sandbox/workspace/contracts.md"
+        },
+        {
+          "path": "catalog/agents/api-contract-guardian/agent/schedules/daily-drift-check.md",
+          "type": "registry:file",
+          "target": "agent/schedules/daily-drift-check.md"
+        },
+        {
+          "path": "catalog/agents/api-contract-guardian/agent/skills/api-contract-guardian.md",
+          "type": "registry:file",
+          "target": "agent/skills/api-contract-guardian.md"
+        },
+        {
+          "path": "catalog/agents/api-contract-guardian/agent/tools/publish_drift_report.ts",
+          "type": "registry:file",
+          "target": "agent/tools/publish_drift_report.ts"
+        },
+        {
+          "path": "catalog/agents/api-contract-guardian/agent/tools/record_drift.ts",
+          "type": "registry:file",
+          "target": "agent/tools/record_drift.ts"
+        },
+        {
+          "path": "catalog/agents/api-contract-guardian/evals/evals.config.ts",
+          "type": "registry:file",
+          "target": "evals/evals.config.ts"
+        },
+        {
+          "path": "catalog/agents/api-contract-guardian/evals/publish-requires-approval.eval.ts",
+          "type": "registry:file",
+          "target": "evals/publish-requires-approval.eval.ts"
+        },
+        {
+          "path": "catalog/agents/api-contract-guardian/evals/record-drift-roundtrip.eval.ts",
+          "type": "registry:file",
+          "target": "evals/record-drift-roundtrip.eval.ts"
+        },
+        {
+          "path": "catalog/agents/api-contract-guardian/examples/sample-input.md",
+          "type": "registry:file",
+          "target": "examples/sample-input.md"
+        },
+        {
+          "path": "catalog/agents/api-contract-guardian/package.json",
+          "type": "registry:file",
+          "target": "package.json"
+        },
+        {
+          "path": "catalog/agents/api-contract-guardian/tsconfig.json",
+          "type": "registry:file",
+          "target": "tsconfig.json"
+        }
+      ],
+      "categories": ["engineering"],
+      "meta": {
+        "runtime": "eve",
+        "layout": "eve-app",
+        "version": "1.0.0",
+        "license": "MIT",
+        "category": "engineering",
+        "integrations": ["postman", "github", "notion", "slack"]
+      }
+    },
+    {
+      "name": "competitive-intel-scout",
+      "type": "registry:block",
+      "title": "Competitive Intel Scout",
+      "description": "Track competitors' pricing, changelogs, and traffic; report evidence-cited changes since the last check.",
+      "dependencies": ["@vercel/connect@^0.2.2", "eve@^0.24.4", "zod@^4.4.3"],
+      "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+      "files": [
+        {
+          "path": "catalog/agents/competitive-intel-scout/.env.example",
+          "type": "registry:file",
+          "target": ".env.example"
+        },
+        {
+          "path": "catalog/agents/competitive-intel-scout/.gitignore",
+          "type": "registry:file",
+          "target": ".gitignore"
+        },
+        {
+          "path": "catalog/agents/competitive-intel-scout/README.md",
+          "type": "registry:file",
+          "target": "README.md"
+        },
+        {
+          "path": "catalog/agents/competitive-intel-scout/SETUP.md",
+          "type": "registry:file",
+          "target": "SETUP.md"
+        },
+        {
+          "path": "catalog/agents/competitive-intel-scout/agent/agent.ts",
+          "type": "registry:file",
+          "target": "agent/agent.ts"
+        },
+        {
+          "path": "catalog/agents/competitive-intel-scout/agent/connections/notion.ts",
+          "type": "registry:file",
+          "target": "agent/connections/notion.ts"
+        },
+        {
+          "path": "catalog/agents/competitive-intel-scout/agent/connections/similarweb.ts",
+          "type": "registry:file",
+          "target": "agent/connections/similarweb.ts"
+        },
+        {
+          "path": "catalog/agents/competitive-intel-scout/agent/instructions.md",
+          "type": "registry:file",
+          "target": "agent/instructions.md"
+        },
+        {
+          "path": "catalog/agents/competitive-intel-scout/agent/lib/snapshot-store.ts",
+          "type": "registry:file",
+          "target": "agent/lib/snapshot-store.ts"
+        },
+        {
+          "path": "catalog/agents/competitive-intel-scout/agent/sandbox/sandbox.ts",
+          "type": "registry:file",
+          "target": "agent/sandbox/sandbox.ts"
+        },
+        {
+          "path": "catalog/agents/competitive-intel-scout/agent/sandbox/workspace/watchlist.md",
+          "type": "registry:file",
+          "target": "agent/sandbox/workspace/watchlist.md"
+        },
+        {
+          "path": "catalog/agents/competitive-intel-scout/agent/schedules/daily-scan.md",
+          "type": "registry:file",
+          "target": "agent/schedules/daily-scan.md"
+        },
+        {
+          "path": "catalog/agents/competitive-intel-scout/agent/skills/competitive-intel-scout.md",
+          "type": "registry:file",
+          "target": "agent/skills/competitive-intel-scout.md"
+        },
+        {
+          "path": "catalog/agents/competitive-intel-scout/agent/subagents/surface-analyst/agent.ts",
+          "type": "registry:file",
+          "target": "agent/subagents/surface-analyst/agent.ts"
+        },
+        {
+          "path": "catalog/agents/competitive-intel-scout/agent/subagents/surface-analyst/instructions.md",
+          "type": "registry:file",
+          "target": "agent/subagents/surface-analyst/instructions.md"
+        },
+        {
+          "path": "catalog/agents/competitive-intel-scout/agent/tools/list_snapshots.ts",
+          "type": "registry:file",
+          "target": "agent/tools/list_snapshots.ts"
+        },
+        {
+          "path": "catalog/agents/competitive-intel-scout/agent/tools/publish_brief.ts",
+          "type": "registry:file",
+          "target": "agent/tools/publish_brief.ts"
+        },
+        {
+          "path": "catalog/agents/competitive-intel-scout/agent/tools/save_snapshot.ts",
+          "type": "registry:file",
+          "target": "agent/tools/save_snapshot.ts"
+        },
+        {
+          "path": "catalog/agents/competitive-intel-scout/evals/evals.config.ts",
+          "type": "registry:file",
+          "target": "evals/evals.config.ts"
+        },
+        {
+          "path": "catalog/agents/competitive-intel-scout/evals/publish-requires-approval.eval.ts",
+          "type": "registry:file",
+          "target": "evals/publish-requires-approval.eval.ts"
+        },
+        {
+          "path": "catalog/agents/competitive-intel-scout/evals/snapshot-roundtrip.eval.ts",
+          "type": "registry:file",
+          "target": "evals/snapshot-roundtrip.eval.ts"
+        },
+        {
+          "path": "catalog/agents/competitive-intel-scout/examples/sample-input.md",
+          "type": "registry:file",
+          "target": "examples/sample-input.md"
+        },
+        {
+          "path": "catalog/agents/competitive-intel-scout/package.json",
+          "type": "registry:file",
+          "target": "package.json"
+        },
+        {
+          "path": "catalog/agents/competitive-intel-scout/tsconfig.json",
+          "type": "registry:file",
+          "target": "tsconfig.json"
+        }
+      ],
+      "categories": ["research"],
+      "meta": {
+        "runtime": "eve",
+        "layout": "eve-app",
+        "version": "1.0.0",
+        "license": "MIT",
+        "category": "research",
+        "integrations": [
+          "similarweb",
+          "browser-use",
+          "kernel",
+          "notion",
+          "slack"
+        ]
+      }
+    },
+    {
+      "name": "churn-risk-sentinel",
+      "type": "registry:block",
+      "title": "Churn Risk Sentinel",
+      "description": "Correlate usage drop-off with billing events, remember account history, and propose specific save plays.",
+      "dependencies": ["@vercel/connect@^0.2.2", "eve@^0.24.4", "zod@^4.4.3"],
+      "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+      "files": [
+        {
+          "path": "catalog/agents/churn-risk-sentinel/.env.example",
+          "type": "registry:file",
+          "target": ".env.example"
+        },
+        {
+          "path": "catalog/agents/churn-risk-sentinel/.gitignore",
+          "type": "registry:file",
+          "target": ".gitignore"
+        },
+        {
+          "path": "catalog/agents/churn-risk-sentinel/README.md",
+          "type": "registry:file",
+          "target": "README.md"
+        },
+        {
+          "path": "catalog/agents/churn-risk-sentinel/SETUP.md",
+          "type": "registry:file",
+          "target": "SETUP.md"
+        },
+        {
+          "path": "catalog/agents/churn-risk-sentinel/agent/agent.ts",
+          "type": "registry:file",
+          "target": "agent/agent.ts"
+        },
+        {
+          "path": "catalog/agents/churn-risk-sentinel/agent/channels/slack.ts",
+          "type": "registry:file",
+          "target": "agent/channels/slack.ts"
+        },
+        {
+          "path": "catalog/agents/churn-risk-sentinel/agent/connections/mem0.ts",
+          "type": "registry:file",
+          "target": "agent/connections/mem0.ts"
+        },
+        {
+          "path": "catalog/agents/churn-risk-sentinel/agent/connections/mixpanel.ts",
+          "type": "registry:file",
+          "target": "agent/connections/mixpanel.ts"
+        },
+        {
+          "path": "catalog/agents/churn-risk-sentinel/agent/connections/posthog.ts",
+          "type": "registry:file",
+          "target": "agent/connections/posthog.ts"
+        },
+        {
+          "path": "catalog/agents/churn-risk-sentinel/agent/connections/stripe.ts",
+          "type": "registry:file",
+          "target": "agent/connections/stripe.ts"
+        },
+        {
+          "path": "catalog/agents/churn-risk-sentinel/agent/instructions.md",
+          "type": "registry:file",
+          "target": "agent/instructions.md"
+        },
+        {
+          "path": "catalog/agents/churn-risk-sentinel/agent/lib/score-store.ts",
+          "type": "registry:file",
+          "target": "agent/lib/score-store.ts"
+        },
+        {
+          "path": "catalog/agents/churn-risk-sentinel/agent/sandbox/sandbox.ts",
+          "type": "registry:file",
+          "target": "agent/sandbox/sandbox.ts"
+        },
+        {
+          "path": "catalog/agents/churn-risk-sentinel/agent/sandbox/workspace/watchlist.md",
+          "type": "registry:file",
+          "target": "agent/sandbox/workspace/watchlist.md"
+        },
+        {
+          "path": "catalog/agents/churn-risk-sentinel/agent/schedules/weekly-risk-scan.md",
+          "type": "registry:file",
+          "target": "agent/schedules/weekly-risk-scan.md"
+        },
+        {
+          "path": "catalog/agents/churn-risk-sentinel/agent/skills/churn-risk-sentinel.md",
+          "type": "registry:file",
+          "target": "agent/skills/churn-risk-sentinel.md"
+        },
+        {
+          "path": "catalog/agents/churn-risk-sentinel/agent/tools/propose_save_play.ts",
+          "type": "registry:file",
+          "target": "agent/tools/propose_save_play.ts"
+        },
+        {
+          "path": "catalog/agents/churn-risk-sentinel/agent/tools/score_account.ts",
+          "type": "registry:file",
+          "target": "agent/tools/score_account.ts"
+        },
+        {
+          "path": "catalog/agents/churn-risk-sentinel/evals/evals.config.ts",
+          "type": "registry:file",
+          "target": "evals/evals.config.ts"
+        },
+        {
+          "path": "catalog/agents/churn-risk-sentinel/evals/propose-requires-approval.eval.ts",
+          "type": "registry:file",
+          "target": "evals/propose-requires-approval.eval.ts"
+        },
+        {
+          "path": "catalog/agents/churn-risk-sentinel/evals/score-roundtrip.eval.ts",
+          "type": "registry:file",
+          "target": "evals/score-roundtrip.eval.ts"
+        },
+        {
+          "path": "catalog/agents/churn-risk-sentinel/examples/sample-input.md",
+          "type": "registry:file",
+          "target": "examples/sample-input.md"
+        },
+        {
+          "path": "catalog/agents/churn-risk-sentinel/package.json",
+          "type": "registry:file",
+          "target": "package.json"
+        },
+        {
+          "path": "catalog/agents/churn-risk-sentinel/tsconfig.json",
+          "type": "registry:file",
+          "target": "tsconfig.json"
+        }
+      ],
+      "categories": ["customer-success"],
+      "meta": {
+        "runtime": "eve",
+        "layout": "eve-app",
+        "version": "1.0.0",
+        "license": "MIT",
+        "category": "customer-success",
+        "integrations": ["stripe", "posthog", "mixpanel", "mem0", "slack"]
+      }
+    },
+    {
+      "name": "inbound-lead-qualifier",
+      "type": "registry:block",
+      "title": "Inbound Lead Qualifier",
+      "description": "Qualify site visitors conversationally, score fit against your ICP, and hand sales a context-rich lead.",
+      "dependencies": ["@vercel/connect@^0.2.2", "eve@^0.24.4", "zod@^4.4.3"],
+      "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+      "files": [
+        {
+          "path": "catalog/agents/inbound-lead-qualifier/.env.example",
+          "type": "registry:file",
+          "target": ".env.example"
+        },
+        {
+          "path": "catalog/agents/inbound-lead-qualifier/.gitignore",
+          "type": "registry:file",
+          "target": ".gitignore"
+        },
+        {
+          "path": "catalog/agents/inbound-lead-qualifier/README.md",
+          "type": "registry:file",
+          "target": "README.md"
+        },
+        {
+          "path": "catalog/agents/inbound-lead-qualifier/SETUP.md",
+          "type": "registry:file",
+          "target": "SETUP.md"
+        },
+        {
+          "path": "catalog/agents/inbound-lead-qualifier/agent/agent.ts",
+          "type": "registry:file",
+          "target": "agent/agent.ts"
+        },
+        {
+          "path": "catalog/agents/inbound-lead-qualifier/agent/connections/airtable.ts",
+          "type": "registry:file",
+          "target": "agent/connections/airtable.ts"
+        },
+        {
+          "path": "catalog/agents/inbound-lead-qualifier/agent/connections/mem0.ts",
+          "type": "registry:file",
+          "target": "agent/connections/mem0.ts"
+        },
+        {
+          "path": "catalog/agents/inbound-lead-qualifier/agent/instructions.md",
+          "type": "registry:file",
+          "target": "agent/instructions.md"
+        },
+        {
+          "path": "catalog/agents/inbound-lead-qualifier/agent/lib/lead-store.ts",
+          "type": "registry:file",
+          "target": "agent/lib/lead-store.ts"
+        },
+        {
+          "path": "catalog/agents/inbound-lead-qualifier/agent/sandbox/sandbox.ts",
+          "type": "registry:file",
+          "target": "agent/sandbox/sandbox.ts"
+        },
+        {
+          "path": "catalog/agents/inbound-lead-qualifier/agent/sandbox/workspace/icp.md",
+          "type": "registry:file",
+          "target": "agent/sandbox/workspace/icp.md"
+        },
+        {
+          "path": "catalog/agents/inbound-lead-qualifier/agent/skills/inbound-lead-qualifier.md",
+          "type": "registry:file",
+          "target": "agent/skills/inbound-lead-qualifier.md"
+        },
+        {
+          "path": "catalog/agents/inbound-lead-qualifier/agent/tools/handoff_to_sales.ts",
+          "type": "registry:file",
+          "target": "agent/tools/handoff_to_sales.ts"
+        },
+        {
+          "path": "catalog/agents/inbound-lead-qualifier/agent/tools/score_lead.ts",
+          "type": "registry:file",
+          "target": "agent/tools/score_lead.ts"
+        },
+        {
+          "path": "catalog/agents/inbound-lead-qualifier/evals/evals.config.ts",
+          "type": "registry:file",
+          "target": "evals/evals.config.ts"
+        },
+        {
+          "path": "catalog/agents/inbound-lead-qualifier/evals/handoff-requires-approval.eval.ts",
+          "type": "registry:file",
+          "target": "evals/handoff-requires-approval.eval.ts"
+        },
+        {
+          "path": "catalog/agents/inbound-lead-qualifier/evals/score-lead-roundtrip.eval.ts",
+          "type": "registry:file",
+          "target": "evals/score-lead-roundtrip.eval.ts"
+        },
+        {
+          "path": "catalog/agents/inbound-lead-qualifier/examples/sample-input.md",
+          "type": "registry:file",
+          "target": "examples/sample-input.md"
+        },
+        {
+          "path": "catalog/agents/inbound-lead-qualifier/package.json",
+          "type": "registry:file",
+          "target": "package.json"
+        },
+        {
+          "path": "catalog/agents/inbound-lead-qualifier/tsconfig.json",
+          "type": "registry:file",
+          "target": "tsconfig.json"
+        }
+      ],
+      "categories": ["sales"],
+      "meta": {
+        "runtime": "eve",
+        "layout": "eve-app",
+        "version": "1.0.0",
+        "license": "MIT",
+        "category": "sales",
+        "integrations": [
+          "eve",
+          "airtable",
+          "mem0",
+          "slack",
+          "chat-sdk-messenger"
+        ]
+      }
+    },
+    {
+      "name": "ai-search-visibility-analyst",
+      "type": "registry:block",
+      "title": "AI Search Visibility Analyst",
+      "description": "Measure how your brand appears in AI answers and search, diagnose citation gaps, and prioritize content fixes.",
+      "dependencies": ["@vercel/connect@^0.2.2", "eve@^0.24.4", "zod@^4.4.3"],
+      "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+      "files": [
+        {
+          "path": "catalog/agents/ai-search-visibility-analyst/.env.example",
+          "type": "registry:file",
+          "target": ".env.example"
+        },
+        {
+          "path": "catalog/agents/ai-search-visibility-analyst/.gitignore",
+          "type": "registry:file",
+          "target": ".gitignore"
+        },
+        {
+          "path": "catalog/agents/ai-search-visibility-analyst/README.md",
+          "type": "registry:file",
+          "target": "README.md"
+        },
+        {
+          "path": "catalog/agents/ai-search-visibility-analyst/SETUP.md",
+          "type": "registry:file",
+          "target": "SETUP.md"
+        },
+        {
+          "path": "catalog/agents/ai-search-visibility-analyst/agent/agent.ts",
+          "type": "registry:file",
+          "target": "agent/agent.ts"
+        },
+        {
+          "path": "catalog/agents/ai-search-visibility-analyst/agent/channels/slack.ts",
+          "type": "registry:file",
+          "target": "agent/channels/slack.ts"
+        },
+        {
+          "path": "catalog/agents/ai-search-visibility-analyst/agent/connections/local-falcon.ts",
+          "type": "registry:file",
+          "target": "agent/connections/local-falcon.ts"
+        },
+        {
+          "path": "catalog/agents/ai-search-visibility-analyst/agent/connections/notion.ts",
+          "type": "registry:file",
+          "target": "agent/connections/notion.ts"
+        },
+        {
+          "path": "catalog/agents/ai-search-visibility-analyst/agent/connections/similarweb.ts",
+          "type": "registry:file",
+          "target": "agent/connections/similarweb.ts"
+        },
+        {
+          "path": "catalog/agents/ai-search-visibility-analyst/agent/connections/webflow.ts",
+          "type": "registry:file",
+          "target": "agent/connections/webflow.ts"
+        },
+        {
+          "path": "catalog/agents/ai-search-visibility-analyst/agent/instructions.md",
+          "type": "registry:file",
+          "target": "agent/instructions.md"
+        },
+        {
+          "path": "catalog/agents/ai-search-visibility-analyst/agent/lib/visibility-store.ts",
+          "type": "registry:file",
+          "target": "agent/lib/visibility-store.ts"
+        },
+        {
+          "path": "catalog/agents/ai-search-visibility-analyst/agent/sandbox/sandbox.ts",
+          "type": "registry:file",
+          "target": "agent/sandbox/sandbox.ts"
+        },
+        {
+          "path": "catalog/agents/ai-search-visibility-analyst/agent/sandbox/workspace/queries.md",
+          "type": "registry:file",
+          "target": "agent/sandbox/workspace/queries.md"
+        },
+        {
+          "path": "catalog/agents/ai-search-visibility-analyst/agent/schedules/weekly-visibility.md",
+          "type": "registry:file",
+          "target": "agent/schedules/weekly-visibility.md"
+        },
+        {
+          "path": "catalog/agents/ai-search-visibility-analyst/agent/skills/ai-search-visibility-analyst.md",
+          "type": "registry:file",
+          "target": "agent/skills/ai-search-visibility-analyst.md"
+        },
+        {
+          "path": "catalog/agents/ai-search-visibility-analyst/agent/tools/publish_visibility_report.ts",
+          "type": "registry:file",
+          "target": "agent/tools/publish_visibility_report.ts"
+        },
+        {
+          "path": "catalog/agents/ai-search-visibility-analyst/agent/tools/save_visibility_snapshot.ts",
+          "type": "registry:file",
+          "target": "agent/tools/save_visibility_snapshot.ts"
+        },
+        {
+          "path": "catalog/agents/ai-search-visibility-analyst/evals/evals.config.ts",
+          "type": "registry:file",
+          "target": "evals/evals.config.ts"
+        },
+        {
+          "path": "catalog/agents/ai-search-visibility-analyst/evals/publish-requires-approval.eval.ts",
+          "type": "registry:file",
+          "target": "evals/publish-requires-approval.eval.ts"
+        },
+        {
+          "path": "catalog/agents/ai-search-visibility-analyst/evals/snapshot-roundtrip.eval.ts",
+          "type": "registry:file",
+          "target": "evals/snapshot-roundtrip.eval.ts"
+        },
+        {
+          "path": "catalog/agents/ai-search-visibility-analyst/examples/sample-input.md",
+          "type": "registry:file",
+          "target": "examples/sample-input.md"
+        },
+        {
+          "path": "catalog/agents/ai-search-visibility-analyst/package.json",
+          "type": "registry:file",
+          "target": "package.json"
+        },
+        {
+          "path": "catalog/agents/ai-search-visibility-analyst/tsconfig.json",
+          "type": "registry:file",
+          "target": "tsconfig.json"
+        }
+      ],
+      "categories": ["marketing"],
+      "meta": {
+        "runtime": "eve",
+        "layout": "eve-app",
+        "version": "1.0.0",
+        "license": "MIT",
+        "category": "marketing",
+        "integrations": [
+          "local-falcon",
+          "similarweb",
+          "notion",
+          "webflow",
+          "slack"
+        ]
+      }
+    },
+    {
+      "name": "spend-subscription-controller",
+      "type": "registry:block",
+      "title": "Spend & Subscription Controller",
+      "description": "Flag card-spend anomalies, upcoming SaaS renewals, and duplicate subscriptions with owner-ready actions.",
+      "dependencies": ["@vercel/connect@^0.2.2", "eve@^0.24.4", "zod@^4.4.3"],
+      "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+      "files": [
+        {
+          "path": "catalog/agents/spend-subscription-controller/.env.example",
+          "type": "registry:file",
+          "target": ".env.example"
+        },
+        {
+          "path": "catalog/agents/spend-subscription-controller/.gitignore",
+          "type": "registry:file",
+          "target": ".gitignore"
+        },
+        {
+          "path": "catalog/agents/spend-subscription-controller/README.md",
+          "type": "registry:file",
+          "target": "README.md"
+        },
+        {
+          "path": "catalog/agents/spend-subscription-controller/SETUP.md",
+          "type": "registry:file",
+          "target": "SETUP.md"
+        },
+        {
+          "path": "catalog/agents/spend-subscription-controller/agent/agent.ts",
+          "type": "registry:file",
+          "target": "agent/agent.ts"
+        },
+        {
+          "path": "catalog/agents/spend-subscription-controller/agent/channels/slack.ts",
+          "type": "registry:file",
+          "target": "agent/channels/slack.ts"
+        },
+        {
+          "path": "catalog/agents/spend-subscription-controller/agent/connections/airtable.ts",
+          "type": "registry:file",
+          "target": "agent/connections/airtable.ts"
+        },
+        {
+          "path": "catalog/agents/spend-subscription-controller/agent/connections/brex.ts",
+          "type": "registry:file",
+          "target": "agent/connections/brex.ts"
+        },
+        {
+          "path": "catalog/agents/spend-subscription-controller/agent/connections/embat.ts",
+          "type": "registry:file",
+          "target": "agent/connections/embat.ts"
+        },
+        {
+          "path": "catalog/agents/spend-subscription-controller/agent/instructions.md",
+          "type": "registry:file",
+          "target": "agent/instructions.md"
+        },
+        {
+          "path": "catalog/agents/spend-subscription-controller/agent/lib/spend-store.ts",
+          "type": "registry:file",
+          "target": "agent/lib/spend-store.ts"
+        },
+        {
+          "path": "catalog/agents/spend-subscription-controller/agent/sandbox/sandbox.ts",
+          "type": "registry:file",
+          "target": "agent/sandbox/sandbox.ts"
+        },
+        {
+          "path": "catalog/agents/spend-subscription-controller/agent/sandbox/workspace/owners.md",
+          "type": "registry:file",
+          "target": "agent/sandbox/workspace/owners.md"
+        },
+        {
+          "path": "catalog/agents/spend-subscription-controller/agent/schedules/renewal-sweep.md",
+          "type": "registry:file",
+          "target": "agent/schedules/renewal-sweep.md"
+        },
+        {
+          "path": "catalog/agents/spend-subscription-controller/agent/skills/spend-subscription-controller.md",
+          "type": "registry:file",
+          "target": "agent/skills/spend-subscription-controller.md"
+        },
+        {
+          "path": "catalog/agents/spend-subscription-controller/agent/tools/flag_anomaly.ts",
+          "type": "registry:file",
+          "target": "agent/tools/flag_anomaly.ts"
+        },
+        {
+          "path": "catalog/agents/spend-subscription-controller/agent/tools/propose_cancel.ts",
+          "type": "registry:file",
+          "target": "agent/tools/propose_cancel.ts"
+        },
+        {
+          "path": "catalog/agents/spend-subscription-controller/evals/cancel-requires-approval.eval.ts",
+          "type": "registry:file",
+          "target": "evals/cancel-requires-approval.eval.ts"
+        },
+        {
+          "path": "catalog/agents/spend-subscription-controller/evals/evals.config.ts",
+          "type": "registry:file",
+          "target": "evals/evals.config.ts"
+        },
+        {
+          "path": "catalog/agents/spend-subscription-controller/evals/flag-roundtrip.eval.ts",
+          "type": "registry:file",
+          "target": "evals/flag-roundtrip.eval.ts"
+        },
+        {
+          "path": "catalog/agents/spend-subscription-controller/examples/sample-input.md",
+          "type": "registry:file",
+          "target": "examples/sample-input.md"
+        },
+        {
+          "path": "catalog/agents/spend-subscription-controller/package.json",
+          "type": "registry:file",
+          "target": "package.json"
+        },
+        {
+          "path": "catalog/agents/spend-subscription-controller/tsconfig.json",
+          "type": "registry:file",
+          "target": "tsconfig.json"
+        }
+      ],
+      "categories": ["finance"],
+      "meta": {
+        "runtime": "eve",
+        "layout": "eve-app",
+        "version": "1.0.0",
+        "license": "MIT",
+        "category": "finance",
+        "integrations": ["brex", "embat", "airtable", "slack"]
+      }
+    },
+    {
+      "name": "whatsapp-chief-of-staff",
+      "type": "registry:block",
+      "title": "Chief of Staff (WhatsApp)",
+      "description": "A pocket chief of staff: captures tasks from quick messages, tracks commitments, and remembers what matters across weeks.",
+      "dependencies": ["@vercel/connect@^0.2.2", "eve@^0.24.4", "zod@^4.4.3"],
+      "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+      "files": [
+        {
+          "path": "catalog/agents/whatsapp-chief-of-staff/.env.example",
+          "type": "registry:file",
+          "target": ".env.example"
+        },
+        {
+          "path": "catalog/agents/whatsapp-chief-of-staff/.gitignore",
+          "type": "registry:file",
+          "target": ".gitignore"
+        },
+        {
+          "path": "catalog/agents/whatsapp-chief-of-staff/README.md",
+          "type": "registry:file",
+          "target": "README.md"
+        },
+        {
+          "path": "catalog/agents/whatsapp-chief-of-staff/SETUP.md",
+          "type": "registry:file",
+          "target": "SETUP.md"
+        },
+        {
+          "path": "catalog/agents/whatsapp-chief-of-staff/agent/agent.ts",
+          "type": "registry:file",
+          "target": "agent/agent.ts"
+        },
+        {
+          "path": "catalog/agents/whatsapp-chief-of-staff/agent/channels/telegram.ts",
+          "type": "registry:file",
+          "target": "agent/channels/telegram.ts"
+        },
+        {
+          "path": "catalog/agents/whatsapp-chief-of-staff/agent/connections/mem0.ts",
+          "type": "registry:file",
+          "target": "agent/connections/mem0.ts"
+        },
+        {
+          "path": "catalog/agents/whatsapp-chief-of-staff/agent/connections/notion.ts",
+          "type": "registry:file",
+          "target": "agent/connections/notion.ts"
+        },
+        {
+          "path": "catalog/agents/whatsapp-chief-of-staff/agent/connections/ticktick.ts",
+          "type": "registry:file",
+          "target": "agent/connections/ticktick.ts"
+        },
+        {
+          "path": "catalog/agents/whatsapp-chief-of-staff/agent/connections/todoist.ts",
+          "type": "registry:file",
+          "target": "agent/connections/todoist.ts"
+        },
+        {
+          "path": "catalog/agents/whatsapp-chief-of-staff/agent/instructions.md",
+          "type": "registry:file",
+          "target": "agent/instructions.md"
+        },
+        {
+          "path": "catalog/agents/whatsapp-chief-of-staff/agent/lib/memory-store.ts",
+          "type": "registry:file",
+          "target": "agent/lib/memory-store.ts"
+        },
+        {
+          "path": "catalog/agents/whatsapp-chief-of-staff/agent/schedules/daily-brief.md",
+          "type": "registry:file",
+          "target": "agent/schedules/daily-brief.md"
+        },
+        {
+          "path": "catalog/agents/whatsapp-chief-of-staff/agent/skills/whatsapp-chief-of-staff.md",
+          "type": "registry:file",
+          "target": "agent/skills/whatsapp-chief-of-staff.md"
+        },
+        {
+          "path": "catalog/agents/whatsapp-chief-of-staff/agent/tools/capture_task.ts",
+          "type": "registry:file",
+          "target": "agent/tools/capture_task.ts"
+        },
+        {
+          "path": "catalog/agents/whatsapp-chief-of-staff/agent/tools/forget.ts",
+          "type": "registry:file",
+          "target": "agent/tools/forget.ts"
+        },
+        {
+          "path": "catalog/agents/whatsapp-chief-of-staff/agent/tools/list_memories.ts",
+          "type": "registry:file",
+          "target": "agent/tools/list_memories.ts"
+        },
+        {
+          "path": "catalog/agents/whatsapp-chief-of-staff/agent/tools/remember.ts",
+          "type": "registry:file",
+          "target": "agent/tools/remember.ts"
+        },
+        {
+          "path": "catalog/agents/whatsapp-chief-of-staff/evals/evals.config.ts",
+          "type": "registry:file",
+          "target": "evals/evals.config.ts"
+        },
+        {
+          "path": "catalog/agents/whatsapp-chief-of-staff/evals/forget-requires-approval.eval.ts",
+          "type": "registry:file",
+          "target": "evals/forget-requires-approval.eval.ts"
+        },
+        {
+          "path": "catalog/agents/whatsapp-chief-of-staff/evals/remember-and-list.eval.ts",
+          "type": "registry:file",
+          "target": "evals/remember-and-list.eval.ts"
+        },
+        {
+          "path": "catalog/agents/whatsapp-chief-of-staff/examples/sample-input.md",
+          "type": "registry:file",
+          "target": "examples/sample-input.md"
+        },
+        {
+          "path": "catalog/agents/whatsapp-chief-of-staff/package.json",
+          "type": "registry:file",
+          "target": "package.json"
+        },
+        {
+          "path": "catalog/agents/whatsapp-chief-of-staff/tsconfig.json",
+          "type": "registry:file",
+          "target": "tsconfig.json"
+        }
+      ],
+      "categories": ["productivity"],
+      "meta": {
+        "runtime": "eve",
+        "layout": "eve-app",
+        "version": "1.0.0",
+        "license": "MIT",
+        "category": "productivity",
+        "integrations": [
+          "chat-sdk-whatsapp",
+          "telegram",
+          "todoist",
+          "ticktick",
+          "notion",
+          "mem0"
+        ]
+      }
+    },
+    {
+      "name": "developer-community-manager",
+      "type": "registry:block",
+      "title": "Developer Community Manager",
+      "description": "Triage community questions, escalate real bugs with reproductions, and turn recurring pain into roadmap signal.",
+      "dependencies": ["@vercel/connect@^0.2.2", "eve@^0.24.4", "zod@^4.4.3"],
+      "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+      "files": [
+        {
+          "path": "catalog/agents/developer-community-manager/.env.example",
+          "type": "registry:file",
+          "target": ".env.example"
+        },
+        {
+          "path": "catalog/agents/developer-community-manager/.gitignore",
+          "type": "registry:file",
+          "target": ".gitignore"
+        },
+        {
+          "path": "catalog/agents/developer-community-manager/README.md",
+          "type": "registry:file",
+          "target": "README.md"
+        },
+        {
+          "path": "catalog/agents/developer-community-manager/SETUP.md",
+          "type": "registry:file",
+          "target": "SETUP.md"
+        },
+        {
+          "path": "catalog/agents/developer-community-manager/agent/agent.ts",
+          "type": "registry:file",
+          "target": "agent/agent.ts"
+        },
+        {
+          "path": "catalog/agents/developer-community-manager/agent/channels/discord.ts",
+          "type": "registry:file",
+          "target": "agent/channels/discord.ts"
+        },
+        {
+          "path": "catalog/agents/developer-community-manager/agent/channels/slack.ts",
+          "type": "registry:file",
+          "target": "agent/channels/slack.ts"
+        },
+        {
+          "path": "catalog/agents/developer-community-manager/agent/connections/notion.ts",
+          "type": "registry:file",
+          "target": "agent/connections/notion.ts"
+        },
+        {
+          "path": "catalog/agents/developer-community-manager/agent/instructions.md",
+          "type": "registry:file",
+          "target": "agent/instructions.md"
+        },
+        {
+          "path": "catalog/agents/developer-community-manager/agent/lib/signal-store.ts",
+          "type": "registry:file",
+          "target": "agent/lib/signal-store.ts"
+        },
+        {
+          "path": "catalog/agents/developer-community-manager/agent/sandbox/sandbox.ts",
+          "type": "registry:file",
+          "target": "agent/sandbox/sandbox.ts"
+        },
+        {
+          "path": "catalog/agents/developer-community-manager/agent/sandbox/workspace/triage.md",
+          "type": "registry:file",
+          "target": "agent/sandbox/workspace/triage.md"
+        },
+        {
+          "path": "catalog/agents/developer-community-manager/agent/schedules/weekly-digest.md",
+          "type": "registry:file",
+          "target": "agent/schedules/weekly-digest.md"
+        },
+        {
+          "path": "catalog/agents/developer-community-manager/agent/skills/developer-community-manager.md",
+          "type": "registry:file",
+          "target": "agent/skills/developer-community-manager.md"
+        },
+        {
+          "path": "catalog/agents/developer-community-manager/agent/subagents/repro-builder/agent.ts",
+          "type": "registry:file",
+          "target": "agent/subagents/repro-builder/agent.ts"
+        },
+        {
+          "path": "catalog/agents/developer-community-manager/agent/subagents/repro-builder/instructions.md",
+          "type": "registry:file",
+          "target": "agent/subagents/repro-builder/instructions.md"
+        },
+        {
+          "path": "catalog/agents/developer-community-manager/agent/tools/escalate_bug.ts",
+          "type": "registry:file",
+          "target": "agent/tools/escalate_bug.ts"
+        },
+        {
+          "path": "catalog/agents/developer-community-manager/agent/tools/log_roadmap_signal.ts",
+          "type": "registry:file",
+          "target": "agent/tools/log_roadmap_signal.ts"
+        },
+        {
+          "path": "catalog/agents/developer-community-manager/evals/escalate-requires-approval.eval.ts",
+          "type": "registry:file",
+          "target": "evals/escalate-requires-approval.eval.ts"
+        },
+        {
+          "path": "catalog/agents/developer-community-manager/evals/evals.config.ts",
+          "type": "registry:file",
+          "target": "evals/evals.config.ts"
+        },
+        {
+          "path": "catalog/agents/developer-community-manager/evals/signal-roundtrip.eval.ts",
+          "type": "registry:file",
+          "target": "evals/signal-roundtrip.eval.ts"
+        },
+        {
+          "path": "catalog/agents/developer-community-manager/examples/sample-input.md",
+          "type": "registry:file",
+          "target": "examples/sample-input.md"
+        },
+        {
+          "path": "catalog/agents/developer-community-manager/package.json",
+          "type": "registry:file",
+          "target": "package.json"
+        },
+        {
+          "path": "catalog/agents/developer-community-manager/tsconfig.json",
+          "type": "registry:file",
+          "target": "tsconfig.json"
+        }
+      ],
+      "categories": ["community"],
+      "meta": {
+        "runtime": "eve",
+        "layout": "eve-app",
+        "version": "1.0.0",
+        "license": "MIT",
+        "category": "community",
+        "integrations": ["discord", "chat-sdk-x", "github", "notion", "slack"]
+      }
+    }
+  ]
+}

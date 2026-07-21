@@ -1,0 +1,40 @@
+---
+title: Compose vs Clone
+description: Choose shadcn install, Composer export, or cloning the directory repo depending on how you want to consume agents.
+---
+
+Three ways to take agents out of Eve Directory:
+
+## Install with shadcn CLI
+
+Best when you already have an Eve project and want **one** agent (or extension) dropped in place.
+
+```bash
+npx shadcn@latest add @evedirectory/<slug>
+```
+
+See [Install with shadcn CLI](/docs/install-with-shadcn).
+
+## Composer
+
+Best when you want a **starter zip** with multiple selected agents/extensions. Open [Composer](/composer), add listings, export.
+
+Composer is local-only for now (selection in `localStorage`). No account required.
+
+## Clone this repo
+
+Best when you are **contributing** catalog content or running the directory site itself.
+
+```bash
+git clone https://github.com/nolly-studio/eve-directory.git
+cd eve-directory
+pnpm install
+pnpm dev
+```
+
+Catalog source lives under `catalog/` — not a substitute for `eve init` in an application.
+
+## Related
+
+- [What is Eve?](/docs/what-is-eve)
+- [Composer](/composer)

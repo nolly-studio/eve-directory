@@ -1,0 +1,6 @@
+{
+  "name": "design-md",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Engine: emits DESIGN.md and a portable frontend-design skill; document, merge, or propose — never restyle."
+}

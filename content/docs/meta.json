@@ -1,0 +1,11 @@
+{
+  "title": "Guides",
+  "pages": [
+    "index",
+    "what-is-eve",
+    "install-with-shadcn",
+    "compose-vs-clone",
+    "---",
+    "integrations"
+  ]
+}

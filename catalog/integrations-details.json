@@ -1,0 +1,3242 @@
+{
+  "scrapedAt": "2026-07-21T16:12:16.106Z",
+  "source": "https://eve.dev",
+  "catalog": "catalog/integrations.json",
+  "count": 52,
+  "failed": [],
+  "integrations": [
+    {
+      "slug": "slack",
+      "sourceUrl": "https://eve.dev/integrations/slack",
+      "scrapedAt": "2026-07-21T16:12:09.662Z",
+      "name": "Slack",
+      "description": "Mention your agent in channels and DMs, with Connect-managed auth.",
+      "badge": "Channel",
+      "docsHref": "/docs/channels/slack",
+      "docsUrl": "https://eve.dev/docs/channels/slack",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "The eve CLI scaffolds the channel for you. eve channels add slack writes agent/channels/slack.ts, adds @vercel/connect, and runs the Connect setup flow:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "eve channels add slack"
+            },
+            {
+              "type": "paragraph",
+              "text": "To wire it up by hand instead, install the framework and the Connect SDK. Slack channels use Vercel Connect for both the outbound bot token and inbound webhook verification:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/channels/slack.ts. The channel name is derived from the filename, so no name field is needed:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/channels/slack.ts\nimport { slackChannel } from \"eve/channels/slack\";\nimport { connectSlackCredentials } from \"@vercel/connect/eve\";\n\nexport default slackChannel({\n  credentials: connectSlackCredentials(\"slack/my-agent\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Link the project and pull OIDC env vars so Connect can authenticate locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel link\nvercel env pull"
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create a Slack Connect client and copy its UID (for example slack/my-agent), then attach this project as the webhook trigger destination at the route eve serves (/eve/v1/slack):"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create slack --triggers"
+            },
+            {
+              "type": "paragraph",
+              "text": "The channel handles mentions, DMs, typing indicators, delivery, and human-in-the-loop consent with sensible defaults. See the Slack channel docs for customizing each behavior."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Slack\n\n`Channel`\n\nMention your agent in channels and DMs, with Connect-managed auth.\n\n[Docs](https://eve.dev/docs/channels/slack)\n\n## Install\n\nThe eve CLI scaffolds the channel for you. eve channels add slack writes agent/channels/slack.ts, adds @vercel/connect, and runs the Connect setup flow:\n\n```bash\neve channels add slack\n```\n\nTo wire it up by hand instead, install the framework and the Connect SDK. Slack channels use Vercel Connect for both the outbound bot token and inbound webhook verification:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/channels/slack.ts. The channel name is derived from the filename, so no name field is needed:\n\n```ts\n// agent/channels/slack.ts\nimport { slackChannel } from \"eve/channels/slack\";\nimport { connectSlackCredentials } from \"@vercel/connect/eve\";\n\nexport default slackChannel({\n  credentials: connectSlackCredentials(\"slack/my-agent\"),\n});\n```\n\nLink the project and pull OIDC env vars so Connect can authenticate locally:\n\n```bash\nvercel link\nvercel env pull\n```\n\n\n## Configure\n\nCreate a Slack Connect client and copy its UID (for example slack/my-agent), then attach this project as the webhook trigger destination at the route eve serves (/eve/v1/slack):\n\n```bash\nvercel connect create slack --triggers\n```\n\nThe channel handles mentions, DMs, typing indicators, delivery, and human-in-the-loop consent with sensible defaults. See the Slack channel docs for customizing each behavior.\n"
+    },
+    {
+      "slug": "discord",
+      "sourceUrl": "https://eve.dev/integrations/discord",
+      "scrapedAt": "2026-07-21T16:12:09.891Z",
+      "name": "Discord",
+      "description": "Run your agent as a Discord bot across servers and threads.",
+      "badge": "Channel",
+      "docsHref": "/docs/channels/discord",
+      "docsUrl": "https://eve.dev/docs/channels/discord",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Install the framework. The Discord channel ships with it:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/channels/discord.ts:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/channels/discord.ts\nimport { discordChannel } from \"eve/channels/discord\";\n\nexport default discordChannel({\n  botToken: () => process.env.DISCORD_BOT_TOKEN!,\n  publicKey: () => process.env.DISCORD_PUBLIC_KEY!,\n});"
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create a Discord application, add a bot, and set the interactions endpoint URL to the route eve serves (/eve/v1/discord). Provide the bot token and public key through environment variables. See the Discord channel docs for intents and slash-command setup."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Discord\n\n`Channel`\n\nRun your agent as a Discord bot across servers and threads.\n\n[Docs](https://eve.dev/docs/channels/discord)\n\n## Install\n\nInstall the framework. The Discord channel ships with it:\n\n```bash\nnpm install eve@latest\n```\n\n\n## Quick start\n\nCreate agent/channels/discord.ts:\n\n```ts\n// agent/channels/discord.ts\nimport { discordChannel } from \"eve/channels/discord\";\n\nexport default discordChannel({\n  botToken: () => process.env.DISCORD_BOT_TOKEN!,\n  publicKey: () => process.env.DISCORD_PUBLIC_KEY!,\n});\n```\n\n\n## Configure\n\nCreate a Discord application, add a bot, and set the interactions endpoint URL to the route eve serves (/eve/v1/discord). Provide the bot token and public key through environment variables. See the Discord channel docs for intents and slash-command setup.\n"
+    },
+    {
+      "slug": "teams",
+      "sourceUrl": "https://eve.dev/integrations/teams",
+      "scrapedAt": "2026-07-21T16:12:09.691Z",
+      "name": "Microsoft Teams",
+      "description": "Bring your agent into Teams chats and channels.",
+      "badge": "Channel",
+      "docsHref": "/docs/channels/teams",
+      "docsUrl": "https://eve.dev/docs/channels/teams",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Install the framework:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/channels/teams.ts:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/channels/teams.ts\nimport { teamsChannel } from \"eve/channels/teams\";\n\nexport default teamsChannel({\n  appId: () => process.env.TEAMS_APP_ID!,\n  appPassword: () => process.env.TEAMS_APP_PASSWORD!,\n});"
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Register an Azure Bot, configure the messaging endpoint to eve's route (/eve/v1/teams), and supply the app ID and password via environment variables. See the Teams channel docs for the full provisioning checklist."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Microsoft Teams\n\n`Channel`\n\nBring your agent into Teams chats and channels.\n\n[Docs](https://eve.dev/docs/channels/teams)\n\n## Install\n\nInstall the framework:\n\n```bash\nnpm install eve@latest\n```\n\n\n## Quick start\n\nCreate agent/channels/teams.ts:\n\n```ts\n// agent/channels/teams.ts\nimport { teamsChannel } from \"eve/channels/teams\";\n\nexport default teamsChannel({\n  appId: () => process.env.TEAMS_APP_ID!,\n  appPassword: () => process.env.TEAMS_APP_PASSWORD!,\n});\n```\n\n\n## Configure\n\nRegister an Azure Bot, configure the messaging endpoint to eve's route (/eve/v1/teams), and supply the app ID and password via environment variables. See the Teams channel docs for the full provisioning checklist.\n"
+    },
+    {
+      "slug": "telegram",
+      "sourceUrl": "https://eve.dev/integrations/telegram",
+      "scrapedAt": "2026-07-21T16:12:09.892Z",
+      "name": "Telegram",
+      "description": "Connect your agent to a Telegram bot for 1:1 and group chats.",
+      "badge": "Channel",
+      "docsHref": "/docs/channels/telegram",
+      "docsUrl": "https://eve.dev/docs/channels/telegram",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Install the framework:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/channels/telegram.ts:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/channels/telegram.ts\nimport { telegramChannel } from \"eve/channels/telegram\";\n\nexport default telegramChannel({\n  botToken: () => process.env.TELEGRAM_BOT_TOKEN!,\n});"
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create a bot with @BotFather, then register the webhook to point at eve's route (/eve/v1/telegram). Store the bot token in an environment variable. See the Telegram channel docs for group privacy and command setup."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Telegram\n\n`Channel`\n\nConnect your agent to a Telegram bot for 1:1 and group chats.\n\n[Docs](https://eve.dev/docs/channels/telegram)\n\n## Install\n\nInstall the framework:\n\n```bash\nnpm install eve@latest\n```\n\n\n## Quick start\n\nCreate agent/channels/telegram.ts:\n\n```ts\n// agent/channels/telegram.ts\nimport { telegramChannel } from \"eve/channels/telegram\";\n\nexport default telegramChannel({\n  botToken: () => process.env.TELEGRAM_BOT_TOKEN!,\n});\n```\n\n\n## Configure\n\nCreate a bot with @BotFather, then register the webhook to point at eve's route (/eve/v1/telegram). Store the bot token in an environment variable. See the Telegram channel docs for group privacy and command setup.\n"
+    },
+    {
+      "slug": "twilio",
+      "sourceUrl": "https://eve.dev/integrations/twilio",
+      "scrapedAt": "2026-07-21T16:12:10.101Z",
+      "name": "Twilio",
+      "description": "Put your agent on a phone number: SMS and speech-transcribed calls.",
+      "badge": "Channel",
+      "docsHref": "/docs/channels/twilio",
+      "docsUrl": "https://eve.dev/docs/channels/twilio",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Install the framework:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/channels/twilio.ts. allowFrom is required and gates who can reach the inbound hooks:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/channels/twilio.ts\nimport { twilioChannel } from \"eve/channels/twilio\";\n\nexport default twilioChannel({\n  allowFrom: \"+15551234567\",\n  messaging: { from: \"+15557654321\" },\n});"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "TWILIO_ACCOUNT_SID=AC...   # required for default outbound SMS\nTWILIO_AUTH_TOKEN=...      # required for inbound signature verification"
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "In the Twilio console, point your number's Messaging webhook at /eve/v1/twilio/messages and its Voice webhook at /eve/v1/twilio/voice. Inbound calls are answered with speech gathering, and the transcript feeds the same session SMS uses. See the Twilio channel docs for dispatch, streaming, and voice specifics."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Twilio\n\n`Channel`\n\nPut your agent on a phone number: SMS and speech-transcribed calls.\n\n[Docs](https://eve.dev/docs/channels/twilio)\n\n## Install\n\nInstall the framework:\n\n```bash\nnpm install eve@latest\n```\n\n\n## Quick start\n\nCreate agent/channels/twilio.ts. allowFrom is required and gates who can reach the inbound hooks:\n\n```ts\n// agent/channels/twilio.ts\nimport { twilioChannel } from \"eve/channels/twilio\";\n\nexport default twilioChannel({\n  allowFrom: \"+15551234567\",\n  messaging: { from: \"+15557654321\" },\n});\n```\n\n```bash\nTWILIO_ACCOUNT_SID=AC...   # required for default outbound SMS\nTWILIO_AUTH_TOKEN=...      # required for inbound signature verification\n```\n\n\n## Configure\n\nIn the Twilio console, point your number's Messaging webhook at /eve/v1/twilio/messages and its Voice webhook at /eve/v1/twilio/voice. Inbound calls are answered with speech gathering, and the transcript feeds the same session SMS uses. See the Twilio channel docs for dispatch, streaming, and voice specifics.\n"
+    },
+    {
+      "slug": "github",
+      "sourceUrl": "https://eve.dev/integrations/github",
+      "scrapedAt": "2026-07-21T16:12:09.990Z",
+      "name": "GitHub",
+      "description": "Drive your agent from issues, pull requests, and comments.",
+      "badge": "Channel",
+      "docsHref": "/docs/channels/github",
+      "docsUrl": "https://eve.dev/docs/channels/github",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Install the framework:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/channels/github.ts:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/channels/github.ts\nimport { githubChannel } from \"eve/channels/github\";\n\nexport default githubChannel({\n  appId: () => process.env.GITHUB_APP_ID!,\n  privateKey: () => process.env.GITHUB_APP_PRIVATE_KEY!,\n  webhookSecret: () => process.env.GITHUB_WEBHOOK_SECRET!,\n});"
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create a GitHub App, subscribe to issue and pull-request events, and set the webhook URL to eve's route (/eve/v1/github). Provide the app ID, private key, and webhook secret through environment variables. See the GitHub channel docs for required permissions."
+            }
+          ]
+        }
+      ],
+      "markdown": "# GitHub\n\n`Channel`\n\nDrive your agent from issues, pull requests, and comments.\n\n[Docs](https://eve.dev/docs/channels/github)\n\n## Install\n\nInstall the framework:\n\n```bash\nnpm install eve@latest\n```\n\n\n## Quick start\n\nCreate agent/channels/github.ts:\n\n```ts\n// agent/channels/github.ts\nimport { githubChannel } from \"eve/channels/github\";\n\nexport default githubChannel({\n  appId: () => process.env.GITHUB_APP_ID!,\n  privateKey: () => process.env.GITHUB_APP_PRIVATE_KEY!,\n  webhookSecret: () => process.env.GITHUB_WEBHOOK_SECRET!,\n});\n```\n\n\n## Configure\n\nCreate a GitHub App, subscribe to issue and pull-request events, and set the webhook URL to eve's route (/eve/v1/github). Provide the app ID, private key, and webhook secret through environment variables. See the GitHub channel docs for required permissions.\n"
+    },
+    {
+      "slug": "linear-agent",
+      "sourceUrl": "https://eve.dev/integrations/linear-agent",
+      "scrapedAt": "2026-07-21T16:12:10.338Z",
+      "name": "Linear Agent",
+      "description": "Delegate Linear issues and comments to your agent through Linear's Agent Sessions.",
+      "badge": "Channel",
+      "docsHref": "/docs/channels/linear",
+      "docsUrl": "https://eve.dev/docs/channels/linear",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Install the framework. The Linear channel ships with it:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/channels/linear.ts:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/channels/linear.ts\nimport { linearChannel } from \"eve/channels/linear\";\n\nexport default linearChannel({\n  credentials: {\n    accessToken: () => process.env.LINEAR_AGENT_ACCESS_TOKEN!,\n    webhookSecret: () => process.env.LINEAR_WEBHOOK_SECRET!,\n  },\n});"
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create a Linear OAuth app with Agent Session events enabled, make the app assignable and mentionable, and point the webhook at eve's route (/eve/v1/linear). Provide the app access token and webhook secret through environment variables. See the Linear channel docs for scopes and Agent Activity behavior."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Linear Agent\n\n`Channel`\n\nDelegate Linear issues and comments to your agent through Linear's Agent Sessions.\n\n[Docs](https://eve.dev/docs/channels/linear)\n\n## Install\n\nInstall the framework. The Linear channel ships with it:\n\n```bash\nnpm install eve@latest\n```\n\n\n## Quick start\n\nCreate agent/channels/linear.ts:\n\n```ts\n// agent/channels/linear.ts\nimport { linearChannel } from \"eve/channels/linear\";\n\nexport default linearChannel({\n  credentials: {\n    accessToken: () => process.env.LINEAR_AGENT_ACCESS_TOKEN!,\n    webhookSecret: () => process.env.LINEAR_WEBHOOK_SECRET!,\n  },\n});\n```\n\n\n## Configure\n\nCreate a Linear OAuth app with Agent Session events enabled, make the app assignable and mentionable, and point the webhook at eve's route (/eve/v1/linear). Provide the app access token and webhook secret through environment variables. See the Linear channel docs for scopes and Agent Activity behavior.\n"
+    },
+    {
+      "slug": "eve",
+      "sourceUrl": "https://eve.dev/integrations/eve",
+      "scrapedAt": "2026-07-21T16:12:10.338Z",
+      "name": "Web Chat",
+      "description": "Embed a first-party web chat UI backed by your agent.",
+      "badge": "Channel",
+      "docsHref": "/docs/channels/eve",
+      "docsUrl": "https://eve.dev/docs/channels/eve",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "The eve CLI scaffolds the full Next.js web chat app alongside agent/channels/eve.ts:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "eve channels add web"
+            },
+            {
+              "type": "paragraph",
+              "text": "To wire it up by hand instead, install the framework:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "The eve channel is on by default. Add agent/channels/eve.ts only when you want to override the default session routes or auth:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/channels/eve.ts\nimport { eveChannel } from \"eve/channels/eve\";\n\nexport default eveChannel();"
+            },
+            {
+              "type": "paragraph",
+              "text": "Point your frontend at the session routes eve serves (/eve/v1/session) and stream responses with the eve web client."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "The eve channel is the lowest-friction way to talk to your agent, with no third-party provisioning required. Layer in auth and route protection as needed. See the eve channel docs and the Frontend guide."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Web Chat\n\n`Channel`\n\nEmbed a first-party web chat UI backed by your agent.\n\n[Docs](https://eve.dev/docs/channels/eve)\n\n## Install\n\nThe eve CLI scaffolds the full Next.js web chat app alongside agent/channels/eve.ts:\n\n```bash\neve channels add web\n```\n\nTo wire it up by hand instead, install the framework:\n\n```bash\nnpm install eve@latest\n```\n\n\n## Quick start\n\nThe eve channel is on by default. Add agent/channels/eve.ts only when you want to override the default session routes or auth:\n\n```ts\n// agent/channels/eve.ts\nimport { eveChannel } from \"eve/channels/eve\";\n\nexport default eveChannel();\n```\n\nPoint your frontend at the session routes eve serves (/eve/v1/session) and stream responses with the eve web client.\n\n\n## Configure\n\nThe eve channel is the lowest-friction way to talk to your agent, with no third-party provisioning required. Layer in auth and route protection as needed. See the eve channel docs and the Frontend guide.\n"
+    },
+    {
+      "slug": "chat-sdk-gchat",
+      "sourceUrl": "https://eve.dev/integrations/chat-sdk-gchat",
+      "scrapedAt": "2026-07-21T16:12:10.416Z",
+      "name": "Google Chat",
+      "description": "Google Chat spaces and DMs via the Chat SDK.",
+      "badge": "Channel",
+      "docsHref": "/docs/channels/chat-sdk",
+      "docsUrl": "https://eve.dev/docs/channels/chat-sdk",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Install eve, the Chat SDK core (chat), the Google Chat adapter, and a state adapter:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest chat @chat-adapter/gchat @chat-adapter/state-memory"
+            },
+            {
+              "type": "paragraph",
+              "text": "The in-memory state store is fine for local development; use a durable state adapter (Redis, PostgreSQL) in production so thread subscriptions survive restarts."
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/channels/gchat.ts. Register Chat SDK handlers on bot, call send to hand each turn to eve, and export the channel:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/channels/gchat.ts\nimport { createGoogleChatAdapter } from \"@chat-adapter/gchat\";\nimport { createMemoryState } from \"@chat-adapter/state-memory\";\nimport { chatSdkChannel } from \"eve/channels/chat-sdk\";\n\nexport const { bot, channel, send } = chatSdkChannel({\n  userName: \"My Agent\",\n  adapters: { gchat: createGoogleChatAdapter() },\n  state: createMemoryState(),\n});\n\nbot.onNewMention(async (thread, message) => {\n  await thread.subscribe();\n  await send(message.text, { thread });\n});\n\nbot.onSubscribedMessage(async (thread, message) => {\n  await send(message.text, { thread });\n});\n\nexport default channel;"
+            },
+            {
+              "type": "paragraph",
+              "text": "Credentials come from the createGoogleChatAdapter config or the adapter's environment variables; see the Google Chat adapter docs."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "The adapter mounts its webhook at /eve/v1/gchat. Point your Google Chat app's HTTP endpoint at it. The adapter owns provider auth, verification, and delivery, while eve owns session dispatch, streaming, typing, and human-in-the-loop. See the Chat SDK channel docs for routes, streaming, and state options."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Google Chat\n\n`Channel`\n\nGoogle Chat spaces and DMs via the Chat SDK.\n\n[Docs](https://eve.dev/docs/channels/chat-sdk)\n\n## Install\n\nInstall eve, the Chat SDK core (chat), the Google Chat adapter, and a state adapter:\n\n```bash\nnpm install eve@latest chat @chat-adapter/gchat @chat-adapter/state-memory\n```\n\nThe in-memory state store is fine for local development; use a durable state adapter (Redis, PostgreSQL) in production so thread subscriptions survive restarts.\n\n\n## Quick start\n\nCreate agent/channels/gchat.ts. Register Chat SDK handlers on bot, call send to hand each turn to eve, and export the channel:\n\n```ts\n// agent/channels/gchat.ts\nimport { createGoogleChatAdapter } from \"@chat-adapter/gchat\";\nimport { createMemoryState } from \"@chat-adapter/state-memory\";\nimport { chatSdkChannel } from \"eve/channels/chat-sdk\";\n\nexport const { bot, channel, send } = chatSdkChannel({\n  userName: \"My Agent\",\n  adapters: { gchat: createGoogleChatAdapter() },\n  state: createMemoryState(),\n});\n\nbot.onNewMention(async (thread, message) => {\n  await thread.subscribe();\n  await send(message.text, { thread });\n});\n\nbot.onSubscribedMessage(async (thread, message) => {\n  await send(message.text, { thread });\n});\n\nexport default channel;\n```\n\nCredentials come from the createGoogleChatAdapter config or the adapter's environment variables; see the Google Chat adapter docs.\n\n\n## Configure\n\nThe adapter mounts its webhook at /eve/v1/gchat. Point your Google Chat app's HTTP endpoint at it. The adapter owns provider auth, verification, and delivery, while eve owns session dispatch, streaming, typing, and human-in-the-loop. See the Chat SDK channel docs for routes, streaming, and state options.\n"
+    },
+    {
+      "slug": "chat-sdk-whatsapp",
+      "sourceUrl": "https://eve.dev/integrations/chat-sdk-whatsapp",
+      "scrapedAt": "2026-07-21T16:12:10.700Z",
+      "name": "WhatsApp",
+      "description": "Customer messaging through WhatsApp Business Cloud via the Chat SDK.",
+      "badge": "Channel",
+      "docsHref": "/docs/channels/chat-sdk",
+      "docsUrl": "https://eve.dev/docs/channels/chat-sdk",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Install eve, the Chat SDK core (chat), the WhatsApp adapter, and a state adapter:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest chat @chat-adapter/whatsapp @chat-adapter/state-memory"
+            },
+            {
+              "type": "paragraph",
+              "text": "The in-memory state store is fine for local development; use a durable state adapter (Redis, PostgreSQL) in production so thread subscriptions survive restarts."
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/channels/whatsapp.ts. Register Chat SDK handlers on bot, call send to hand each turn to eve, and export the channel:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/channels/whatsapp.ts\nimport { createWhatsAppAdapter } from \"@chat-adapter/whatsapp\";\nimport { createMemoryState } from \"@chat-adapter/state-memory\";\nimport { chatSdkChannel } from \"eve/channels/chat-sdk\";\n\nexport const { bot, channel, send } = chatSdkChannel({\n  userName: \"My Agent\",\n  adapters: { whatsapp: createWhatsAppAdapter() },\n  state: createMemoryState(),\n});\n\nbot.onNewMention(async (thread, message) => {\n  await thread.subscribe();\n  await send(message.text, { thread });\n});\n\nbot.onSubscribedMessage(async (thread, message) => {\n  await send(message.text, { thread });\n});\n\nexport default channel;"
+            },
+            {
+              "type": "paragraph",
+              "text": "Credentials come from the createWhatsAppAdapter config or the adapter's environment variables; see the WhatsApp adapter docs."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "The adapter mounts its webhook at /eve/v1/whatsapp. Point your WhatsApp Business Cloud webhook at it. The adapter owns provider auth, verification, and delivery, while eve owns session dispatch, streaming, typing, and human-in-the-loop. See the Chat SDK channel docs for routes, streaming, and state options."
+            }
+          ]
+        }
+      ],
+      "markdown": "# WhatsApp\n\n`Channel`\n\nCustomer messaging through WhatsApp Business Cloud via the Chat SDK.\n\n[Docs](https://eve.dev/docs/channels/chat-sdk)\n\n## Install\n\nInstall eve, the Chat SDK core (chat), the WhatsApp adapter, and a state adapter:\n\n```bash\nnpm install eve@latest chat @chat-adapter/whatsapp @chat-adapter/state-memory\n```\n\nThe in-memory state store is fine for local development; use a durable state adapter (Redis, PostgreSQL) in production so thread subscriptions survive restarts.\n\n\n## Quick start\n\nCreate agent/channels/whatsapp.ts. Register Chat SDK handlers on bot, call send to hand each turn to eve, and export the channel:\n\n```ts\n// agent/channels/whatsapp.ts\nimport { createWhatsAppAdapter } from \"@chat-adapter/whatsapp\";\nimport { createMemoryState } from \"@chat-adapter/state-memory\";\nimport { chatSdkChannel } from \"eve/channels/chat-sdk\";\n\nexport const { bot, channel, send } = chatSdkChannel({\n  userName: \"My Agent\",\n  adapters: { whatsapp: createWhatsAppAdapter() },\n  state: createMemoryState(),\n});\n\nbot.onNewMention(async (thread, message) => {\n  await thread.subscribe();\n  await send(message.text, { thread });\n});\n\nbot.onSubscribedMessage(async (thread, message) => {\n  await send(message.text, { thread });\n});\n\nexport default channel;\n```\n\nCredentials come from the createWhatsAppAdapter config or the adapter's environment variables; see the WhatsApp adapter docs.\n\n\n## Configure\n\nThe adapter mounts its webhook at /eve/v1/whatsapp. Point your WhatsApp Business Cloud webhook at it. The adapter owns provider auth, verification, and delivery, while eve owns session dispatch, streaming, typing, and human-in-the-loop. See the Chat SDK channel docs for routes, streaming, and state options.\n"
+    },
+    {
+      "slug": "chat-sdk-x",
+      "sourceUrl": "https://eve.dev/integrations/chat-sdk-x",
+      "scrapedAt": "2026-07-21T16:12:10.870Z",
+      "name": "X",
+      "description": "Public mentions and DMs on X via the Chat SDK.",
+      "badge": "Channel",
+      "docsHref": "/docs/channels/chat-sdk",
+      "docsUrl": "https://eve.dev/docs/channels/chat-sdk",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Install eve, the Chat SDK core (chat), the X adapter, and a state adapter:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest chat @chat-adapter/x @chat-adapter/state-memory"
+            },
+            {
+              "type": "paragraph",
+              "text": "The in-memory state store is fine for local development; use a durable state adapter (Redis, PostgreSQL) in production so thread subscriptions survive restarts."
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/channels/x.ts. Register Chat SDK handlers on bot, call send to hand each turn to eve, and export the channel:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/channels/x.ts\nimport { createXAdapter } from \"@chat-adapter/x\";\nimport { createMemoryState } from \"@chat-adapter/state-memory\";\nimport { chatSdkChannel } from \"eve/channels/chat-sdk\";\n\nexport const { bot, channel, send } = chatSdkChannel({\n  userName: \"My Agent\",\n  adapters: { x: createXAdapter() },\n  state: createMemoryState(),\n});\n\nbot.onNewMention(async (thread, message) => {\n  await thread.subscribe();\n  await send(message.text, { thread });\n});\n\nbot.onSubscribedMessage(async (thread, message) => {\n  await send(message.text, { thread });\n});\n\nexport default channel;"
+            },
+            {
+              "type": "paragraph",
+              "text": "Credentials come from the createXAdapter config or the adapter's environment variables; see the X adapter docs."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "The adapter mounts its webhook at /eve/v1/x. Point your X account activity webhook at it. The adapter owns provider auth, verification, and delivery, while eve owns session dispatch, streaming, typing, and human-in-the-loop. See the Chat SDK channel docs for routes, streaming, and state options."
+            }
+          ]
+        }
+      ],
+      "markdown": "# X\n\n`Channel`\n\nPublic mentions and DMs on X via the Chat SDK.\n\n[Docs](https://eve.dev/docs/channels/chat-sdk)\n\n## Install\n\nInstall eve, the Chat SDK core (chat), the X adapter, and a state adapter:\n\n```bash\nnpm install eve@latest chat @chat-adapter/x @chat-adapter/state-memory\n```\n\nThe in-memory state store is fine for local development; use a durable state adapter (Redis, PostgreSQL) in production so thread subscriptions survive restarts.\n\n\n## Quick start\n\nCreate agent/channels/x.ts. Register Chat SDK handlers on bot, call send to hand each turn to eve, and export the channel:\n\n```ts\n// agent/channels/x.ts\nimport { createXAdapter } from \"@chat-adapter/x\";\nimport { createMemoryState } from \"@chat-adapter/state-memory\";\nimport { chatSdkChannel } from \"eve/channels/chat-sdk\";\n\nexport const { bot, channel, send } = chatSdkChannel({\n  userName: \"My Agent\",\n  adapters: { x: createXAdapter() },\n  state: createMemoryState(),\n});\n\nbot.onNewMention(async (thread, message) => {\n  await thread.subscribe();\n  await send(message.text, { thread });\n});\n\nbot.onSubscribedMessage(async (thread, message) => {\n  await send(message.text, { thread });\n});\n\nexport default channel;\n```\n\nCredentials come from the createXAdapter config or the adapter's environment variables; see the X adapter docs.\n\n\n## Configure\n\nThe adapter mounts its webhook at /eve/v1/x. Point your X account activity webhook at it. The adapter owns provider auth, verification, and delivery, while eve owns session dispatch, streaming, typing, and human-in-the-loop. See the Chat SDK channel docs for routes, streaming, and state options.\n"
+    },
+    {
+      "slug": "chat-sdk-messenger",
+      "sourceUrl": "https://eve.dev/integrations/chat-sdk-messenger",
+      "scrapedAt": "2026-07-21T16:12:10.907Z",
+      "name": "Messenger",
+      "description": "Facebook Messenger bots with templates, buttons, and reactions via the Chat SDK.",
+      "badge": "Channel",
+      "docsHref": "/docs/channels/chat-sdk",
+      "docsUrl": "https://eve.dev/docs/channels/chat-sdk",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Install eve, the Chat SDK core (chat), the Messenger adapter, and a state adapter:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest chat @chat-adapter/messenger @chat-adapter/state-memory"
+            },
+            {
+              "type": "paragraph",
+              "text": "The in-memory state store is fine for local development; use a durable state adapter (Redis, PostgreSQL) in production so thread subscriptions survive restarts."
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/channels/messenger.ts. Register Chat SDK handlers on bot, call send to hand each turn to eve, and export the channel:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/channels/messenger.ts\nimport { createMessengerAdapter } from \"@chat-adapter/messenger\";\nimport { createMemoryState } from \"@chat-adapter/state-memory\";\nimport { chatSdkChannel } from \"eve/channels/chat-sdk\";\n\nexport const { bot, channel, send } = chatSdkChannel({\n  userName: \"My Agent\",\n  adapters: { messenger: createMessengerAdapter() },\n  state: createMemoryState(),\n});\n\nbot.onNewMention(async (thread, message) => {\n  await thread.subscribe();\n  await send(message.text, { thread });\n});\n\nbot.onSubscribedMessage(async (thread, message) => {\n  await send(message.text, { thread });\n});\n\nexport default channel;"
+            },
+            {
+              "type": "paragraph",
+              "text": "Credentials come from the createMessengerAdapter config or the adapter's environment variables; see the Messenger adapter docs."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "The adapter mounts its webhook at /eve/v1/messenger. Point your Messenger webhook at it. The adapter owns provider auth, verification, and delivery, while eve owns session dispatch, streaming, typing, and human-in-the-loop. See the Chat SDK channel docs for routes, streaming, and state options."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Messenger\n\n`Channel`\n\nFacebook Messenger bots with templates, buttons, and reactions via the Chat SDK.\n\n[Docs](https://eve.dev/docs/channels/chat-sdk)\n\n## Install\n\nInstall eve, the Chat SDK core (chat), the Messenger adapter, and a state adapter:\n\n```bash\nnpm install eve@latest chat @chat-adapter/messenger @chat-adapter/state-memory\n```\n\nThe in-memory state store is fine for local development; use a durable state adapter (Redis, PostgreSQL) in production so thread subscriptions survive restarts.\n\n\n## Quick start\n\nCreate agent/channels/messenger.ts. Register Chat SDK handlers on bot, call send to hand each turn to eve, and export the channel:\n\n```ts\n// agent/channels/messenger.ts\nimport { createMessengerAdapter } from \"@chat-adapter/messenger\";\nimport { createMemoryState } from \"@chat-adapter/state-memory\";\nimport { chatSdkChannel } from \"eve/channels/chat-sdk\";\n\nexport const { bot, channel, send } = chatSdkChannel({\n  userName: \"My Agent\",\n  adapters: { messenger: createMessengerAdapter() },\n  state: createMemoryState(),\n});\n\nbot.onNewMention(async (thread, message) => {\n  await thread.subscribe();\n  await send(message.text, { thread });\n});\n\nbot.onSubscribedMessage(async (thread, message) => {\n  await send(message.text, { thread });\n});\n\nexport default channel;\n```\n\nCredentials come from the createMessengerAdapter config or the adapter's environment variables; see the Messenger adapter docs.\n\n\n## Configure\n\nThe adapter mounts its webhook at /eve/v1/messenger. Point your Messenger webhook at it. The adapter owns provider auth, verification, and delivery, while eve owns session dispatch, streaming, typing, and human-in-the-loop. See the Chat SDK channel docs for routes, streaming, and state options.\n"
+    },
+    {
+      "slug": "agent-browser",
+      "sourceUrl": "https://eve.dev/integrations/agent-browser",
+      "scrapedAt": "2026-07-21T16:12:10.723Z",
+      "name": "agent-browser",
+      "description": "Add browser automation tools backed by agent-browser to an eve agent.",
+      "badge": "Extension",
+      "docsHref": "/docs/sandbox#network-policy",
+      "docsUrl": "https://eve.dev/docs/sandbox#network-policy",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Install the agent-browser extension for eve:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install @agent-browser/eve"
+            },
+            {
+              "type": "paragraph",
+              "text": "The extension installs agent-browser automatically on first use and runs it inside the agent's sandbox. It requires a sandbox backend with real process execution, such as Vercel Sandbox, Docker, or microsandbox."
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Mount the extension under agent/extensions/:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "import browser from \"@agent-browser/eve\";\n\nexport default browser({});"
+            },
+            {
+              "type": "paragraph",
+              "text": "The filename supplies the browser namespace. The extension adds tools such as browser__navigate, browser__snapshot, browser__click, browser__fill, browser__find, and browser__screenshot. agent-browser keeps the underlying browser process and session state in the eve sandbox."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Restrict browser access to the sites the agent needs with the extension's domain allow-list:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "import browser from \"@agent-browser/eve\";\n\nexport default browser({\n  allowedDomains: [\"example.com\", \"*.example.com\"],\n  contentBoundaries: true,\n  maxOutputChars: 50_000,\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Also configure the sandbox network policy for defense in depth. Treat saved browser state, cookies, screenshots, downloads, and recordings as sensitive data. Do not place passwords or session tokens in prompts. Use the extension's per-tool overrides to gate or disable actions your agent should not take unattended."
+            },
+            {
+              "type": "paragraph",
+              "text": "The extension also supports inline screenshots, session naming, proxies, and production pre-installation. See the agent-browser eve extension documentation for the complete options and example app."
+            }
+          ]
+        }
+      ],
+      "markdown": "# agent-browser\n\n`Extension`\n\nAdd browser automation tools backed by agent-browser to an eve agent.\n\n[Docs](https://eve.dev/docs/sandbox#network-policy)\n\n## Install\n\nInstall the agent-browser extension for eve:\n\n```bash\nnpm install @agent-browser/eve\n```\n\nThe extension installs agent-browser automatically on first use and runs it inside the agent's sandbox. It requires a sandbox backend with real process execution, such as Vercel Sandbox, Docker, or microsandbox.\n\n\n## Quick start\n\nMount the extension under agent/extensions/:\n\n```ts\nimport browser from \"@agent-browser/eve\";\n\nexport default browser({});\n```\n\nThe filename supplies the browser namespace. The extension adds tools such as browser__navigate, browser__snapshot, browser__click, browser__fill, browser__find, and browser__screenshot. agent-browser keeps the underlying browser process and session state in the eve sandbox.\n\n\n## Configure\n\nRestrict browser access to the sites the agent needs with the extension's domain allow-list:\n\n```ts\nimport browser from \"@agent-browser/eve\";\n\nexport default browser({\n  allowedDomains: [\"example.com\", \"*.example.com\"],\n  contentBoundaries: true,\n  maxOutputChars: 50_000,\n});\n```\n\nAlso configure the sandbox network policy for defense in depth. Treat saved browser state, cookies, screenshots, downloads, and recordings as sensitive data. Do not place passwords or session tokens in prompts. Use the extension's per-tool overrides to gate or disable actions your agent should not take unattended.\n\nThe extension also supports inline screenshots, session naming, proxies, and production pre-installation. See the agent-browser eve extension documentation for the complete options and example app.\n"
+    },
+    {
+      "slug": "kernel",
+      "sourceUrl": "https://eve.dev/integrations/kernel",
+      "scrapedAt": "2026-07-21T16:12:11.260Z",
+      "name": "Kernel",
+      "description": "Launch cloud browsers and automate web interactions through Kernel's MCP server.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections",
+      "docsUrl": "https://eve.dev/docs/connections",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/kernel.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/kernel.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.onkernel.com/mcp\",\n  description: \"Kernel: launch and automate cloud browsers, run Playwright, and inspect replays.\",\n  auth: connect(\"mcp.onkernel.com/kernel\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create mcp.onkernel.com --name kernel\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "Kernel's MCP server can launch browsers, execute Playwright, and manage recordings. Add approval gates or tool filters before allowing unattended browser actions."
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Kernel\n\n`Connection`\n\nLaunch cloud browsers and automate web interactions through Kernel's MCP server.\n\n[Docs](https://eve.dev/docs/connections)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/kernel.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/kernel.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.onkernel.com/mcp\",\n  description: \"Kernel: launch and automate cloud browsers, run Playwright, and inspect replays.\",\n  auth: connect(\"mcp.onkernel.com/kernel\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create mcp.onkernel.com --name kernel\nvercel link\nvercel env pull\n```\n\nKernel's MCP server can launch browsers, execute Playwright, and manage recordings. Add approval gates or tool filters before allowing unattended browser actions.\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "browser-use",
+      "sourceUrl": "https://eve.dev/integrations/browser-use",
+      "scrapedAt": "2026-07-21T16:12:11.167Z",
+      "name": "Browser Use",
+      "description": "Run managed browser automation tasks through Browser Use's MCP server.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections",
+      "docsUrl": "https://eve.dev/docs/connections",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Install the framework:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/browser-use.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/browser-use.ts\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://api.browser-use.com/v3/mcp\",\n  description: \"Browser Use: run browser automation tasks, inspect sessions, and manage browser profiles.\",\n  headers: () => ({\n    \"x-browser-use-api-key\": process.env.BROWSER_USE_API_KEY!,\n  }),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Keep the API key in a server-side environment variable. eve sends it directly to the MCP server and does not expose it to the model."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Set BROWSER_USE_API_KEY as a server-side environment variable:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "BROWSER_USE_API_KEY=your_api_key"
+            },
+            {
+              "type": "paragraph",
+              "text": "Browser Use runs tasks in managed cloud browsers. Add approval gates or tool filters before allowing unattended browser actions."
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Browser Use\n\n`Connection`\n\nRun managed browser automation tasks through Browser Use's MCP server.\n\n[Docs](https://eve.dev/docs/connections)\n\n## Install\n\nConnections live under agent/connections/. Install the framework:\n\n```bash\nnpm install eve@latest\n```\n\n\n## Quick start\n\nCreate agent/connections/browser-use.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/browser-use.ts\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://api.browser-use.com/v3/mcp\",\n  description: \"Browser Use: run browser automation tasks, inspect sessions, and manage browser profiles.\",\n  headers: () => ({\n    \"x-browser-use-api-key\": process.env.BROWSER_USE_API_KEY!,\n  }),\n});\n```\n\nKeep the API key in a server-side environment variable. eve sends it directly to the MCP server and does not expose it to the model.\n\n\n## Configure\n\nSet BROWSER_USE_API_KEY as a server-side environment variable:\n\n```bash\nBROWSER_USE_API_KEY=your_api_key\n```\n\nBrowser Use runs tasks in managed cloud browsers. Add approval gates or tool filters before allowing unattended browser actions.\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "linear",
+      "sourceUrl": "https://eve.dev/integrations/linear",
+      "scrapedAt": "2026-07-21T16:12:11.167Z",
+      "name": "Linear",
+      "description": "Issues, projects, cycles, and comments via Linear's MCP server.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/linear.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/linear.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.linear.app/mcp\",\n  description: \"Linear workspace: issues, projects, cycles, and comments.\",\n  auth: connect(\"linear\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create linear\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Linear\n\n`Connection`\n\nIssues, projects, cycles, and comments via Linear's MCP server.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/linear.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/linear.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.linear.app/mcp\",\n  description: \"Linear workspace: issues, projects, cycles, and comments.\",\n  auth: connect(\"linear\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create linear\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "notion",
+      "sourceUrl": "https://eve.dev/integrations/notion",
+      "scrapedAt": "2026-07-21T16:12:11.445Z",
+      "name": "Notion",
+      "description": "Search and edit Notion pages and databases over MCP or OpenAPI.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections",
+      "docsUrl": "https://eve.dev/docs/connections",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/notion.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/notion.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.notion.com/mcp\",\n  description: \"Notion workspace: search and edit pages and databases.\",\n  auth: connect(\"notion\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create notion\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "For JWT bearer, principalToSubject controls the asserted subject. The default maps app principals to { type: \"app\" } and user principals to { type: \"user\", id, issuer }."
+            },
+            {
+              "type": "paragraph",
+              "text": "The OpenAPI setup sends the required Notion-Version header; bump it as Notion ships new API versions."
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Notion\n\n`Connection`\n\nSearch and edit Notion pages and databases over MCP or OpenAPI.\n\n[Docs](https://eve.dev/docs/connections)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/notion.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/notion.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.notion.com/mcp\",\n  description: \"Notion workspace: search and edit pages and databases.\",\n  auth: connect(\"notion\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create notion\nvercel link\nvercel env pull\n```\n\nFor JWT bearer, principalToSubject controls the asserted subject. The default maps app principals to { type: \"app\" } and user principals to { type: \"user\", id, issuer }.\n\nThe OpenAPI setup sends the required Notion-Version header; bump it as Notion ships new API versions.\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "datadog",
+      "sourceUrl": "https://eve.dev/integrations/datadog",
+      "scrapedAt": "2026-07-21T16:12:11.736Z",
+      "name": "Datadog",
+      "description": "Query metrics, monitors, and logs through Datadog's MCP server.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/datadog.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/datadog.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.datadoghq.com/api/mcp\",\n  description: \"Datadog: query metrics, monitors, logs, and incidents.\",\n  auth: connect({\n    connector: \"datadog\",\n    principalToSubject: (principal) => ({\n      type: \"jwt-bearer\",\n      sub: principal.attributes.email,\n    }),\n  }),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect exchanges a JWT bearer assertion for a provider token. principalToSubject maps each principal to the subject your IdP expects."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create datadog\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "For JWT bearer, principalToSubject controls the asserted subject. The default maps app principals to { type: \"app\" } and user principals to { type: \"user\", id, issuer }."
+            },
+            {
+              "type": "paragraph",
+              "text": "Match the MCP url to your Datadog site (datadoghq.com, datadoghq.eu, and so on)."
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Datadog\n\n`Connection`\n\nQuery metrics, monitors, and logs through Datadog's MCP server.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/datadog.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/datadog.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.datadoghq.com/api/mcp\",\n  description: \"Datadog: query metrics, monitors, logs, and incidents.\",\n  auth: connect({\n    connector: \"datadog\",\n    principalToSubject: (principal) => ({\n      type: \"jwt-bearer\",\n      sub: principal.attributes.email,\n    }),\n  }),\n});\n```\n\nConnect exchanges a JWT bearer assertion for a provider token. principalToSubject maps each principal to the subject your IdP expects.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create datadog\nvercel link\nvercel env pull\n```\n\nFor JWT bearer, principalToSubject controls the asserted subject. The default maps app principals to { type: \"app\" } and user principals to { type: \"user\", id, issuer }.\n\nMatch the MCP url to your Datadog site (datadoghq.com, datadoghq.eu, and so on).\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "honeycomb",
+      "sourceUrl": "https://eve.dev/integrations/honeycomb",
+      "scrapedAt": "2026-07-21T16:12:11.711Z",
+      "name": "Honeycomb",
+      "description": "Explore traces and run queries through Honeycomb's MCP server.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/honeycomb.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/honeycomb.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.honeycomb.io/mcp\",\n  description: \"Honeycomb: explore traces, run queries, and inspect datasets.\",\n  auth: connect({\n    connector: \"honeycomb\",\n    principalToSubject: (principal) => ({\n      type: \"jwt-bearer\",\n      sub: principal.attributes.email,\n    }),\n  }),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect exchanges a JWT bearer assertion for a provider token. principalToSubject maps each principal to the subject your IdP expects."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create honeycomb\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "For JWT bearer, principalToSubject controls the asserted subject. The default maps app principals to { type: \"app\" } and user principals to { type: \"user\", id, issuer }."
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Honeycomb\n\n`Connection`\n\nExplore traces and run queries through Honeycomb's MCP server.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/honeycomb.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/honeycomb.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.honeycomb.io/mcp\",\n  description: \"Honeycomb: explore traces, run queries, and inspect datasets.\",\n  auth: connect({\n    connector: \"honeycomb\",\n    principalToSubject: (principal) => ({\n      type: \"jwt-bearer\",\n      sub: principal.attributes.email,\n    }),\n  }),\n});\n```\n\nConnect exchanges a JWT bearer assertion for a provider token. principalToSubject maps each principal to the subject your IdP expects.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create honeycomb\nvercel link\nvercel env pull\n```\n\nFor JWT bearer, principalToSubject controls the asserted subject. The default maps app principals to { type: \"app\" } and user principals to { type: \"user\", id, issuer }.\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "airtable",
+      "sourceUrl": "https://eve.dev/integrations/airtable",
+      "scrapedAt": "2026-07-21T16:12:11.674Z",
+      "name": "Airtable",
+      "description": "Bases, tables, and records through Airtable's MCP server.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/airtable.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/airtable.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.airtable.com/mcp\",\n  description: \"Airtable: bases, tables, and records.\",\n  auth: connect(\"airtable\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create airtable\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Airtable\n\n`Connection`\n\nBases, tables, and records through Airtable's MCP server.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/airtable.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/airtable.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.airtable.com/mcp\",\n  description: \"Airtable: bases, tables, and records.\",\n  auth: connect(\"airtable\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create airtable\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "bitly",
+      "sourceUrl": "https://eve.dev/integrations/bitly",
+      "scrapedAt": "2026-07-21T16:12:11.983Z",
+      "name": "Bitly",
+      "description": "Shorten links, generate QR Codes, and track performance.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/bitly.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/bitly.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://api-ssl.bitly.com/v4/mcp\",\n  description: \"Bitly: shorten links, generate QR Codes, and track link performance.\",\n  auth: connect(\"bitly\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create bitly\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Bitly\n\n`Connection`\n\nShorten links, generate QR Codes, and track performance.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/bitly.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/bitly.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://api-ssl.bitly.com/v4/mcp\",\n  description: \"Bitly: shorten links, generate QR Codes, and track link performance.\",\n  auth: connect(\"bitly\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create bitly\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "brex",
+      "sourceUrl": "https://eve.dev/integrations/brex",
+      "scrapedAt": "2026-07-21T16:12:12.310Z",
+      "name": "Brex",
+      "description": "Expenses, cards, and cash through Brex's finance automation.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/brex.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/brex.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://api.brex.com/mcp\",\n  description: \"Brex: expenses, cards, budgets, and cash.\",\n  auth: connect(\"brex\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create brex\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Brex\n\n`Connection`\n\nExpenses, cards, and cash through Brex's finance automation.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/brex.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/brex.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://api.brex.com/mcp\",\n  description: \"Brex: expenses, cards, budgets, and cash.\",\n  auth: connect(\"brex\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create brex\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "candid",
+      "sourceUrl": "https://eve.dev/integrations/candid",
+      "scrapedAt": "2026-07-21T16:12:12.215Z",
+      "name": "Candid",
+      "description": "Research nonprofits and funders using Candid's data.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/candid.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/candid.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.candid.org/mcp\",\n  description: \"Candid: research nonprofits, funders, and grants.\",\n  auth: connect(\"candid\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create candid\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Candid\n\n`Connection`\n\nResearch nonprofits and funders using Candid's data.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/candid.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/candid.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.candid.org/mcp\",\n  description: \"Candid: research nonprofits, funders, and grants.\",\n  auth: connect(\"candid\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create candid\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "clickhouse",
+      "sourceUrl": "https://eve.dev/integrations/clickhouse",
+      "scrapedAt": "2026-07-21T16:12:12.724Z",
+      "name": "ClickHouse",
+      "description": "Query and explore your ClickHouse Cloud data.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/clickhouse.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/clickhouse.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.clickhouse.cloud/mcp\",\n  description: \"ClickHouse Cloud: query and explore databases and tables.\",\n  auth: connect(\"clickhouse\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create clickhouse\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# ClickHouse\n\n`Connection`\n\nQuery and explore your ClickHouse Cloud data.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/clickhouse.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/clickhouse.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.clickhouse.cloud/mcp\",\n  description: \"ClickHouse Cloud: query and explore databases and tables.\",\n  auth: connect(\"clickhouse\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create clickhouse\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "cloudinary",
+      "sourceUrl": "https://eve.dev/integrations/cloudinary",
+      "scrapedAt": "2026-07-21T16:12:12.518Z",
+      "name": "Cloudinary",
+      "description": "Manage, transform, and deliver your images and videos.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/cloudinary.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/cloudinary.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://asset-management.mcp.cloudinary.com/sse\",\n  description: \"Cloudinary: manage, transform, and deliver image and video assets.\",\n  auth: connect(\"cloudinary\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create cloudinary\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Cloudinary\n\n`Connection`\n\nManage, transform, and deliver your images and videos.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/cloudinary.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/cloudinary.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://asset-management.mcp.cloudinary.com/sse\",\n  description: \"Cloudinary: manage, transform, and deliver image and video assets.\",\n  auth: connect(\"cloudinary\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create cloudinary\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "coda",
+      "sourceUrl": "https://eve.dev/integrations/coda",
+      "scrapedAt": "2026-07-21T16:12:12.763Z",
+      "name": "Coda",
+      "description": "Create, search, and update docs and tables.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/coda.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/coda.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://coda.io/apis/mcp\",\n  description: \"Coda: create, search, and update docs and tables.\",\n  auth: connect(\"coda\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create coda\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Coda\n\n`Connection`\n\nCreate, search, and update docs and tables.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/coda.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/coda.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://coda.io/apis/mcp\",\n  description: \"Coda: create, search, and update docs and tables.\",\n  auth: connect(\"coda\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create coda\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "egnyte",
+      "sourceUrl": "https://eve.dev/integrations/egnyte",
+      "scrapedAt": "2026-07-21T16:12:12.805Z",
+      "name": "Egnyte",
+      "description": "Securely access and analyze Egnyte content.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/egnyte.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/egnyte.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp-server.egnyte.com/mcp\",\n  description: \"Egnyte: search, access, and analyze governed content.\",\n  auth: connect(\"egnyte\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create egnyte\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Egnyte\n\n`Connection`\n\nSecurely access and analyze Egnyte content.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/egnyte.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/egnyte.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp-server.egnyte.com/mcp\",\n  description: \"Egnyte: search, access, and analyze governed content.\",\n  auth: connect(\"egnyte\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create egnyte\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "embat",
+      "sourceUrl": "https://eve.dev/integrations/embat",
+      "scrapedAt": "2026-07-21T16:12:13.068Z",
+      "name": "Embat",
+      "description": "Ask Embat about cash, debt, payments, and accounting.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/embat.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/embat.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://tellme.embat.io/mcp\",\n  description: \"Embat: cash, debt, payments, and accounting.\",\n  auth: connect(\"embat\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create embat\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Embat\n\n`Connection`\n\nAsk Embat about cash, debt, payments, and accounting.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/embat.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/embat.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://tellme.embat.io/mcp\",\n  description: \"Embat: cash, debt, payments, and accounting.\",\n  auth: connect(\"embat\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create embat\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "hugging-face",
+      "sourceUrl": "https://eve.dev/integrations/hugging-face",
+      "scrapedAt": "2026-07-21T16:12:13.284Z",
+      "name": "Hugging Face",
+      "description": "Access the Hugging Face Hub and thousands of Gradio apps.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/hugging-face.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/hugging-face.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://huggingface.co/mcp?login&gradio=none\",\n  description: \"Hugging Face: models, datasets, Spaces, and Gradio apps on the Hub.\",\n  auth: connect(\"hugging-face\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create hugging-face\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Hugging Face\n\n`Connection`\n\nAccess the Hugging Face Hub and thousands of Gradio apps.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/hugging-face.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/hugging-face.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://huggingface.co/mcp?login&gradio=none\",\n  description: \"Hugging Face: models, datasets, Spaces, and Gradio apps on the Hub.\",\n  auth: connect(\"hugging-face\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create hugging-face\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "local-falcon",
+      "sourceUrl": "https://eve.dev/integrations/local-falcon",
+      "scrapedAt": "2026-07-21T16:12:13.317Z",
+      "name": "Local Falcon",
+      "description": "AI visibility and local search intelligence.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/local-falcon.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/local-falcon.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.localfalcon.com\",\n  description: \"Local Falcon: local search rankings and AI visibility reports.\",\n  auth: connect(\"local-falcon\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create local-falcon\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Local Falcon\n\n`Connection`\n\nAI visibility and local search intelligence.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/local-falcon.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/local-falcon.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.localfalcon.com\",\n  description: \"Local Falcon: local search rankings and AI visibility reports.\",\n  auth: connect(\"local-falcon\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create local-falcon\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "make",
+      "sourceUrl": "https://eve.dev/integrations/make",
+      "scrapedAt": "2026-07-21T16:12:13.324Z",
+      "name": "Make",
+      "description": "Run Make scenarios and manage your Make account.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/make.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/make.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.make.com\",\n  description: \"Make: run scenarios and manage automations.\",\n  auth: connect(\"make\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create make\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Make\n\n`Connection`\n\nRun Make scenarios and manage your Make account.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/make.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/make.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.make.com\",\n  description: \"Make: run scenarios and manage automations.\",\n  auth: connect(\"make\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create make\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "manufact",
+      "sourceUrl": "https://eve.dev/integrations/manufact",
+      "scrapedAt": "2026-07-21T16:12:13.535Z",
+      "name": "Manufact",
+      "description": "Deploy and monitor MCP servers with Manufact.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/manufact.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/manufact.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.manufact.com/mcp\",\n  description: \"Manufact: deploy and monitor MCP servers.\",\n  auth: connect(\"manufact\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create manufact\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Manufact\n\n`Connection`\n\nDeploy and monitor MCP servers with Manufact.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/manufact.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/manufact.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.manufact.com/mcp\",\n  description: \"Manufact: deploy and monitor MCP servers.\",\n  auth: connect(\"manufact\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create manufact\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "mem0",
+      "sourceUrl": "https://eve.dev/integrations/mem0",
+      "scrapedAt": "2026-07-21T16:12:13.755Z",
+      "name": "Mem0",
+      "description": "Persistent memory for AI agents and assistants.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/mem0.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/mem0.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.mem0.ai/mcp\",\n  description: \"Mem0: store and retrieve persistent agent memory.\",\n  auth: connect(\"mem0\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create mem0\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Mem0\n\n`Connection`\n\nPersistent memory for AI agents and assistants.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/mem0.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/mem0.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.mem0.ai/mcp\",\n  description: \"Mem0: store and retrieve persistent agent memory.\",\n  auth: connect(\"mem0\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create mem0\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "miro",
+      "sourceUrl": "https://eve.dev/integrations/miro",
+      "scrapedAt": "2026-07-21T16:12:13.777Z",
+      "name": "Miro",
+      "description": "Access and create content on Miro boards.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/miro.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/miro.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.miro.com/\",\n  description: \"Miro: read and create content on boards.\",\n  auth: connect(\"miro\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create miro\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Miro\n\n`Connection`\n\nAccess and create content on Miro boards.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/miro.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/miro.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.miro.com/\",\n  description: \"Miro: read and create content on boards.\",\n  auth: connect(\"miro\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create miro\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "mixpanel",
+      "sourceUrl": "https://eve.dev/integrations/mixpanel",
+      "scrapedAt": "2026-07-21T16:12:14.008Z",
+      "name": "Mixpanel",
+      "description": "Analyze, query, and manage your Mixpanel data.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/mixpanel.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/mixpanel.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.mixpanel.com/mcp\",\n  description: \"Mixpanel: analyze, query, and manage analytics data.\",\n  auth: connect(\"mixpanel\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create mixpanel\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Mixpanel\n\n`Connection`\n\nAnalyze, query, and manage your Mixpanel data.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/mixpanel.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/mixpanel.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.mixpanel.com/mcp\",\n  description: \"Mixpanel: analyze, query, and manage analytics data.\",\n  auth: connect(\"mixpanel\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create mixpanel\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "netlify",
+      "sourceUrl": "https://eve.dev/integrations/netlify",
+      "scrapedAt": "2026-07-21T16:12:14.068Z",
+      "name": "Netlify",
+      "description": "Create, deploy, manage, and secure websites on Netlify.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/netlify.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/netlify.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://netlify-mcp.netlify.app/mcp\",\n  description: \"Netlify: create, deploy, manage, and secure sites.\",\n  auth: connect(\"netlify\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create netlify\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Netlify\n\n`Connection`\n\nCreate, deploy, manage, and secure websites on Netlify.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/netlify.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/netlify.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://netlify-mcp.netlify.app/mcp\",\n  description: \"Netlify: create, deploy, manage, and secure sites.\",\n  auth: connect(\"netlify\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create netlify\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "oreilly",
+      "sourceUrl": "https://eve.dev/integrations/oreilly",
+      "scrapedAt": "2026-07-21T16:12:14.233Z",
+      "name": "O'Reilly",
+      "description": "Discover O'Reilly's expert learning content.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/oreilly.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/oreilly.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://api.oreilly.com/api/content-discovery/v1/mcp/\",\n  description: \"O'Reilly: search books, courses, and learning content.\",\n  auth: connect(\"oreilly\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create oreilly\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# O'Reilly\n\n`Connection`\n\nDiscover O'Reilly's expert learning content.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/oreilly.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/oreilly.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://api.oreilly.com/api/content-discovery/v1/mcp/\",\n  description: \"O'Reilly: search books, courses, and learning content.\",\n  auth: connect(\"oreilly\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create oreilly\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "planetscale",
+      "sourceUrl": "https://eve.dev/integrations/planetscale",
+      "scrapedAt": "2026-07-21T16:12:14.294Z",
+      "name": "PlanetScale",
+      "description": "Authenticated access to your PlanetScale Postgres and MySQL databases.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/planetscale.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/planetscale.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.pscale.dev/mcp/planetscale\",\n  description: \"PlanetScale: query Postgres and MySQL databases.\",\n  auth: connect(\"planetscale\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create planetscale\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# PlanetScale\n\n`Connection`\n\nAuthenticated access to your PlanetScale Postgres and MySQL databases.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/planetscale.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/planetscale.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.pscale.dev/mcp/planetscale\",\n  description: \"PlanetScale: query Postgres and MySQL databases.\",\n  auth: connect(\"planetscale\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create planetscale\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "posthog",
+      "sourceUrl": "https://eve.dev/integrations/posthog",
+      "scrapedAt": "2026-07-21T16:12:14.579Z",
+      "name": "PostHog",
+      "description": "Query, analyze, and manage your PostHog insights.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/posthog.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/posthog.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.posthog.com/mcp\",\n  description: \"PostHog: insights, events, and feature flags.\",\n  auth: connect(\"posthog\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create posthog\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# PostHog\n\n`Connection`\n\nQuery, analyze, and manage your PostHog insights.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/posthog.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/posthog.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.posthog.com/mcp\",\n  description: \"PostHog: insights, events, and feature flags.\",\n  auth: connect(\"posthog\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create posthog\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "postman",
+      "sourceUrl": "https://eve.dev/integrations/postman",
+      "scrapedAt": "2026-07-21T16:12:14.534Z",
+      "name": "Postman",
+      "description": "Give API context to your coding agents with Postman.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/postman.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/postman.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.postman.com/minimal\",\n  description: \"Postman: APIs, collections, and workspaces.\",\n  auth: connect(\"postman\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create postman\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Postman\n\n`Connection`\n\nGive API context to your coding agents with Postman.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/postman.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/postman.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.postman.com/minimal\",\n  description: \"Postman: APIs, collections, and workspaces.\",\n  auth: connect(\"postman\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create postman\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "razorpay",
+      "sourceUrl": "https://eve.dev/integrations/razorpay",
+      "scrapedAt": "2026-07-21T16:12:14.670Z",
+      "name": "Razorpay",
+      "description": "Razorpay payments, settlements, and dashboard data.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/razorpay.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/razorpay.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.razorpay.com/mcp\",\n  description: \"Razorpay: payments, settlements, and dashboard data.\",\n  auth: connect(\"razorpay\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create razorpay\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Razorpay\n\n`Connection`\n\nRazorpay payments, settlements, and dashboard data.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/razorpay.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/razorpay.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.razorpay.com/mcp\",\n  description: \"Razorpay: payments, settlements, and dashboard data.\",\n  auth: connect(\"razorpay\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create razorpay\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "sentry",
+      "sourceUrl": "https://eve.dev/integrations/sentry",
+      "scrapedAt": "2026-07-21T16:12:14.933Z",
+      "name": "Sentry",
+      "description": "Search, query, and debug errors intelligently.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/sentry.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/sentry.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.sentry.dev/mcp\",\n  description: \"Sentry: search, query, and debug errors and issues.\",\n  auth: connect(\"sentry\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create sentry\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Sentry\n\n`Connection`\n\nSearch, query, and debug errors intelligently.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/sentry.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/sentry.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.sentry.dev/mcp\",\n  description: \"Sentry: search, query, and debug errors and issues.\",\n  auth: connect(\"sentry\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create sentry\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "similarweb",
+      "sourceUrl": "https://eve.dev/integrations/similarweb",
+      "scrapedAt": "2026-07-21T16:12:15.059Z",
+      "name": "Similarweb",
+      "description": "Real-time web, mobile app, and market data.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/similarweb.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/similarweb.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.similarweb.com\",\n  description: \"Similarweb: web traffic, app, and market intelligence data.\",\n  auth: connect(\"similarweb\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create similarweb\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Similarweb\n\n`Connection`\n\nReal-time web, mobile app, and market data.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/similarweb.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/similarweb.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.similarweb.com\",\n  description: \"Similarweb: web traffic, app, and market intelligence data.\",\n  auth: connect(\"similarweb\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create similarweb\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "stripe",
+      "sourceUrl": "https://eve.dev/integrations/stripe",
+      "scrapedAt": "2026-07-21T16:12:14.922Z",
+      "name": "Stripe",
+      "description": "Payment processing and financial infrastructure tools.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/stripe.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/stripe.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.stripe.com\",\n  description: \"Stripe: payments, customers, billing, and financial infrastructure.\",\n  auth: connect(\"stripe\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create stripe\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Stripe\n\n`Connection`\n\nPayment processing and financial infrastructure tools.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/stripe.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/stripe.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.stripe.com\",\n  description: \"Stripe: payments, customers, billing, and financial infrastructure.\",\n  auth: connect(\"stripe\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create stripe\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "supabase",
+      "sourceUrl": "https://eve.dev/integrations/supabase",
+      "scrapedAt": "2026-07-21T16:12:15.142Z",
+      "name": "Supabase",
+      "description": "Manage databases, authentication, and storage.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/supabase.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/supabase.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.supabase.com/mcp\",\n  description: \"Supabase: databases, authentication, and storage.\",\n  auth: connect(\"supabase\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create supabase\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Supabase\n\n`Connection`\n\nManage databases, authentication, and storage.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/supabase.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/supabase.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.supabase.com/mcp\",\n  description: \"Supabase: databases, authentication, and storage.\",\n  auth: connect(\"supabase\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create supabase\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "ticket-tailor",
+      "sourceUrl": "https://eve.dev/integrations/ticket-tailor",
+      "scrapedAt": "2026-07-21T16:12:15.372Z",
+      "name": "Ticket Tailor",
+      "description": "Manage tickets, orders, and events with Ticket Tailor.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/ticket-tailor.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/ticket-tailor.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.tickettailor.ai/mcp\",\n  description: \"Ticket Tailor: events, tickets, and orders.\",\n  auth: connect(\"ticket-tailor\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create ticket-tailor\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Ticket Tailor\n\n`Connection`\n\nManage tickets, orders, and events with Ticket Tailor.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/ticket-tailor.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/ticket-tailor.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.tickettailor.ai/mcp\",\n  description: \"Ticket Tailor: events, tickets, and orders.\",\n  auth: connect(\"ticket-tailor\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create ticket-tailor\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "ticktick",
+      "sourceUrl": "https://eve.dev/integrations/ticktick",
+      "scrapedAt": "2026-07-21T16:12:15.372Z",
+      "name": "TickTick",
+      "description": "Search, create, and manage your tasks and habits in TickTick.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/ticktick.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/ticktick.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.ticktick.com\",\n  description: \"TickTick: tasks, habits, and lists.\",\n  auth: connect(\"ticktick\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create ticktick\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# TickTick\n\n`Connection`\n\nSearch, create, and manage your tasks and habits in TickTick.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/ticktick.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/ticktick.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.ticktick.com\",\n  description: \"TickTick: tasks, habits, and lists.\",\n  auth: connect(\"ticktick\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create ticktick\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "todoist",
+      "sourceUrl": "https://eve.dev/integrations/todoist",
+      "scrapedAt": "2026-07-21T16:12:15.580Z",
+      "name": "Todoist",
+      "description": "Search, complete, and manage your tasks in Todoist.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/todoist.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/todoist.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://ai.todoist.net/mcp\",\n  description: \"Todoist: search, complete, and manage tasks.\",\n  auth: connect(\"todoist\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create todoist\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Todoist\n\n`Connection`\n\nSearch, complete, and manage your tasks in Todoist.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/todoist.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/todoist.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://ai.todoist.net/mcp\",\n  description: \"Todoist: search, complete, and manage tasks.\",\n  auth: connect(\"todoist\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create todoist\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "webflow",
+      "sourceUrl": "https://eve.dev/integrations/webflow",
+      "scrapedAt": "2026-07-21T16:12:15.659Z",
+      "name": "Webflow",
+      "description": "Manage Webflow CMS, pages, assets, and sites.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/webflow.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/webflow.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.webflow.com/mcp\",\n  description: \"Webflow: CMS items, pages, assets, and sites.\",\n  auth: connect(\"webflow\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create webflow\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Webflow\n\n`Connection`\n\nManage Webflow CMS, pages, assets, and sites.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/webflow.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/webflow.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.webflow.com/mcp\",\n  description: \"Webflow: CMS items, pages, assets, and sites.\",\n  auth: connect(\"webflow\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create webflow\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "wix",
+      "sourceUrl": "https://eve.dev/integrations/wix",
+      "scrapedAt": "2026-07-21T16:12:15.887Z",
+      "name": "Wix",
+      "description": "Manage and build sites and apps on Wix.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/wix.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/wix.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.wix.com/mcp\",\n  description: \"Wix: manage and build sites and apps.\",\n  auth: connect(\"wix\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create wix\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Wix\n\n`Connection`\n\nManage and build sites and apps on Wix.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/wix.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/wix.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.wix.com/mcp\",\n  description: \"Wix: manage and build sites and apps.\",\n  auth: connect(\"wix\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create wix\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "zapier",
+      "sourceUrl": "https://eve.dev/integrations/zapier",
+      "scrapedAt": "2026-07-21T16:12:15.865Z",
+      "name": "Zapier",
+      "description": "Automate workflows across thousands of apps.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/zapier.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/zapier.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.zapier.com/api/v1/connect\",\n  description: \"Zapier: run and manage automations across apps.\",\n  auth: connect(\"zapier\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create zapier\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Zapier\n\n`Connection`\n\nAutomate workflows across thousands of apps.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/zapier.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/zapier.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp.zapier.com/api/v1/connect\",\n  description: \"Zapier: run and manage automations across apps.\",\n  auth: connect(\"zapier\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create zapier\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    },
+    {
+      "slug": "zomato",
+      "sourceUrl": "https://eve.dev/integrations/zomato",
+      "scrapedAt": "2026-07-21T16:12:16.106Z",
+      "name": "Zomato",
+      "description": "Online food ordering and delivery through Zomato.",
+      "badge": "Connection",
+      "docsHref": "/docs/connections/mcp",
+      "docsUrl": "https://eve.dev/docs/connections/mcp",
+      "sections": [
+        {
+          "title": "Install",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Connections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "npm install eve@latest @vercel/connect"
+            }
+          ]
+        },
+        {
+          "title": "Quick start",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create agent/connections/zomato.ts. The connection name is derived from the filename:"
+            },
+            {
+              "type": "code",
+              "language": "ts",
+              "code": "// agent/connections/zomato.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp-server.zomato.com/mcp\",\n  description: \"Zomato: food ordering and delivery.\",\n  auth: connect(\"zomato\"),\n});"
+            },
+            {
+              "type": "paragraph",
+              "text": "Connect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call."
+            }
+          ]
+        },
+        {
+          "title": "Configure",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Create the connector, link it to your project, and pull OIDC locally:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "vercel connect create zomato\nvercel link\nvercel env pull"
+            },
+            {
+              "type": "paragraph",
+              "text": "See the Connections docs for principal types, headers, approval, and protocol-specific filters."
+            }
+          ]
+        }
+      ],
+      "markdown": "# Zomato\n\n`Connection`\n\nOnline food ordering and delivery through Zomato.\n\n[Docs](https://eve.dev/docs/connections/mcp)\n\n## Install\n\nConnections live under agent/connections/. Auth is brokered by Vercel Connect, so install the framework and the Connect SDK:\n\n```bash\nnpm install eve@latest @vercel/connect\n```\n\n\n## Quick start\n\nCreate agent/connections/zomato.ts. The connection name is derived from the filename:\n\n```ts\n// agent/connections/zomato.ts\nimport { connect } from \"@vercel/connect/eve\";\nimport { defineMcpClientConnection } from \"eve/connections\";\n\nexport default defineMcpClientConnection({\n  url: \"https://mcp-server.zomato.com/mcp\",\n  description: \"Zomato: food ordering and delivery.\",\n  auth: connect(\"zomato\"),\n});\n```\n\nConnect owns the OAuth flow, and each end-user authorizes in their own browser before their first tool call.\n\n\n## Configure\n\nCreate the connector, link it to your project, and pull OIDC locally:\n\n```bash\nvercel connect create zomato\nvercel link\nvercel env pull\n```\n\nSee the Connections docs for principal types, headers, approval, and protocol-specific filters.\n"
+    }
+  ]
+}

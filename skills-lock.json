@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "skills": {
+    "bootstrap-agents-md": {
+      "source": "nolly-studio/ai-engineer-skills",
+      "sourceType": "github",
+      "skillPath": "skills/bootstrap-agents-md/SKILL.md",
+      "computedHash": "8e1c11e608b3ebba9797bb1549c6a57fbcf7af0356d7598908d1126918d03a9e"
+    },
+    "design-md": {
+      "source": "nolly-studio/ai-engineer-skills",
+      "sourceType": "github",
+      "skillPath": "skills/design-md/SKILL.md",
+      "computedHash": "c86e9cbddaf2cb3c51c5cf7baf64a294d6a45b43b45926a92db9919689c1eeeb"
+    },
+    "frontier-interview": {
+      "source": "nolly-studio/ai-engineer-skills",
+      "sourceType": "github",
+      "skillPath": "skills/frontier-interview/SKILL.md",
+      "computedHash": "6938934295dbbcd12ff8037c17d887a73d3fa5cddfa0581be875aee926c78208"
+    },
+    "setup": {
+      "source": "nolly-studio/ai-engineer-skills",
+      "sourceType": "github",
+      "skillPath": "skills/setup/SKILL.md",
+      "computedHash": "a5d21fdb247f1fddfe9096d57b326700ced39c84222e10169201fbf66b8043f4"
+    }
+  }
+}

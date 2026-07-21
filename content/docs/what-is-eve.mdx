@@ -1,0 +1,39 @@
+---
+title: What is Eve?
+description: Eve is a filesystem-first framework for durable AI agents. Eve Directory catalogs ready-to-install agent projects built with it.
+---
+
+[Eve](https://github.com/vercel/eve) is a TypeScript framework for durable backend agents. You author capabilities as files under `agent/` — instructions, tools, skills, channels, connections — and Eve discovers that tree at runtime.
+
+A minimal agent looks like this:
+
+```text title="my-agent/"
+my-agent/
+└── agent/
+    ├── agent.ts
+    ├── instructions.md
+    └── tools/
+        └── get_weather.ts
+```
+
+Scaffold one with:
+
+```bash
+npx eve@latest init my-agent
+```
+
+## Eve Directory vs Eve
+
+|  | Eve | Eve Directory |
+| --- | --- | --- |
+| What it is | The framework + runtime | An open catalog of agents/extensions |
+| Install | `npx eve@latest init` | Browse + shadcn CLI / Composer |
+| Docs | [eve.dev/docs](https://eve.dev/docs/introduction) | These guides + listing pages |
+
+This site does **not** replace Eve’s docs. Use Eve Directory to find agents, inspect source, and drop files into a project. Use Eve’s docs when you need APIs, channels, sandboxes, or deployment.
+
+## Related
+
+- [Install with shadcn CLI](/docs/install-with-shadcn)
+- [Browse agents](/agents)
+- [Eve introduction](https://eve.dev/docs/introduction)

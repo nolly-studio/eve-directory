@@ -1,0 +1,37 @@
+---
+title: Integrations
+description: How Eve Directory labels channels and connections on agent listings — and where to read official setup docs.
+---
+
+On listings, **integrations** are short slugs (for example `slack`, `github`, `linear`) for channels and connections the agent is built around. They power `/integrations/[name]` filters and chips on cards.
+
+## Official recipes
+
+Eve publishes install/quick-start recipes for first-party channels and connections at [eve.dev/integrations](https://eve.dev/integrations). Deep docs live under [Channels](https://eve.dev/docs/channels) and [Connections](https://eve.dev/docs/connections).
+
+Typical channel file (from Eve’s docs style):
+
+```ts title="agent/channels/slack.ts"
+import { connectSlackCredentials } from "@vercel/connect/eve";
+import { slackChannel } from "eve/channels/slack";
+
+export default slackChannel({
+  credentials: connectSlackCredentials("slack/my-agent"),
+});
+```
+
+## On this site
+
+- Browse the [integrations directory](/integrations) or open `/integrations/<name>` for setup context + matching agents
+- Full framework setup always links out to Eve — we do not fork those docs
+
+### Agents using Slack
+
+Live catalog cards for the `slack` integration:
+
+<AgentsByIntegration slug="slack" />
+
+## Related
+
+- [What is Eve?](/docs/what-is-eve)
+- [Browse agents](/agents)

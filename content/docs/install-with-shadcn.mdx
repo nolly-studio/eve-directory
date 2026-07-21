@@ -1,0 +1,41 @@
+---
+title: Install with shadcn CLI
+description: Install a catalog agent into your Eve project the same way you add shadcn UI blocks — via the registry CLI.
+---
+
+Eve Directory serves agents as a [shadcn registry](https://ui.shadcn.com/docs/registry). From a project that already has Eve (or after `npx eve@latest init`), install an agent by slug:
+
+```bash
+npx shadcn@latest add @evedirectory/<agent-slug>
+```
+
+Replace `<agent-slug>` with the listing slug from the URL — for example `/agents/pr-review-sentinel` → `pr-review-sentinel`.
+
+The CLI writes a complete Eve app into your project: `package.json`, `agent/` (instructions, tools, connections, schedules, …), and `evals/`. Review the generated files, set any required env vars (see `SETUP.md`), then run:
+
+```bash
+npm install
+npm run dev
+```
+
+One-time registry setup (if you have not added `@evedirectory` yet):
+
+```bash
+npx shadcn@latest registry add @evedirectory=https://evedirectory.com/r/{name}.json
+```
+
+## Before you install
+
+1. Prefer an existing Eve app, or scaffold with `npx eve@latest init .`
+2. Commit or stash local changes — the CLI may create or overwrite files under `agent/`
+3. Read the listing’s summary and file explorer so you know what you’re pulling in
+
+## Compose instead
+
+Need several agents or extensions in one starter? Use [Composer](/composer) to pick listings and download a zip, then follow that project’s setup notes.
+
+## Related
+
+- [Compose vs clone](/docs/compose-vs-clone)
+- [Browse agents](/agents)
+- [Eve getting started](https://eve.dev/docs/getting-started)

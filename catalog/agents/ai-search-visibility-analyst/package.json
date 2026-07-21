@@ -1,0 +1,25 @@
+{
+  "name": "ai-search-visibility-analyst",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "eve dev",
+    "build": "eve build",
+    "start": "eve start",
+    "eval": "eve eval",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@vercel/connect": "^0.2.2",
+    "eve": "^0.24.4",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "24.x",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": "24.x"
+  }
+}
