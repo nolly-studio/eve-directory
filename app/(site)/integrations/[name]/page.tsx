@@ -3,6 +3,10 @@ import { notFound } from "next/navigation";
 
 import { IntegrationLogo } from "@/components/integration-badge";
 import { IntegrationDetailContent } from "@/components/integration-detail-content";
+import {
+  IntegrationDocsExcerpts,
+  IntegrationDocsGlance,
+} from "@/components/integration-docs-facts";
 import { AgentCard } from "@/components/listing-card";
 import { PageShell } from "@/components/page-shell";
 import { Badge } from "@/components/ui/badge";
@@ -56,32 +60,34 @@ export default async function IntegrationPage({
     agents,
     badge,
     description,
+    docsFacts,
     localGuideUrl,
     officialDocsUrl,
+    scrapedAt,
     sections,
     slug,
     title,
   } = model;
 
   return (
-    <PageShell narrow>
+    <PageShell narrow className="py-8">
       <ButtonLink href="/integrations" variant="ghost" size="sm">
         All integrations
       </ButtonLink>
 
-      <header className="mt-6">
-        <IntegrationLogo slug={slug} className="size-8" />
-        <div className="mt-4 flex flex-wrap items-center gap-2">
+      <header className="mt-5">
+        <IntegrationLogo slug={slug} className="size-7" />
+        <div className="mt-3 flex flex-wrap items-center gap-2">
           <h1 className="text-heading-32 font-semibold tracking-tighter text-balance text-gray-1000 [--font-weight-semibold:450] md:text-heading-40">
             {title}
           </h1>
           {badge ? <Badge variant="secondary">{badge}</Badge> : null}
         </div>
-        <p className="mt-3 max-w-2xl text-copy-16 text-pretty text-muted-foreground md:text-copy-18">
+        <p className="mt-2 max-w-2xl text-copy-14 text-pretty text-muted-foreground md:text-copy-16">
           {description ?? `Agents that include ${title} integration variants.`}
         </p>
         {officialDocsUrl || localGuideUrl ? (
-          <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1">
+          <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1">
             {officialDocsUrl ? (
               <a
                 href={officialDocsUrl}
@@ -97,7 +103,7 @@ export default async function IntegrationPage({
                 href={localGuideUrl}
                 variant="ghost"
                 size="sm"
-                className="-ml-2 h-auto px-2 py-1 text-copy-14 text-muted-foreground"
+                className="-ml-2 h-auto px-2 py-0.5 text-copy-14 text-muted-foreground"
               >
                 Directory guide
               </ButtonLink>
@@ -106,24 +112,43 @@ export default async function IntegrationPage({
         ) : null}
       </header>
 
-      <IntegrationDetailContent sections={sections} />
+      <div className="mt-8 flex flex-col gap-8">
+        {docsFacts ? (
+          <IntegrationDocsGlance
+            facts={docsFacts}
+            officialDocsUrl={officialDocsUrl}
+            scrapedAt={scrapedAt}
+            title={title}
+          />
+        ) : null}
 
-      <section className="mt-14 border-t border-border pt-10">
-        <h2 className="text-heading-24 font-semibold tracking-tight text-gray-1000">
-          Agents using {title}
-        </h2>
-        {agents.length > 0 ? (
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
-            {agents.map((agent) => (
-              <AgentCard key={agent.slug} agent={agent} />
-            ))}
-          </div>
-        ) : (
-          <p className="mt-4 text-copy-14 text-muted-foreground">
-            No catalog agents reference this integration yet.
-          </p>
-        )}
-      </section>
+        <IntegrationDetailContent sections={sections} />
+
+        {docsFacts ? (
+          <IntegrationDocsExcerpts
+            facts={docsFacts}
+            officialDocsUrl={officialDocsUrl}
+            title={title}
+          />
+        ) : null}
+
+        <section className="border-t border-border pt-8">
+          <h2 className="text-heading-24 font-semibold tracking-tight text-gray-1000">
+            Agents using {title}
+          </h2>
+          {agents.length > 0 ? (
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              {agents.map((agent) => (
+                <AgentCard key={agent.slug} agent={agent} />
+              ))}
+            </div>
+          ) : (
+            <p className="mt-3 text-copy-14 text-muted-foreground">
+              No catalog agents reference this integration yet.
+            </p>
+          )}
+        </section>
+      </div>
     </PageShell>
   );
 }

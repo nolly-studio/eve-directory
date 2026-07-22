@@ -23,6 +23,7 @@ export {
   getIntegrationInstallSummary,
   getOfficialIntegration,
   getOfficialIntegrations,
+  isIntegrationDocsShared,
 } from "./integrations";
 
 const CATALOG_ROOT = path.join(process.cwd(), "catalog");

@@ -46,10 +46,10 @@ function CodePanel({ title, code }: { title: string; code: string }) {
   const lines = code.replace(/\n$/, "").split("\n");
 
   return (
-    <div className="shadow-surface flex min-h-[280px] flex-col overflow-hidden rounded-xl bg-card md:min-h-[320px]">
+    <div className="shadow-surface flex min-h-[280px] min-w-0 max-w-full flex-col overflow-hidden rounded-xl bg-card md:min-h-[320px]">
       <WindowChrome title={title} />
-      <div className="flex-1 overflow-auto p-4">
-        <pre className="text-copy-14-mono leading-relaxed">
+      <div className="min-w-0 flex-1 overflow-x-auto overflow-y-auto p-4">
+        <pre className="inline-block min-w-full text-copy-14-mono leading-relaxed">
           {lines.map((line, index) => {
             const isComment = line.trimStart().startsWith("#");
             return (
@@ -82,9 +82,9 @@ function PreviewPanel({
   children: ReactNode;
 }) {
   return (
-    <div className="shadow-surface flex min-h-[280px] flex-col overflow-hidden rounded-xl bg-card md:min-h-[320px]">
+    <div className="shadow-surface flex min-h-[280px] min-w-0 max-w-full flex-col overflow-hidden rounded-xl bg-card md:min-h-[320px]">
       <WindowChrome title={title} />
-      <div className="flex flex-1 flex-col gap-3 overflow-auto p-4">
+      <div className="flex min-w-0 flex-1 flex-col gap-3 overflow-auto p-4">
         {children}
       </div>
     </div>
@@ -113,12 +113,12 @@ export function HomeHeroPreview({ tabs }: HomeHeroPreviewProps) {
   }
 
   return (
-    <div className="w-full">
-      <div className="mb-4 flex items-center justify-between gap-3">
+    <div className="w-full min-w-0 max-w-full hidden md:block">
+      <div className="mb-4 flex min-w-0 items-center justify-between gap-3">
         <div
           role="tablist"
           aria-label="Product preview"
-          className="flex min-w-0 flex-1 items-center gap-1 p-[1px] overflow-x-auto"
+          className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto p-[1px]"
         >
           {tabs.map((tab, index) => {
             const selected = index === activeIndex;
@@ -167,7 +167,7 @@ export function HomeHeroPreview({ tabs }: HomeHeroPreviewProps) {
         </div>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
+      <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
         <CodePanel title={active.codeTitle} code={active.code} />
         <PreviewPanel title={active.previewTitle}>
           {active.preview}

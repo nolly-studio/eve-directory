@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import posthog from "posthog-js";
+import { useEffect } from "react";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -34,6 +36,24 @@ function SignInControl() {
 
 function AuthenticatedMenu() {
   const { data: session, isPending } = authClient.useSession();
+
+  useEffect(() => {
+    if (!session?.user) {
+      return;
+    }
+
+    posthog.identify(session.user.id, {
+      email: session.user.email,
+      name: session.user.name,
+      role: session.user.role,
+    });
+
+    const signInKey = `posthog-signed-in-${session.user.id}`;
+    if (!sessionStorage.getItem(signInKey)) {
+      posthog.capture("user_signed_in", { auth_provider: "github" });
+      sessionStorage.setItem(signInKey, "true");
+    }
+  }, [session?.user]);
 
   if (isPending) {
     return (
@@ -104,6 +124,8 @@ function AuthenticatedMenu() {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => {
+            posthog.capture("user_signed_out");
+            posthog.reset();
             void authClient.signOut();
           }}
         >

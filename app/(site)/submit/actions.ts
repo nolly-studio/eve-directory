@@ -22,6 +22,7 @@ import {
 import type { AgentActionState } from "@/lib/community/validation";
 import { db } from "@/lib/db";
 import { communityAgent, user } from "@/lib/db/schema";
+import { getPostHogClient } from "@/lib/posthog-server";
 
 function formString(formData: FormData, key: string): string {
   const value = formData.get(key);
@@ -197,6 +198,18 @@ export async function createCommunityAgent(
     status: "published",
   });
 
+  const posthog = getPostHogClient();
+  posthog.capture({
+    distinctId: session.user.id,
+    event: "community_agent_published",
+    properties: {
+      category_slug: category.slug,
+      file_count: parsed.data.files.length,
+      integration_count: integrationsResult.integrations.length,
+    },
+  });
+  await posthog.flush();
+
   revalidateCommunity(dbUser.handle, parsed.data.slug);
   redirect(`/agents/@${dbUser.handle}/${parsed.data.slug}`);
 }
@@ -321,6 +334,19 @@ export async function updateCommunityAgent(
     })
     .where(eq(communityAgent.id, id));
 
+  const posthog = getPostHogClient();
+  posthog.capture({
+    distinctId: session.user.id,
+    event: "community_agent_updated",
+    properties: {
+      category_slug: category.slug,
+      file_count: parsed.data.files.length,
+      integration_count: integrationsResult.integrations.length,
+      slug_changed: owned.slug !== parsed.data.slug,
+    },
+  });
+  await posthog.flush();
+
   revalidateCommunity(dbUser.handle, owned.slug);
   if (owned.slug !== parsed.data.slug) {
     revalidateCommunity(dbUser.handle, parsed.data.slug);
@@ -357,6 +383,13 @@ export async function unpublishCommunityAgent(
     .update(communityAgent)
     .set({ status: "delisted" })
     .where(eq(communityAgent.id, id));
+
+  const posthog = getPostHogClient();
+  posthog.capture({
+    distinctId: session.user.id,
+    event: "community_agent_unpublished",
+  });
+  await posthog.flush();
 
   revalidateCommunity(dbUser.handle, owned.slug);
   return { ok: true, message: "Agent unpublished." };

@@ -1,12 +1,14 @@
 import {
   getAgentsByIntegration,
   getIntegrationDetail,
+  isIntegrationDocsShared,
   resolveIntegrationPage,
 } from "@/lib/catalog";
 import type {
   AgentListing,
   IntegrationDetail,
   IntegrationDetailSection,
+  IntegrationDocsFacts,
 } from "@/lib/catalog/types";
 import { getIntegrationGuideUrl } from "@/lib/docs/related-guides";
 import { integrationLabel } from "@/lib/site";
@@ -17,6 +19,9 @@ export interface IntegrationPageModel {
   description: string | null;
   badge: string | null;
   sections: IntegrationDetailSection[];
+  /** Docs-derived facts; null when the docs page is shared across integrations. */
+  docsFacts: IntegrationDocsFacts | null;
+  scrapedAt: string | null;
   localGuideUrl: string | null;
   officialDocsUrl: string | null;
   agents: AgentListing[];
@@ -83,12 +88,22 @@ export async function getIntegrationPageModel(
     getAgentsByIntegration(normalized),
   ]);
 
+  let docsFacts: IntegrationDocsFacts | null = null;
+  if (detail?.docsFacts) {
+    const shared = await isIntegrationDocsShared(detail);
+    if (!shared) {
+      ({ docsFacts } = detail);
+    }
+  }
+
   return {
     agents,
     badge: resolveBadge(detail, resolved),
     description: resolveDescription(detail, resolved),
+    docsFacts,
     localGuideUrl: getIntegrationGuideUrl(normalized),
     officialDocsUrl: detail?.docsUrl ?? null,
+    scrapedAt: detail?.scrapedAt ?? null,
     sections: detail?.sections ?? [],
     slug: normalized,
     title: resolveTitle(detail, resolved, normalized),

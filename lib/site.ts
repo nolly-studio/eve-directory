@@ -30,7 +30,6 @@ export const NAV_LINKS: readonly NavLink[] = [
 export const FOOTER_LINKS: readonly NavLink[] = [
   ...NAV_LINKS,
   { href: "/extensions", label: "Extensions" },
-  { href: "/integrations", label: "Integrations" },
   { href: "/terms", label: "Terms" },
   { href: "/privacy", label: "Privacy" },
 ] as const;

@@ -293,7 +293,7 @@ export function HomeHero({ featuredAgent }: HomeHeroProps) {
 
   return (
     <section className="border-b border-border">
-      <div className="mx-auto flex max-w-6xl flex-col items-center px-6 pt-16 pb-14 md:pt-24 md:pb-20 lg:pt-28">
+      <div className="mx-auto flex w-full max-w-6xl min-w-0 flex-col items-center px-6 pt-16 pb-14 md:pt-24 md:pb-20 lg:pt-28">
         <div
           className="animate-enter flex flex-col items-center text-center"
           style={{ "--stagger": 0 } as CSSProperties}
@@ -303,14 +303,14 @@ export function HomeHero({ featuredAgent }: HomeHeroProps) {
         </div>
 
         <h1
-          className="mt-8 max-w-3xl animate-enter text-heading-40 font-semibold text-center text-gray-1000 [--font-weight-semibold:450] md:text-heading-64"
+          className="mt-8 max-w-3xl animate-enter text-heading-40 font-semibold text-center text-balance text-gray-1000 [--font-weight-semibold:450] md:text-heading-64"
           style={{ "--stagger": 1 } as CSSProperties}
         >
           Eve agents & templates for Vercel Eve
         </h1>
 
         <p
-          className="mt-5 max-w-2xl animate-enter text-copy-16 text-center text-gray-900 md:text-copy-18"
+          className="mt-5 max-w-2xl animate-enter text-copy-16 text-center text-pretty text-gray-900 md:text-copy-18"
           style={{ "--stagger": 2 } as CSSProperties}
         >
           {lead}
@@ -324,21 +324,21 @@ export function HomeHero({ featuredAgent }: HomeHeroProps) {
         </div>
 
         <div
-          className="mt-5 animate-enter"
+          className="mt-5 w-full max-w-xl min-w-0 animate-enter"
           style={{ "--stagger": 4 } as CSSProperties}
         >
           <CommandBar command={command} />
         </div>
 
         <div
-          className="mt-12 w-full max-w-5xl animate-enter md:mt-14"
+          className="mt-12 w-full max-w-5xl min-w-0 animate-enter md:mt-14"
           style={{ "--stagger": 5 } as CSSProperties}
         >
           <HomeHeroPreview key={audience} tabs={tabs} />
         </div>
 
         <div
-          className="mt-8 animate-enter"
+          className="mt-8 animate-enter hidden md:block"
           style={{ "--stagger": 6 } as CSSProperties}
         >
           <Link

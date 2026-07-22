@@ -112,6 +112,25 @@ export function getIntegrationInstallSummary(
 }
 
 /**
+ * Whether this integration's docs page is shared with other integrations
+ * (e.g. the generic MCP connections doc). Shared docs should not be rendered
+ * per-integration — that would stamp identical generic content on dozens of
+ * pages.
+ */
+export async function isIntegrationDocsShared(
+  detail: IntegrationDetail
+): Promise<boolean> {
+  if (!detail.docsUrl) {
+    return false;
+  }
+  const file = await readIntegrationDetailsFile();
+  const sharedCount = file.integrations.filter(
+    (item) => item.docsUrl === detail.docsUrl
+  ).length;
+  return sharedCount > 1;
+}
+
+/**
  * Docs markdown ready for the integration detail page: drop frontmatter and
  * the leading H1 (the page already has a title), then normalize whitespace.
  */

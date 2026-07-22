@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import posthog from "posthog-js";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -25,6 +26,11 @@ export function AddToComposerButton({
     } else {
       addExtensionToComposer(slug);
     }
+
+    posthog.capture("agent_added_to_composer", {
+      item_kind: kind,
+      item_slug: slug,
+    });
 
     router.push("/composer");
   }

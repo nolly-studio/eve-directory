@@ -2,6 +2,7 @@
 
 import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import posthog from "posthog-js";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -36,7 +37,11 @@ export function SetupWithPromptButton({
     try {
       await navigator.clipboard.writeText(prompt);
       setCopied(true);
-    } catch {
+      posthog.capture("setup_prompt_copied", {
+        source_type: "agent_detail",
+      });
+    } catch (error) {
+      posthog.captureException(error);
       // Clipboard may be unavailable; keep UI quiet.
     }
   }

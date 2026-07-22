@@ -43,7 +43,7 @@ export function CommandBar({ command, className }: CommandBarProps) {
       onClick={handleCopy}
       aria-label={copied ? "Copied" : `Copy command: ${command}`}
       className={cn(
-        "group inline-flex h-11 max-w-full items-center gap-3 rounded-full bg-card px-5 shadow-chip transition-[box-shadow,transform] duration-150 hover:shadow-surface-hover active:scale-[0.99] motion-reduce:transition-none",
+        "group flex h-11 w-full max-w-full min-w-0 items-center gap-3 rounded-full bg-card px-5 shadow-chip transition-[box-shadow,transform] duration-150 hover:shadow-surface-hover active:scale-[0.99] motion-reduce:transition-none",
         className
       )}
     >

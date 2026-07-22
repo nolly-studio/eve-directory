@@ -580,3 +580,8 @@
     scroll-behavior: auto;
   }
 }
+
+html,
+body {
+  overscroll-behavior-y: none;
+}

@@ -1,11 +1,12 @@
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
-import { Fragment } from 'react';
-import type { ReactNode } from 'react';
+import { Fragment } from "react";
+import type { ReactNode } from "react";
 
 import type {
   IntegrationDetailBlock,
   IntegrationDetailSection,
 } from "@/lib/catalog/types";
+import { cn } from "@/lib/utils";
 
 /** Renders scraped paragraph text with `` `inline code` `` spans. */
 function InlineRichText({ text }: { text: string }) {
@@ -33,22 +34,37 @@ function InlineRichText({ text }: { text: string }) {
   return nodes;
 }
 
-function SectionBlock({ block }: { block: IntegrationDetailBlock }) {
+function SectionBlock({
+  block,
+  nextType,
+}: {
+  block: IntegrationDetailBlock;
+  nextType: IntegrationDetailBlock["type"] | null;
+}) {
   switch (block.type) {
     case "paragraph": {
+      // Keep lead-in copy tight to the code it introduces.
       return (
-        <p className="max-w-2xl text-copy-16 text-pretty text-gray-900">
+        <p
+          className={cn(
+            "max-w-2xl text-copy-14 text-pretty text-gray-900",
+            nextType === "code" && "mb-2",
+            nextType === "paragraph" && "mb-3"
+          )}
+        >
           <InlineRichText text={block.text} />
         </p>
       );
     }
     case "code": {
       return (
-        <DynamicCodeBlock
-          lang={block.language}
-          code={block.code}
-          codeblock={{ allowCopy: true, className: "my-0" }}
-        />
+        <div className={cn(nextType && "mb-5")}>
+          <DynamicCodeBlock
+            lang={block.language}
+            code={block.code}
+            codeblock={{ allowCopy: true, className: "my-0" }}
+          />
+        </div>
       );
     }
     default: {
@@ -72,22 +88,19 @@ export function IntegrationDetailContent({
   }
 
   return (
-    <div className="mt-10">
-      {sections.map((section, sectionIndex) => (
-        <section
-          key={section.title}
-          className={
-            sectionIndex === 0
-              ? "border-t border-border pt-10"
-              : "mt-10 border-t border-border pt-10"
-          }
-        >
+    <div className="divide-y divide-border border-t border-border">
+      {sections.map((section) => (
+        <section key={section.title} className="py-8">
           <h2 className="text-heading-24 font-semibold tracking-tight text-gray-1000">
             {section.title}
           </h2>
-          <div className="mt-4 space-y-4">
+          <div className="mt-3">
             {section.blocks.map((block, index) => (
-              <SectionBlock key={`${section.title}-${index}`} block={block} />
+              <SectionBlock
+                key={`${section.title}-${index}`}
+                block={block}
+                nextType={section.blocks[index + 1]?.type ?? null}
+              />
             ))}
           </div>
         </section>

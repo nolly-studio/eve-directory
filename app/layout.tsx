@@ -10,6 +10,7 @@ import { SiteSearchDialog } from "@/components/search-dialog";
 import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SEARCH_TAGS } from "@/lib/search/tags";
+import { DEFAULT_OG_IMAGE } from "@/lib/seo";
 import { NAV_LINKS, SITE, siteOrigin } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
@@ -21,6 +22,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     description: SITE.description,
+    images: [DEFAULT_OG_IMAGE],
     locale: "en_US",
     siteName: SITE.name,
     title: SITE.title,
@@ -34,6 +36,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     description: SITE.description,
+    images: [DEFAULT_OG_IMAGE.url],
     title: SITE.title,
   },
 };

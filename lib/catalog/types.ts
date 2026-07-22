@@ -108,6 +108,35 @@ export interface IntegrationDetailSection {
   blocks: IntegrationDetailBlock[];
 }
 
+export interface IntegrationDocsEnvVar {
+  name: string;
+  description: string | null;
+}
+
+export interface IntegrationDocsCapability {
+  id: string;
+  title: string;
+  supported: boolean;
+  summary: string | null;
+}
+
+export interface IntegrationDocsExcerpt {
+  title: string;
+  markdown: string;
+}
+
+/**
+ * Structured facts derived from the eve docs page at scrape time — grounded
+ * in the docs without mirroring their prose.
+ */
+export interface IntegrationDocsFacts {
+  route: string | null;
+  envVars: IntegrationDocsEnvVar[];
+  hooks: string[];
+  capabilities: IntegrationDocsCapability[];
+  excerpts: IntegrationDocsExcerpt[];
+}
+
 /** Scraped eve.dev integration page from `catalog/integrations-details.json`. */
 export interface IntegrationDetail {
   slug: string;
@@ -120,6 +149,7 @@ export interface IntegrationDetail {
   docsUrl: string | null;
   /** Cleaned markdown from `{docsUrl}.md` (eve docs), when available. */
   docsMarkdown?: string | null;
+  docsFacts?: IntegrationDocsFacts | null;
   sections: IntegrationDetailSection[];
   markdown: string;
 }

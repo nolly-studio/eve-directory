@@ -31,7 +31,7 @@ export default async function IntegrationsPage() {
     <PageShell>
       <PageHeader
         title="Integrations"
-        description="Official Eve channels and connections. Open a page for setup context and the agents that use it."
+        description="Official Eve channels and connections. Open a page for setup context and agents that use it."
       />
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {withCounts.map(({ agentCount, integration }) => (

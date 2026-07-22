@@ -1,5 +1,6 @@
 "use client";
 
+import posthog from "posthog-js";
 import { useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 
@@ -67,11 +68,19 @@ export function ComposerWorkspace({
 
     setExporting(true);
     setMessage(null);
+    posthog.capture("composer_export_requested", {
+      agent_count: selection.agents.length,
+      extension_count: selection.extensions.length,
+    });
 
     try {
       const response = await fetch("/api/composer/export", {
         body: JSON.stringify(selection),
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-PostHog-Distinct-Id": posthog.get_distinct_id(),
+          "X-PostHog-Session-Id": posthog.get_session_id(),
+        },
         method: "POST",
       });
 
@@ -87,7 +96,8 @@ export function ComposerWorkspace({
       anchor.click();
       URL.revokeObjectURL(url);
       setMessage({ text: "Starter archive downloaded.", tone: "info" });
-    } catch {
+    } catch (error) {
+      posthog.captureException(error);
       setMessage({
         text: "Could not export starter. Try again.",
         tone: "error",

@@ -27,6 +27,16 @@ const BASE_URL = "https://eve.dev";
 /** @typedef {{ type: "code", language: string, code: string }} CodeBlock */
 /** @typedef {ParagraphBlock | CodeBlock} ContentBlock */
 /** @typedef {{ title: string, blocks: ContentBlock[] }} Section */
+/** @typedef {{ name: string, description: string | null }} DocsEnvVar */
+/** @typedef {{ id: string, title: string, supported: boolean, summary: string | null }} DocsCapability */
+/** @typedef {{ title: string, markdown: string }} DocsExcerpt */
+/** @typedef {{
+ *   route: string | null
+ *   envVars: DocsEnvVar[]
+ *   hooks: string[]
+ *   capabilities: DocsCapability[]
+ *   excerpts: DocsExcerpt[]
+ * }} DocsFacts */
 /** @typedef {{
  *   slug: string
  *   sourceUrl: string
@@ -37,6 +47,7 @@ const BASE_URL = "https://eve.dev";
  *   docsHref: string | null
  *   docsUrl: string | null
  *   docsMarkdown: string | null
+ *   docsFacts: DocsFacts | null
  *   sections: Section[]
  *   markdown: string
  * }} ScrapedIntegration */
@@ -87,6 +98,161 @@ function cleanDocsMarkdown(markdown, docsHref) {
   );
 
   return `${text}\n`;
+}
+
+/**
+ * Split markdown into heading sections at the given level, ignoring headings
+ * inside fenced code blocks.
+ *
+ * @param {string} markdown
+ * @param {number} level
+ * @returns {Array<{ title: string, body: string }>}
+ */
+function splitHeadingSections(markdown, level) {
+  const prefix = `${"#".repeat(level)} `;
+  /** @type {Array<{ title: string, lines: string[] }>} */
+  const sections = [];
+  /** @type {{ title: string, lines: string[] } | null} */
+  let current = null;
+  let inFence = false;
+
+  for (const line of markdown.split("\n")) {
+    if (/^\s*(```|~~~)/.test(line)) {
+      inFence = !inFence;
+    }
+    if (!inFence && line.startsWith(prefix)) {
+      if (current) {
+        sections.push(current);
+      }
+      current = { lines: [], title: line.slice(prefix.length).trim() };
+      continue;
+    }
+    if (current) {
+      current.lines.push(line);
+    }
+  }
+  if (current) {
+    sections.push(current);
+  }
+
+  return sections.map((section) => ({
+    body: section.lines.join("\n").trim(),
+    title: section.title,
+  }));
+}
+
+/**
+ * First plain-text sentence of a markdown chunk (code blocks stripped).
+ *
+ * @param {string} body
+ * @returns {string | null}
+ */
+function firstSentence(body) {
+  const text = body
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replaceAll(/[*_>#]/g, "")
+    .replaceAll("`", "")
+    .replaceAll(/\s+/g, " ")
+    .trim();
+  if (!text) {
+    return null;
+  }
+  const match = text.match(/^.*?[.!?](?=\s|$)/);
+  return match ? match[0] : text.slice(0, 200);
+}
+
+/**
+ * Env vars declared in bash/env code blocks as `NAME=...  # description`.
+ *
+ * @param {string} markdown
+ * @returns {DocsEnvVar[]}
+ */
+function extractEnvVars(markdown) {
+  /** @type {Map<string, string | null>} */
+  const vars = new Map();
+
+  for (const match of markdown.matchAll(
+    /```(?:bash|sh|shell|env)[^\n]*\n([\s\S]*?)```/g
+  )) {
+    for (const line of match[1].split("\n")) {
+      const varMatch = line.match(/^([A-Z][A-Z0-9_]{2,})=\S*\s*(?:#\s*(.+))?$/);
+      if (varMatch && !vars.has(varMatch[1])) {
+        vars.set(varMatch[1], varMatch[2]?.trim() ?? null);
+      }
+    }
+  }
+
+  return [...vars].map(([name, description]) => ({ description, name }));
+}
+
+/**
+ * Derive structured, directory-native facts from an eve docs page so the
+ * detail page can present grounded information without mirroring prose.
+ *
+ * @param {string} markdown
+ * @returns {DocsFacts | null}
+ */
+function deriveDocsFacts(markdown) {
+  const routeMatch = markdown.match(/\/eve\/v1\/[a-z0-9-]+/i);
+  const route = routeMatch ? routeMatch[0] : null;
+  const envVars = extractEnvVars(markdown);
+
+  const h2s = splitHeadingSections(markdown, 2);
+  const behavior = h2s.find((section) =>
+    /how (?:the|this) .* handles|how it (?:works|behaves)/i.test(section.title)
+  );
+  const subsections = behavior ? splitHeadingSections(behavior.body, 3) : [];
+
+  const hookSource = (
+    subsections.find((section) => /dispatch/i.test(section.title)) ?? {
+      body: markdown,
+    }
+  ).body;
+  const hooks = [
+    ...new Set(
+      [...hookSource.matchAll(/`(on[A-Z][A-Za-z]*)\(/g)].map(
+        (match) => match[1]
+      )
+    ),
+  ];
+
+  /** @type {DocsCapability[]} */
+  const capabilities = [];
+  const capabilityDefs = [
+    { id: "hitl", re: /human-in-the-loop|hitl/i, title: "Human-in-the-loop" },
+    { id: "proactive", re: /proactive/i, title: "Proactive sessions" },
+    { id: "attachments", re: /attachments/i, title: "Attachments" },
+  ];
+  for (const def of capabilityDefs) {
+    const section = subsections.find((sub) => def.re.test(sub.title));
+    if (!section) {
+      continue;
+    }
+    capabilities.push({
+      id: def.id,
+      summary: firstSentence(section.body),
+      supported: !/\bnot supported\b/i.test(section.body),
+      title: def.title,
+    });
+  }
+
+  const excerpts = subsections
+    .filter((section) => section.body)
+    .slice(0, 6)
+    .map((section) => ({ markdown: section.body, title: section.title }));
+
+  if (
+    !route &&
+    envVars.length === 0 &&
+    hooks.length === 0 &&
+    capabilities.length === 0 &&
+    excerpts.length === 0
+  ) {
+    return null;
+  }
+
+  return { capabilities, envVars, excerpts, hooks, route };
 }
 
 /**
@@ -495,6 +661,7 @@ function parseIntegrationPage(html, slug) {
   return {
     badge: header.badge,
     description: header.description,
+    docsFacts: null,
     docsHref: header.docsHref,
     docsMarkdown: null,
     docsUrl: header.docsHref ? `${BASE_URL}${header.docsHref}` : null,
@@ -541,6 +708,10 @@ async function scrapeSlug(slug) {
       detail.docsMarkdown = null;
     }
   }
+
+  detail.docsFacts = detail.docsMarkdown
+    ? deriveDocsFacts(detail.docsMarkdown)
+    : null;
 
   return detail;
 }
