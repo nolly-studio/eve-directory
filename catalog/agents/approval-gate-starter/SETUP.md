@@ -22,7 +22,12 @@ Update the Connect UID in `agent/channels/slack.ts` to the one the CLI returned.
 
 ## 3. Try it
 
-In Slack: `@bot issue a refund for charge ch_123 of 2500 cents — never shipped.` An approval card appears. Approve → the stub logs and the bot confirms. Deny → the tool does not run.
+In Slack:
+
+- `@bot issue a refund for charge ch_123 of 2500 cents — never shipped.` → approval every time (`always()`).
+- `@bot restart the api service — memory leak.` → approval the first time in the session; a later restart auto-allows (`once()`).
+
+Approve → the stub logs and the bot confirms. Deny → the tool does not run.
 
 ## Verify
 
@@ -30,4 +35,4 @@ In Slack: `@bot issue a refund for charge ch_123 of 2500 cents — never shipped
 npm run eval
 ```
 
-The eval asserts `t.parked()` + `issue_refund` pending — model credentials required, Slack credentials not.
+Evals assert `t.parked()` for both tools — model credentials required, Slack credentials not.

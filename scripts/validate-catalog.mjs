@@ -28,7 +28,7 @@ const REQUIRED_AGENT_PATHS = [
   ".env.example",
   "agent/",
   "agent/agent.ts",
-  "agent/instructions.md",
+  // instructions.md OR instructions.ts — checked separately (eve allows either).
   "evals/",
   "examples/",
 ];
@@ -181,6 +181,23 @@ async function validateAgentDirectory(agent, label) {
         `${label}: missing required ${requiredPath.endsWith("/") ? "directory" : "file"} "${requiredPath}"`
       );
     }
+  }
+
+  const hasInstructionsMd = isFile(
+    path.join(agentDir, "agent/instructions.md")
+  );
+  const hasInstructionsTs = isFile(
+    path.join(agentDir, "agent/instructions.ts")
+  );
+  if (!hasInstructionsMd && !hasInstructionsTs) {
+    fail(
+      `${label}: missing required file "agent/instructions.md" or "agent/instructions.ts"`
+    );
+  }
+  if (hasInstructionsMd && hasInstructionsTs) {
+    fail(
+      `${label}: both agent/instructions.md and agent/instructions.ts exist (eve allows only one)`
+    );
   }
 
   const evalsDir = path.join(agentDir, "evals");

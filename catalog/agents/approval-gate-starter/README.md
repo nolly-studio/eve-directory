@@ -1,8 +1,15 @@
 # Approval Gate Starter
 
-Ask it to "issue a refund" — an approval card appears in Slack, and the tool only runs after someone approves. The tool body just logs; swap in your real action.
+Ask it to "issue a refund" or "restart the api service" — Slack shows an approval card. Tool bodies just log; swap in your real actions.
 
-One gated tool, one Slack channel. Demos: human-in-the-loop.
+Two gated tools demonstrate `always()` vs `once()`:
+
+| Tool | Helper | Behavior |
+| --- | --- | --- |
+| `issue_refund` | `always()` | Approve every call |
+| `restart_service` | `once()` | Approve the first call in the session; later calls auto-allow |
+
+Demos: human-in-the-loop approvals.
 
 ## Layout
 
@@ -13,7 +20,8 @@ approval-gate-starter/
 │   ├── agent.ts
 │   ├── instructions.md
 │   ├── channels/slack.ts
-│   └── tools/issue_refund.ts   # ← approval: always(); replace execute()
+│   ├── tools/issue_refund.ts      # approval: always()
+│   └── tools/restart_service.ts   # approval: once()
 ├── evals/
 ```
 
@@ -24,11 +32,11 @@ npm install
 npm run dev
 ```
 
-Evals prove the park-on-approval behavior without Slack. See `SETUP.md` to wire Slack buttons in a workspace.
+Evals prove park-on-approval without Slack. See `SETUP.md` for Connect.
 
 ## Make it yours
 
-Replace the `console.log` in `agent/tools/issue_refund.ts` with a real API call (Stripe refund, ops restart, etc.). Keep `approval: always()`.
+Replace the `console.log` bodies with real API calls. Keep the `approval` helpers.
 
 ## Verify
 

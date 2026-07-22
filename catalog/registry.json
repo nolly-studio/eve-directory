@@ -253,7 +253,7 @@
       "name": "Approval Gate Starter",
       "slug": "approval-gate-starter",
       "path": "agents/approval-gate-starter",
-      "summary": "Ask to issue a refund — Slack shows an approval card; the tool runs only after approve. Demos human-in-the-loop.",
+      "summary": "Refunds always need Slack approval; service restarts use once(). Tool bodies log only — swap in real actions.",
       "version": "1.0.0",
       "license": "MIT",
       "category": {
@@ -289,6 +289,76 @@
         "slug": "starters"
       },
       "integrations": ["slack"],
+      "tags": ["starter"]
+    },
+    {
+      "name": "Cron Task Starter",
+      "slug": "cron-task-starter",
+      "path": "agents/cron-task-starter",
+      "summary": "A fire-and-forget weekly task as a plain markdown schedule — cron in frontmatter, prompt in the body.",
+      "version": "1.0.0",
+      "license": "MIT",
+      "category": {
+        "name": "Starters",
+        "slug": "starters"
+      },
+      "integrations": ["eve"],
+      "tags": ["starter"]
+    },
+    {
+      "name": "Receipt Scanner Starter",
+      "slug": "receipt-scanner-starter",
+      "path": "agents/receipt-scanner-starter",
+      "summary": "Photo a receipt in Telegram and get merchant, total, category, and line items back. Demos attachments.",
+      "version": "1.0.0",
+      "license": "MIT",
+      "category": {
+        "name": "Starters",
+        "slug": "starters"
+      },
+      "integrations": ["telegram"],
+      "tags": ["starter"]
+    },
+    {
+      "name": "Translator Starter",
+      "slug": "translator-starter",
+      "path": "agents/translator-starter",
+      "summary": "Paste text, get it back in TARGET_LANGUAGE. Instructions-only — the entire product is the prompt.",
+      "version": "1.0.0",
+      "license": "MIT",
+      "category": {
+        "name": "Starters",
+        "slug": "starters"
+      },
+      "integrations": ["eve"],
+      "tags": ["starter"]
+    },
+    {
+      "name": "Headless API Starter",
+      "slug": "headless-api-starter",
+      "path": "agents/headless-api-starter",
+      "summary": "Drive an agent with curl or eve/client — no chat UI. Demos the default HTTP session protocol.",
+      "version": "1.0.0",
+      "license": "MIT",
+      "category": {
+        "name": "Starters",
+        "slug": "starters"
+      },
+      "integrations": ["eve"],
+      "tags": ["starter"]
+    },
+    {
+      "name": "Evals Playground Starter",
+      "slug": "evals-playground-starter",
+      "path": "agents/evals-playground-starter",
+      "summary": "A tiny agent plus numbered evals teaching succeeded, calledTool, parked, check, and judge.",
+      "version": "1.0.0",
+      "license": "MIT",
+      "category": {
+        "name": "Starters",
+        "slug": "starters"
+      },
+      "integrations": ["eve"],
       "tags": ["starter"]
     }
   ],
