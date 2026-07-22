@@ -1,5 +1,14 @@
+import type { Metadata } from "next";
+
 import { PageShell } from "@/components/page-shell";
+import { pageMetadata } from "@/lib/seo";
 import { SITE } from "@/lib/site";
+
+export const metadata: Metadata = pageMetadata({
+  description: `Terms of service for using ${SITE.name}, the open catalog of Eve agents and extensions.`,
+  pathname: "/terms",
+  title: "Terms of Service",
+});
 
 export default function TermsPage() {
   return (

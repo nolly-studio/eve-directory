@@ -1,0 +1,98 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "linear-triage-starter",
+  "title": "Linear Triage Starter",
+  "description": "Delegated Linear tickets get a priority and team recommendation from rules in your instructions.",
+  "dependencies": ["eve@^0.24.6"],
+  "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+  "files": [
+    {
+      "path": "catalog/agents/linear-triage-starter/.env.example",
+      "content": "# Linear OAuth app credentials (or use Vercel Connect — see SETUP.md).\nLINEAR_AGENT_ACCESS_TOKEN=lin_api_replace-me\nLINEAR_WEBHOOK_SECRET=replace-me\n\n# Model access follows your eve setup (Vercel AI Gateway or a provider key).\n",
+      "type": "registry:file",
+      "target": ".env.example"
+    },
+    {
+      "path": "catalog/agents/linear-triage-starter/.gitignore",
+      "content": "node_modules/\n.eve/\nvar/\n.env\n.env.local\n*.tsbuildinfo\n",
+      "type": "registry:file",
+      "target": ".gitignore"
+    },
+    {
+      "path": "catalog/agents/linear-triage-starter/README.md",
+      "content": "# Linear Triage Starter\n\nDelegate or mention this agent on a Linear ticket and it answers with a triage recommendation — priority, team, and what is missing from the report — per the rules in your instructions.\n\nOne channel, no tools. Demos: the Linear Agent Sessions channel.\n\n## Layout\n\n```text\nlinear-triage-starter/\n├── package.json\n├── agent/\n│   ├── agent.ts             # model choice\n│   ├── instructions.md      # ← edit priority + team rules here\n│   └── channels/linear.ts   # Linear Agent Sessions channel\n├── evals/\n```\n\n## Run\n\n```bash\nnpm install\nnpm run dev\n```\n\nYou can paste a ticket into the dev terminal immediately (see `examples/sample-input.md`). See `SETUP.md` to connect Linear.\n\n## Make it yours\n\nEdit the `Priority rules` and `Team routing rules` in `agent/instructions.md` to match your workspace's teams and severity conventions. That is the only required change.\n\n## Verify\n\n```bash\nnpm run eval\n```\n\n## License\n\nMIT\n",
+      "type": "registry:file",
+      "target": "README.md"
+    },
+    {
+      "path": "catalog/agents/linear-triage-starter/SETUP.md",
+      "content": "# Set up Linear Triage Starter\n\n## 1. Install and run\n\n```bash\nnpm install\nnpm run dev\n```\n\n## 2. Connect Linear\n\nThe easiest path is [Vercel Connect](https://vercel.com/docs/connect), which manages the Linear app and webhook verification:\n\n```bash\nnpm install -g vercel@latest\nvercel connect create linear --triggers\nvercel connect detach <uid> --yes\nvercel connect attach <uid> --triggers --trigger-path /eve/v1/linear --yes\n```\n\nThen switch `agent/channels/linear.ts` to `connectLinearCredentials(\"<uid>\")` (requires `npm install @vercel/connect`).\n\nTo bring your own Linear OAuth app instead: create one with `actor=app`, grant `app:assignable` and `app:mentionable`, subscribe to the `AgentSessionEvent` webhook category, point the webhook at `https://<your-deployment>/eve/v1/linear`, and fill `.env` from `.env.example`.\n\n## 3. Try it\n\nIn Linear, delegate a ticket to the agent (or @mention it). It replies as a native Agent Session response with priority, team, reasoning, and missing info.\n\n## Verify\n\n```bash\nnpm run eval\n```\n\nEvals exercise the triage rules over eve's local HTTP channel — model credentials required, Linear credentials not.\n",
+      "type": "registry:file",
+      "target": "SETUP.md"
+    },
+    {
+      "path": "catalog/agents/linear-triage-starter/agent/agent.ts",
+      "content": "import { defineAgent } from \"eve\";\n\nexport default defineAgent({\n  model: \"openai/gpt-5.4-mini\",\n});\n",
+      "type": "registry:file",
+      "target": "agent/agent.ts"
+    },
+    {
+      "path": "catalog/agents/linear-triage-starter/agent/channels/linear.ts",
+      "content": "import { linearChannel } from \"eve/channels/linear\";\n\n// Credentials come from env: LINEAR_AGENT_ACCESS_TOKEN and\n// LINEAR_WEBHOOK_SECRET. See SETUP.md.\nexport default linearChannel();\n",
+      "type": "registry:file",
+      "target": "agent/channels/linear.ts"
+    },
+    {
+      "path": "catalog/agents/linear-triage-starter/agent/instructions.md",
+      "content": "# Identity\n\nYou are a triage agent for a Linear workspace. When a ticket is delegated or mentioned to you, you read it and answer with a triage recommendation: priority, team, and what is missing from the report.\n\n<!-- CUSTOMIZE HERE: replace the rules below with your workspace's. -->\n\n# Priority rules\n\nPick exactly one priority:\n\n- **Urgent** — production is down, data is being lost, or a security issue.\n- **High** — a core workflow is broken for many users with no workaround.\n- **Medium** — broken or degraded behavior with a workaround, or an important improvement.\n- **Low** — polish, minor bugs, nice-to-haves.\n\n# Team routing rules\n\nPick exactly one team:\n\n- **Platform** — API, backend services, data, infrastructure, performance.\n- **Web** — the web app UI, dashboard, browser issues.\n- **Mobile** — the iOS and Android apps.\n- **Growth** — onboarding, billing, emails, marketing site.\n\n# Output format (required)\n\nReply with exactly this structure:\n\n```\nPriority: <Urgent|High|Medium|Low>\nTeam: <Platform|Web|Mobile|Growth>\nReasoning: <one or two sentences>\nMissing info: <what the reporter should add, or \"None\">\n```\n\n# Rules\n\n- Always give exactly one priority and one team, even when the ticket is vague — choose the most likely and say why in Reasoning.\n- Do not promise fixes or timelines, and do not attempt to edit the ticket; your reply is a recommendation the team applies.\n- Keep the whole reply under 120 words.\n",
+      "type": "registry:file",
+      "target": "agent/instructions.md"
+    },
+    {
+      "path": "catalog/agents/linear-triage-starter/evals/evals.config.ts",
+      "content": "import { defineEvalConfig } from \"eve/evals\";\n\nexport default defineEvalConfig({\n  maxConcurrency: 1,\n  timeoutMs: 120_000,\n});\n",
+      "type": "registry:file",
+      "target": "evals/evals.config.ts"
+    },
+    {
+      "path": "catalog/agents/linear-triage-starter/evals/output-format.eval.ts",
+      "content": "import { defineEval } from \"eve/evals\";\nimport { includes } from \"eve/evals/expect\";\n\nexport default defineEval({\n  description: \"A vague ticket still gets the full structured triage output.\",\n  async test(t) {\n    await t.send(\n      [\n        \"Triage this ticket:\",\n        \"\",\n        \"Title: thing looks weird\",\n        \"Description: idk it's just off on my phone\",\n      ].join(\"\\n\")\n    );\n    t.succeeded();\n    t.check(t.reply, includes(/Priority:\\s*(Urgent|High|Medium|Low)/i));\n    t.check(t.reply, includes(/Team:\\s*(Platform|Web|Mobile|Growth)/i));\n    t.check(t.reply, includes(/Missing info:/i));\n  },\n});\n",
+      "type": "registry:file",
+      "target": "evals/output-format.eval.ts"
+    },
+    {
+      "path": "catalog/agents/linear-triage-starter/evals/triages-outage.eval.ts",
+      "content": "import { defineEval } from \"eve/evals\";\nimport { includes } from \"eve/evals/expect\";\n\nexport default defineEval({\n  description: \"A production outage is triaged Urgent for Platform.\",\n  async test(t) {\n    await t.send(\n      [\n        \"Triage this ticket:\",\n        \"\",\n        \"Title: API returning 500s for all requests since 14:20 UTC\",\n        \"Description: Every customer API call fails. Status page is red.\",\n      ].join(\"\\n\")\n    );\n    t.succeeded();\n    t.check(t.reply, includes(/Priority:\\s*Urgent/i));\n    t.check(t.reply, includes(/Team:\\s*Platform/i));\n  },\n});\n",
+      "type": "registry:file",
+      "target": "evals/triages-outage.eval.ts"
+    },
+    {
+      "path": "catalog/agents/linear-triage-starter/examples/sample-input.md",
+      "content": "# Example request\n\nTriage this ticket:\n\nTitle: Checkout button does nothing on iPhone Description: Several users report tapping \"Checkout\" in the iOS app does nothing. Works fine on web. Started after yesterday's release.\n\n# Expected behavior\n\nA structured reply: `Priority: High` (core workflow broken, no workaround mentioned), `Team: Mobile`, one or two sentences of reasoning, and missing info (iOS version, app version, whether a force-quit helps).\n",
+      "type": "registry:file",
+      "target": "examples/sample-input.md"
+    },
+    {
+      "path": "catalog/agents/linear-triage-starter/package.json",
+      "content": "{\n  \"name\": \"linear-triage-starter\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": {\n    \"dev\": \"eve dev\",\n    \"build\": \"eve build\",\n    \"start\": \"eve start\",\n    \"eval\": \"eve eval\",\n    \"typecheck\": \"tsc\"\n  },\n  \"dependencies\": {\n    \"eve\": \"^0.24.6\"\n  },\n  \"devDependencies\": {\n    \"@types/node\": \"24.x\",\n    \"typescript\": \"^5.9.3\"\n  },\n  \"engines\": {\n    \"node\": \"24.x\"\n  }\n}\n",
+      "type": "registry:file",
+      "target": "package.json"
+    },
+    {
+      "path": "catalog/agents/linear-triage-starter/tsconfig.json",
+      "content": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\",\n    \"module\": \"esnext\",\n    \"moduleResolution\": \"bundler\",\n    \"types\": [\"node\"],\n    \"strict\": true,\n    \"esModuleInterop\": true,\n    \"skipLibCheck\": true,\n    \"noEmit\": true\n  },\n  \"include\": [\"agent/**/*.ts\", \"evals/**/*.ts\"]\n}\n",
+      "type": "registry:file",
+      "target": "tsconfig.json"
+    }
+  ],
+  "meta": {
+    "runtime": "eve",
+    "layout": "eve-app",
+    "version": "1.0.0",
+    "license": "MIT",
+    "category": "starters",
+    "integrations": ["linear-agent"]
+  },
+  "categories": ["starters"],
+  "type": "registry:block"
+}

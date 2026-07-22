@@ -9,6 +9,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { getMDXComponents } from "@/components/mdx";
+import { pageMetadata } from "@/lib/seo";
 import { source } from "@/lib/source";
 
 export default async function Page(props: {
@@ -50,8 +51,9 @@ export async function generateMetadata(props: {
     notFound();
   }
 
-  return {
-    description: page.data.description,
+  return pageMetadata({
+    description: page.data.description ?? "",
+    pathname: page.url,
     title: page.data.title,
-  };
+  });
 }

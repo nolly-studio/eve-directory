@@ -1,0 +1,104 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "daily-digest-starter",
+  "title": "Daily Digest Starter",
+  "description": "Weekday 9am UTC: fetch one RSS feed and post a five-item summary to Slack. Demos cron schedules.",
+  "dependencies": ["@vercel/connect@^0.2.2", "eve@^0.24.6", "zod@^4.4.3"],
+  "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+  "files": [
+    {
+      "path": "catalog/agents/daily-digest-starter/.env.example",
+      "content": "# The feed to digest (RSS or Atom). Defaults to Hacker News front page.\nDIGEST_FEED_URL=https://hnrss.org/frontpage\n\n# Slack channel id to post the digest into (right-click channel → copy link;\n# the id starts with C).\nSLACK_DIGEST_CHANNEL_ID=C0123456789\n\n# Slack credentials are managed by Vercel Connect:\n#   vercel link\n#   vercel connect create slack --triggers\n#   vercel env pull\n# Then update the Connect UID in agent/channels/slack.ts.\n\n# Model access follows your eve setup (Vercel AI Gateway or a provider key).\n",
+      "type": "registry:file",
+      "target": ".env.example"
+    },
+    {
+      "path": "catalog/agents/daily-digest-starter/.gitignore",
+      "content": "node_modules/\n.eve/\nvar/\n.env\n.env.local\n*.tsbuildinfo\n",
+      "type": "registry:file",
+      "target": ".gitignore"
+    },
+    {
+      "path": "catalog/agents/daily-digest-starter/README.md",
+      "content": "# Daily Digest Starter\n\nEvery weekday at 9:00 UTC, fetches one RSS/Atom feed and posts a five-item summary to a Slack channel.\n\nOne schedule, one tool, one channel. Demos: cron schedules.\n\n## Layout\n\n```text\ndaily-digest-starter/\n├── package.json\n├── agent/\n│   ├── agent.ts                     # model choice\n│   ├── instructions.md              # digest format and rules\n│   ├── tools/fetch_source.ts        # ← swap the feed URL here (or via env)\n│   ├── schedules/daily-digest.ts    # ← cron cadence here\n│   └── channels/slack.ts            # Slack delivery via Vercel Connect\n├── evals/\n```\n\n## Run\n\n```bash\nnpm install\nnpm run dev\n```\n\nTrigger the schedule once, without waiting for the cron tick:\n\n```bash\ncurl -X POST http://localhost:3000/eve/v1/dev/schedules/daily-digest\n```\n\nSee `SETUP.md` for Slack setup.\n\n## Make it yours\n\n- Point `DIGEST_FEED_URL` at your feed (defaults to Hacker News).\n- Change the cadence in `agent/schedules/daily-digest.ts` — cron runs in UTC.\n- Adjust item count and tone in `agent/instructions.md`.\n\n## Verify\n\n```bash\nnpm run eval\n```\n\n## License\n\nMIT\n",
+      "type": "registry:file",
+      "target": "README.md"
+    },
+    {
+      "path": "catalog/agents/daily-digest-starter/SETUP.md",
+      "content": "# Set up Daily Digest Starter\n\n## 1. Install and run\n\n```bash\nnpm install\nnpm run dev\n```\n\n`eve dev` never fires schedules on their cron cadence; trigger one manually:\n\n```bash\ncurl -X POST http://localhost:3000/eve/v1/dev/schedules/daily-digest\n```\n\n(Without Slack connected, the run logs the delivery failure — the fetch and summarization still exercise end to end via `npm run eval`.)\n\n## 2. Connect Slack\n\n```bash\nnpm install -g vercel@latest\nvercel link\nvercel connect create slack --triggers\nvercel connect detach <uid> --yes\nvercel connect attach <uid> --triggers --trigger-path /eve/v1/slack --yes\nvercel env pull\n```\n\nUpdate the Connect UID in `agent/channels/slack.ts` to the one the CLI returned, and set `SLACK_DIGEST_CHANNEL_ID` in `.env` to the channel the digest should land in. Invite the bot to that channel.\n\n## 3. Pick your feed and cadence\n\n- `DIGEST_FEED_URL` in `.env` — any RSS or Atom feed.\n- `cron` in `agent/schedules/daily-digest.ts` — evaluated in UTC on Vercel.\n\n## 4. Deploy\n\n```bash\nVERCEL_USE_EXPERIMENTAL_FRAMEWORKS=1 vercel deploy --prod\n```\n\nEach schedule becomes a Vercel Cron Job (Settings → Cron Jobs).\n\n## Verify\n\n```bash\nnpm run eval\n```\n\nThe eval drives an on-demand digest over eve's local HTTP channel — model credentials and network access required, Slack credentials not.\n",
+      "type": "registry:file",
+      "target": "SETUP.md"
+    },
+    {
+      "path": "catalog/agents/daily-digest-starter/agent/agent.ts",
+      "content": "import { defineAgent } from \"eve\";\n\nexport default defineAgent({\n  model: \"openai/gpt-5.4-mini\",\n});\n",
+      "type": "registry:file",
+      "target": "agent/agent.ts"
+    },
+    {
+      "path": "catalog/agents/daily-digest-starter/agent/channels/slack.ts",
+      "content": "import { connectSlackCredentials } from \"@vercel/connect/eve\";\nimport { slackChannel } from \"eve/channels/slack\";\n\n// Replace the UID with your own Slack Connect client. See SETUP.md.\nexport default slackChannel({\n  credentials: connectSlackCredentials(\"slack/daily-digest-starter\"),\n});\n",
+      "type": "registry:file",
+      "target": "agent/channels/slack.ts"
+    },
+    {
+      "path": "catalog/agents/daily-digest-starter/agent/instructions.md",
+      "content": "# Identity\n\nYou are a daily digest bot. Every weekday morning you fetch one feed and post a short summary to Slack.\n\n# Workflow\n\n1. Call `fetch_source` to get the feed's raw XML.\n2. Pick the 5 most interesting items (favor substance over hype; skip duplicates covering the same story).\n3. Post the digest in this shape:\n\n```\n*Daily digest — <date>*\n1. <title> — one-line why it matters. <link>\n2. ...\n```\n\n<!-- CUSTOMIZE HERE: change the item count, tone, or selection criteria. -->\n\n# Rules\n\n- Every item must come from the fetched feed — never invent items or links.\n- One line of commentary per item, no more.\n- If the feed fetch fails or is empty, post a single line saying the digest is unavailable today and why. Do not retry more than once.\n- When someone mentions you in Slack, you can also run the digest on demand or answer questions about today's items.\n",
+      "type": "registry:file",
+      "target": "agent/instructions.md"
+    },
+    {
+      "path": "catalog/agents/daily-digest-starter/agent/schedules/daily-digest.ts",
+      "content": "import { defineSchedule } from \"eve/schedules\";\n\nimport slack from \"../channels/slack\";\n\n// 09:00 UTC on weekdays. Vercel evaluates cron in UTC — adjust for your\n// timezone. CUSTOMIZE HERE.\nexport default defineSchedule({\n  cron: \"0 9 * * 1-5\",\n  async run({ receive, waitUntil, appAuth }) {\n    const channelId = process.env.SLACK_DIGEST_CHANNEL_ID;\n    if (!channelId) {\n      console.warn(\n        \"daily-digest: SLACK_DIGEST_CHANNEL_ID is not set, skipping\"\n      );\n      return;\n    }\n    waitUntil(\n      receive(slack, {\n        message:\n          \"Fetch today's feed with fetch_source and post the daily digest.\",\n        target: { channelId },\n        auth: appAuth,\n      })\n    );\n  },\n});\n",
+      "type": "registry:file",
+      "target": "agent/schedules/daily-digest.ts"
+    },
+    {
+      "path": "catalog/agents/daily-digest-starter/agent/tools/fetch_source.ts",
+      "content": "import { defineTool } from \"eve/tools\";\nimport { z } from \"zod\";\n\n// CUSTOMIZE HERE: set DIGEST_FEED_URL to the RSS/Atom feed you want digested.\nconst DEFAULT_FEED_URL = \"https://hnrss.org/frontpage\";\nconst MAX_CHARS = 12_000;\n\nexport default defineTool({\n  description:\n    \"Fetch the configured RSS/Atom feed and return its raw XML (truncated). Call this before writing the digest.\",\n  inputSchema: z.object({}),\n  async execute(_input, ctx) {\n    const url = process.env.DIGEST_FEED_URL ?? DEFAULT_FEED_URL;\n    const response = await fetch(url, {\n      signal: ctx.abortSignal,\n      headers: { accept: \"application/rss+xml, application/atom+xml, */*\" },\n    });\n    if (!response.ok) {\n      throw new Error(`Feed fetch failed: ${response.status} ${url}`);\n    }\n    const body = await response.text();\n    return {\n      url,\n      truncated: body.length > MAX_CHARS,\n      content: body.slice(0, MAX_CHARS),\n    };\n  },\n});\n",
+      "type": "registry:file",
+      "target": "agent/tools/fetch_source.ts"
+    },
+    {
+      "path": "catalog/agents/daily-digest-starter/evals/digest-roundtrip.eval.ts",
+      "content": "import { defineEval } from \"eve/evals\";\nimport { includes } from \"eve/evals/expect\";\n\nexport default defineEval({\n  description: \"An on-demand digest fetches the feed and lists numbered items.\",\n  async test(t) {\n    await t.send(\n      \"Fetch today's feed with fetch_source and post the daily digest.\"\n    );\n    t.succeeded();\n    t.calledTool(\"fetch_source\");\n    t.check(t.reply, includes(/1\\./)).soft();\n  },\n});\n",
+      "type": "registry:file",
+      "target": "evals/digest-roundtrip.eval.ts"
+    },
+    {
+      "path": "catalog/agents/daily-digest-starter/evals/evals.config.ts",
+      "content": "import { defineEvalConfig } from \"eve/evals\";\n\nexport default defineEvalConfig({\n  maxConcurrency: 1,\n  timeoutMs: 180_000,\n});\n",
+      "type": "registry:file",
+      "target": "evals/evals.config.ts"
+    },
+    {
+      "path": "catalog/agents/daily-digest-starter/examples/sample-input.md",
+      "content": "# Example request\n\nFetch today's feed with fetch_source and post the daily digest.\n\n# Expected behavior\n\nCall `fetch_source`, pick the 5 most substantive items from the returned feed XML, and reply in the digest format: a dated header followed by five numbered lines, each with the item title, one line of why it matters, and the link. No invented items.\n",
+      "type": "registry:file",
+      "target": "examples/sample-input.md"
+    },
+    {
+      "path": "catalog/agents/daily-digest-starter/package.json",
+      "content": "{\n  \"name\": \"daily-digest-starter\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": {\n    \"dev\": \"eve dev\",\n    \"build\": \"eve build\",\n    \"start\": \"eve start\",\n    \"eval\": \"eve eval\",\n    \"typecheck\": \"tsc\"\n  },\n  \"dependencies\": {\n    \"@vercel/connect\": \"^0.2.2\",\n    \"eve\": \"^0.24.6\",\n    \"zod\": \"^4.4.3\"\n  },\n  \"devDependencies\": {\n    \"@types/node\": \"24.x\",\n    \"typescript\": \"^5.9.3\"\n  },\n  \"engines\": {\n    \"node\": \"24.x\"\n  }\n}\n",
+      "type": "registry:file",
+      "target": "package.json"
+    },
+    {
+      "path": "catalog/agents/daily-digest-starter/tsconfig.json",
+      "content": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\",\n    \"module\": \"esnext\",\n    \"moduleResolution\": \"bundler\",\n    \"types\": [\"node\"],\n    \"strict\": true,\n    \"esModuleInterop\": true,\n    \"skipLibCheck\": true,\n    \"noEmit\": true\n  },\n  \"include\": [\"agent/**/*.ts\", \"evals/**/*.ts\"]\n}\n",
+      "type": "registry:file",
+      "target": "tsconfig.json"
+    }
+  ],
+  "meta": {
+    "runtime": "eve",
+    "layout": "eve-app",
+    "version": "1.0.0",
+    "license": "MIT",
+    "category": "starters",
+    "integrations": ["slack"]
+  },
+  "categories": ["starters"],
+  "type": "registry:block"
+}

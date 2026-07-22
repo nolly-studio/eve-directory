@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { AuthMenu } from "@/components/auth-menu";
 import { EveDirectoryLogo } from "@/components/logo";
 import { SearchTrigger } from "@/components/search-trigger";
 import { buttonVariants } from "@/components/ui/button";
@@ -42,10 +43,14 @@ export function SiteHeader({ className }: { className?: string }) {
             href={SITE.aisdkUrl}
             target="_blank"
             rel="noreferrer"
-            className={cn(buttonVariants({ size: "sm" }), "ml-1")}
+            className={cn(
+              buttonVariants({ size: "sm" }),
+              "ml-1 hidden sm:inline-flex"
+            )}
           >
             AI SDK Agents
           </a>
+          <AuthMenu />
         </nav>
       </div>
     </header>

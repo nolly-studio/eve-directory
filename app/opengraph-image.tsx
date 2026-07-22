@@ -109,7 +109,7 @@ export default async function Image() {
             color: muted,
           }}
         >
-          <span>{SITE.domain}</span>
+          <span>www.{SITE.domain}</span>
           <span>Agents & extensions</span>
         </div>
 
@@ -146,7 +146,7 @@ export default async function Image() {
               color: ink,
             }}
           >
-            Open registry for Eve agents and extensions
+            Eve agents & templates for Vercel Eve
           </div>
         </div>
 

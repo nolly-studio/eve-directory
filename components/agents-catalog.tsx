@@ -14,7 +14,7 @@ import {
   IntegrationLogo,
   IntegrationMark,
 } from "@/components/integration-badge";
-import { AgentCard } from "@/components/listing-card";
+import { AgentCard, agentCardKey } from "@/components/listing-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -22,16 +22,19 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import type {
+  AgentTierFilter,
+  IntegrationFilterOption,
+} from "@/lib/catalog/agent-filters";
 import {
   filterAgents,
   groupIntegrationFilterOptions,
 } from "@/lib/catalog/agent-filters";
-import type { IntegrationFilterOption } from "@/lib/catalog/agent-filters";
-import type { AgentListing, Category } from "@/lib/catalog/types";
+import type { Category, DirectoryAgent } from "@/lib/catalog/types";
 import { cn } from "@/lib/utils";
 
 interface AgentsCatalogProps {
-  agents: AgentListing[];
+  agents: DirectoryAgent[];
   categories: Category[];
   integrations: IntegrationFilterOption[];
 }
@@ -79,6 +82,12 @@ function IntegrationOption({
   );
 }
 
+const TIER_OPTIONS: { value: AgentTierFilter; label: string }[] = [
+  { value: "all", label: "All tiers" },
+  { value: "official", label: "Official" },
+  { value: "community", label: "Community" },
+];
+
 export function AgentsCatalog({
   agents,
   categories,
@@ -87,6 +96,7 @@ export function AgentsCatalog({
   const [query, setQuery] = useState("");
   const [categorySlug, setCategorySlug] = useState<string | null>(null);
   const [integrationSlug, setIntegrationSlug] = useState<string | null>(null);
+  const [tier, setTier] = useState<AgentTierFilter>("all");
   const [integrationOpen, setIntegrationOpen] = useState(false);
   const [integrationQuery, setIntegrationQuery] = useState("");
 
@@ -122,8 +132,9 @@ export function AgentsCatalog({
         categorySlug,
         integrationSlug,
         query: deferredQuery,
+        tier,
       }),
-    [agents, categorySlug, deferredQuery, integrationSlug]
+    [agents, categorySlug, deferredQuery, integrationSlug, tier]
   );
 
   return (
@@ -268,6 +279,20 @@ export function AgentsCatalog({
       </div>
 
       <div className="flex flex-wrap gap-2">
+        {TIER_OPTIONS.map((option) => (
+          <Button
+            key={option.value}
+            type="button"
+            size="sm"
+            variant={tier === option.value ? "default" : "outline"}
+            onClick={() => setTier(option.value)}
+          >
+            {option.label}
+          </Button>
+        ))}
+      </div>
+
+      <div className="flex flex-wrap gap-2">
         <Button
           type="button"
           size="sm"
@@ -292,7 +317,7 @@ export function AgentsCatalog({
       {filteredAgents.length > 0 ? (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredAgents.map((agent) => (
-            <AgentCard key={agent.slug} agent={agent} />
+            <AgentCard key={agentCardKey(agent)} agent={agent} />
           ))}
         </div>
       ) : (

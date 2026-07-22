@@ -6,16 +6,19 @@ import {
   getExtensions,
   getIntegrationDirectorySlugs,
 } from "@/lib/catalog";
+import { getPublishedCommunityAgents } from "@/lib/community/queries";
 import { siteUrl } from "@/lib/site";
 import { source } from "@/lib/source";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [agents, extensions, categories, integrations] = await Promise.all([
-    getAgents(),
-    getExtensions(),
-    getCategories(),
-    getIntegrationDirectorySlugs(),
-  ]);
+  const [agents, communityAgents, extensions, categories, integrations] =
+    await Promise.all([
+      getAgents(),
+      getPublishedCommunityAgents(),
+      getExtensions(),
+      getCategories(),
+      getIntegrationDirectorySlugs(),
+    ]);
 
   const staticRoutes: MetadataRoute.Sitemap = [
     "",
@@ -36,6 +39,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: "weekly",
     priority: 0.8,
     url: siteUrl(`/agents/${agent.slug}`),
+  }));
+
+  const communityAgentRoutes: MetadataRoute.Sitemap = communityAgents.map(
+    (agent) => ({
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+      url: siteUrl(`/agents/@${agent.handle}/${agent.slug}`),
+    })
+  );
+
+  const profileHandles = [...new Set(communityAgents.map((a) => a.handle))];
+  const profileRoutes: MetadataRoute.Sitemap = profileHandles.map((handle) => ({
+    changeFrequency: "weekly" as const,
+    priority: 0.5,
+    url: siteUrl(`/u/${handle}`),
   }));
 
   const extensionRoutes: MetadataRoute.Sitemap = extensions.map(
@@ -67,6 +85,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     ...staticRoutes,
     ...agentRoutes,
+    ...communityAgentRoutes,
+    ...profileRoutes,
     ...extensionRoutes,
     ...categoryRoutes,
     ...integrationRoutes,

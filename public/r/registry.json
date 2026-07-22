@@ -1348,6 +1348,1311 @@
         "category": "community",
         "integrations": ["discord", "chat-sdk-x", "github", "notion", "slack"]
       }
+    },
+    {
+      "name": "telegram-assistant-starter",
+      "type": "registry:block",
+      "title": "Telegram Assistant Starter",
+      "description": "Message a Telegram bot and it replies per your instructions. The blank canvas — edit instructions.md and nothing else.",
+      "dependencies": ["eve@^0.24.6"],
+      "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+      "files": [
+        {
+          "path": "catalog/agents/telegram-assistant-starter/.env.example",
+          "type": "registry:file",
+          "target": ".env.example"
+        },
+        {
+          "path": "catalog/agents/telegram-assistant-starter/.gitignore",
+          "type": "registry:file",
+          "target": ".gitignore"
+        },
+        {
+          "path": "catalog/agents/telegram-assistant-starter/README.md",
+          "type": "registry:file",
+          "target": "README.md"
+        },
+        {
+          "path": "catalog/agents/telegram-assistant-starter/SETUP.md",
+          "type": "registry:file",
+          "target": "SETUP.md"
+        },
+        {
+          "path": "catalog/agents/telegram-assistant-starter/agent/agent.ts",
+          "type": "registry:file",
+          "target": "agent/agent.ts"
+        },
+        {
+          "path": "catalog/agents/telegram-assistant-starter/agent/channels/telegram.ts",
+          "type": "registry:file",
+          "target": "agent/channels/telegram.ts"
+        },
+        {
+          "path": "catalog/agents/telegram-assistant-starter/agent/instructions.md",
+          "type": "registry:file",
+          "target": "agent/instructions.md"
+        },
+        {
+          "path": "catalog/agents/telegram-assistant-starter/evals/evals.config.ts",
+          "type": "registry:file",
+          "target": "evals/evals.config.ts"
+        },
+        {
+          "path": "catalog/agents/telegram-assistant-starter/evals/smoke.eval.ts",
+          "type": "registry:file",
+          "target": "evals/smoke.eval.ts"
+        },
+        {
+          "path": "catalog/agents/telegram-assistant-starter/evals/stays-brief.eval.ts",
+          "type": "registry:file",
+          "target": "evals/stays-brief.eval.ts"
+        },
+        {
+          "path": "catalog/agents/telegram-assistant-starter/examples/sample-input.md",
+          "type": "registry:file",
+          "target": "examples/sample-input.md"
+        },
+        {
+          "path": "catalog/agents/telegram-assistant-starter/package.json",
+          "type": "registry:file",
+          "target": "package.json"
+        },
+        {
+          "path": "catalog/agents/telegram-assistant-starter/tsconfig.json",
+          "type": "registry:file",
+          "target": "tsconfig.json"
+        }
+      ],
+      "categories": ["starters"],
+      "meta": {
+        "runtime": "eve",
+        "layout": "eve-app",
+        "version": "1.0.0",
+        "license": "MIT",
+        "category": "starters",
+        "integrations": ["telegram"]
+      }
+    },
+    {
+      "name": "discord-docs-starter",
+      "type": "registry:block",
+      "title": "Discord Docs Starter",
+      "description": "Answers Discord questions from a single knowledge.md FAQ you paste in. Demos giving an agent knowledge.",
+      "dependencies": ["eve@^0.24.6"],
+      "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+      "files": [
+        {
+          "path": "catalog/agents/discord-docs-starter/.env.example",
+          "type": "registry:file",
+          "target": ".env.example"
+        },
+        {
+          "path": "catalog/agents/discord-docs-starter/.gitignore",
+          "type": "registry:file",
+          "target": ".gitignore"
+        },
+        {
+          "path": "catalog/agents/discord-docs-starter/README.md",
+          "type": "registry:file",
+          "target": "README.md"
+        },
+        {
+          "path": "catalog/agents/discord-docs-starter/SETUP.md",
+          "type": "registry:file",
+          "target": "SETUP.md"
+        },
+        {
+          "path": "catalog/agents/discord-docs-starter/agent/agent.ts",
+          "type": "registry:file",
+          "target": "agent/agent.ts"
+        },
+        {
+          "path": "catalog/agents/discord-docs-starter/agent/channels/discord.ts",
+          "type": "registry:file",
+          "target": "agent/channels/discord.ts"
+        },
+        {
+          "path": "catalog/agents/discord-docs-starter/agent/instructions.md",
+          "type": "registry:file",
+          "target": "agent/instructions.md"
+        },
+        {
+          "path": "catalog/agents/discord-docs-starter/agent/skills/knowledge.md",
+          "type": "registry:file",
+          "target": "agent/skills/knowledge.md"
+        },
+        {
+          "path": "catalog/agents/discord-docs-starter/evals/admits-unknown.eval.ts",
+          "type": "registry:file",
+          "target": "evals/admits-unknown.eval.ts"
+        },
+        {
+          "path": "catalog/agents/discord-docs-starter/evals/answers-from-knowledge.eval.ts",
+          "type": "registry:file",
+          "target": "evals/answers-from-knowledge.eval.ts"
+        },
+        {
+          "path": "catalog/agents/discord-docs-starter/evals/evals.config.ts",
+          "type": "registry:file",
+          "target": "evals/evals.config.ts"
+        },
+        {
+          "path": "catalog/agents/discord-docs-starter/examples/sample-input.md",
+          "type": "registry:file",
+          "target": "examples/sample-input.md"
+        },
+        {
+          "path": "catalog/agents/discord-docs-starter/package.json",
+          "type": "registry:file",
+          "target": "package.json"
+        },
+        {
+          "path": "catalog/agents/discord-docs-starter/tsconfig.json",
+          "type": "registry:file",
+          "target": "tsconfig.json"
+        }
+      ],
+      "categories": ["starters"],
+      "meta": {
+        "runtime": "eve",
+        "layout": "eve-app",
+        "version": "1.0.0",
+        "license": "MIT",
+        "category": "starters",
+        "integrations": ["discord"]
+      }
+    },
+    {
+      "name": "github-issue-labeler-starter",
+      "type": "registry:block",
+      "title": "GitHub Issue Labeler Starter",
+      "description": "New issue opened → applies one label from your taxonomy and asks for repro steps when a bug report is thin.",
+      "dependencies": ["eve@^0.24.6"],
+      "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+      "files": [
+        {
+          "path": "catalog/agents/github-issue-labeler-starter/.env.example",
+          "type": "registry:file",
+          "target": ".env.example"
+        },
+        {
+          "path": "catalog/agents/github-issue-labeler-starter/.gitignore",
+          "type": "registry:file",
+          "target": ".gitignore"
+        },
+        {
+          "path": "catalog/agents/github-issue-labeler-starter/README.md",
+          "type": "registry:file",
+          "target": "README.md"
+        },
+        {
+          "path": "catalog/agents/github-issue-labeler-starter/SETUP.md",
+          "type": "registry:file",
+          "target": "SETUP.md"
+        },
+        {
+          "path": "catalog/agents/github-issue-labeler-starter/agent/agent.ts",
+          "type": "registry:file",
+          "target": "agent/agent.ts"
+        },
+        {
+          "path": "catalog/agents/github-issue-labeler-starter/agent/channels/github.ts",
+          "type": "registry:file",
+          "target": "agent/channels/github.ts"
+        },
+        {
+          "path": "catalog/agents/github-issue-labeler-starter/agent/instructions.md",
+          "type": "registry:file",
+          "target": "agent/instructions.md"
+        },
+        {
+          "path": "catalog/agents/github-issue-labeler-starter/evals/evals.config.ts",
+          "type": "registry:file",
+          "target": "evals/evals.config.ts"
+        },
+        {
+          "path": "catalog/agents/github-issue-labeler-starter/evals/labels-bug.eval.ts",
+          "type": "registry:file",
+          "target": "evals/labels-bug.eval.ts"
+        },
+        {
+          "path": "catalog/agents/github-issue-labeler-starter/evals/labels-feature.eval.ts",
+          "type": "registry:file",
+          "target": "evals/labels-feature.eval.ts"
+        },
+        {
+          "path": "catalog/agents/github-issue-labeler-starter/examples/sample-input.md",
+          "type": "registry:file",
+          "target": "examples/sample-input.md"
+        },
+        {
+          "path": "catalog/agents/github-issue-labeler-starter/package.json",
+          "type": "registry:file",
+          "target": "package.json"
+        },
+        {
+          "path": "catalog/agents/github-issue-labeler-starter/tsconfig.json",
+          "type": "registry:file",
+          "target": "tsconfig.json"
+        }
+      ],
+      "categories": ["starters"],
+      "meta": {
+        "runtime": "eve",
+        "layout": "eve-app",
+        "version": "1.0.0",
+        "license": "MIT",
+        "category": "starters",
+        "integrations": ["github"]
+      }
+    },
+    {
+      "name": "linear-triage-starter",
+      "type": "registry:block",
+      "title": "Linear Triage Starter",
+      "description": "Delegated Linear tickets get a priority and team recommendation from rules in your instructions.",
+      "dependencies": ["eve@^0.24.6"],
+      "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+      "files": [
+        {
+          "path": "catalog/agents/linear-triage-starter/.env.example",
+          "type": "registry:file",
+          "target": ".env.example"
+        },
+        {
+          "path": "catalog/agents/linear-triage-starter/.gitignore",
+          "type": "registry:file",
+          "target": ".gitignore"
+        },
+        {
+          "path": "catalog/agents/linear-triage-starter/README.md",
+          "type": "registry:file",
+          "target": "README.md"
+        },
+        {
+          "path": "catalog/agents/linear-triage-starter/SETUP.md",
+          "type": "registry:file",
+          "target": "SETUP.md"
+        },
+        {
+          "path": "catalog/agents/linear-triage-starter/agent/agent.ts",
+          "type": "registry:file",
+          "target": "agent/agent.ts"
+        },
+        {
+          "path": "catalog/agents/linear-triage-starter/agent/channels/linear.ts",
+          "type": "registry:file",
+          "target": "agent/channels/linear.ts"
+        },
+        {
+          "path": "catalog/agents/linear-triage-starter/agent/instructions.md",
+          "type": "registry:file",
+          "target": "agent/instructions.md"
+        },
+        {
+          "path": "catalog/agents/linear-triage-starter/evals/evals.config.ts",
+          "type": "registry:file",
+          "target": "evals/evals.config.ts"
+        },
+        {
+          "path": "catalog/agents/linear-triage-starter/evals/output-format.eval.ts",
+          "type": "registry:file",
+          "target": "evals/output-format.eval.ts"
+        },
+        {
+          "path": "catalog/agents/linear-triage-starter/evals/triages-outage.eval.ts",
+          "type": "registry:file",
+          "target": "evals/triages-outage.eval.ts"
+        },
+        {
+          "path": "catalog/agents/linear-triage-starter/examples/sample-input.md",
+          "type": "registry:file",
+          "target": "examples/sample-input.md"
+        },
+        {
+          "path": "catalog/agents/linear-triage-starter/package.json",
+          "type": "registry:file",
+          "target": "package.json"
+        },
+        {
+          "path": "catalog/agents/linear-triage-starter/tsconfig.json",
+          "type": "registry:file",
+          "target": "tsconfig.json"
+        }
+      ],
+      "categories": ["starters"],
+      "meta": {
+        "runtime": "eve",
+        "layout": "eve-app",
+        "version": "1.0.0",
+        "license": "MIT",
+        "category": "starters",
+        "integrations": ["linear-agent"]
+      }
+    },
+    {
+      "name": "daily-digest-starter",
+      "type": "registry:block",
+      "title": "Daily Digest Starter",
+      "description": "Weekday 9am UTC: fetch one RSS feed and post a five-item summary to Slack. Demos cron schedules.",
+      "dependencies": ["@vercel/connect@^0.2.2", "eve@^0.24.6", "zod@^4.4.3"],
+      "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+      "files": [
+        {
+          "path": "catalog/agents/daily-digest-starter/.env.example",
+          "type": "registry:file",
+          "target": ".env.example"
+        },
+        {
+          "path": "catalog/agents/daily-digest-starter/.gitignore",
+          "type": "registry:file",
+          "target": ".gitignore"
+        },
+        {
+          "path": "catalog/agents/daily-digest-starter/README.md",
+          "type": "registry:file",
+          "target": "README.md"
+        },
+        {
+          "path": "catalog/agents/daily-digest-starter/SETUP.md",
+          "type": "registry:file",
+          "target": "SETUP.md"
+        },
+        {
+          "path": "catalog/agents/daily-digest-starter/agent/agent.ts",
+          "type": "registry:file",
+          "target": "agent/agent.ts"
+        },
+        {
+          "path": "catalog/agents/daily-digest-starter/agent/channels/slack.ts",
+          "type": "registry:file",
+          "target": "agent/channels/slack.ts"
+        },
+        {
+          "path": "catalog/agents/daily-digest-starter/agent/instructions.md",
+          "type": "registry:file",
+          "target": "agent/instructions.md"
+        },
+        {
+          "path": "catalog/agents/daily-digest-starter/agent/schedules/daily-digest.ts",
+          "type": "registry:file",
+          "target": "agent/schedules/daily-digest.ts"
+        },
+        {
+          "path": "catalog/agents/daily-digest-starter/agent/tools/fetch_source.ts",
+          "type": "registry:file",
+          "target": "agent/tools/fetch_source.ts"
+        },
+        {
+          "path": "catalog/agents/daily-digest-starter/evals/digest-roundtrip.eval.ts",
+          "type": "registry:file",
+          "target": "evals/digest-roundtrip.eval.ts"
+        },
+        {
+          "path": "catalog/agents/daily-digest-starter/evals/evals.config.ts",
+          "type": "registry:file",
+          "target": "evals/evals.config.ts"
+        },
+        {
+          "path": "catalog/agents/daily-digest-starter/examples/sample-input.md",
+          "type": "registry:file",
+          "target": "examples/sample-input.md"
+        },
+        {
+          "path": "catalog/agents/daily-digest-starter/package.json",
+          "type": "registry:file",
+          "target": "package.json"
+        },
+        {
+          "path": "catalog/agents/daily-digest-starter/tsconfig.json",
+          "type": "registry:file",
+          "target": "tsconfig.json"
+        }
+      ],
+      "categories": ["starters"],
+      "meta": {
+        "runtime": "eve",
+        "layout": "eve-app",
+        "version": "1.0.0",
+        "license": "MIT",
+        "category": "starters",
+        "integrations": ["slack"]
+      }
+    },
+    {
+      "name": "uptime-watch-starter",
+      "type": "registry:block",
+      "title": "Uptime Watch Starter",
+      "description": "Checks one URL every 5 minutes and Telegram-alerts you only when it goes down or recovers.",
+      "dependencies": ["eve@^0.24.6", "zod@^4.4.3"],
+      "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+      "files": [
+        {
+          "path": "catalog/agents/uptime-watch-starter/.env.example",
+          "type": "registry:file",
+          "target": ".env.example"
+        },
+        {
+          "path": "catalog/agents/uptime-watch-starter/.gitignore",
+          "type": "registry:file",
+          "target": ".gitignore"
+        },
+        {
+          "path": "catalog/agents/uptime-watch-starter/README.md",
+          "type": "registry:file",
+          "target": "README.md"
+        },
+        {
+          "path": "catalog/agents/uptime-watch-starter/SETUP.md",
+          "type": "registry:file",
+          "target": "SETUP.md"
+        },
+        {
+          "path": "catalog/agents/uptime-watch-starter/agent/agent.ts",
+          "type": "registry:file",
+          "target": "agent/agent.ts"
+        },
+        {
+          "path": "catalog/agents/uptime-watch-starter/agent/channels/telegram.ts",
+          "type": "registry:file",
+          "target": "agent/channels/telegram.ts"
+        },
+        {
+          "path": "catalog/agents/uptime-watch-starter/agent/instructions.md",
+          "type": "registry:file",
+          "target": "agent/instructions.md"
+        },
+        {
+          "path": "catalog/agents/uptime-watch-starter/agent/lib/status-store.ts",
+          "type": "registry:file",
+          "target": "agent/lib/status-store.ts"
+        },
+        {
+          "path": "catalog/agents/uptime-watch-starter/agent/schedules/watch.ts",
+          "type": "registry:file",
+          "target": "agent/schedules/watch.ts"
+        },
+        {
+          "path": "catalog/agents/uptime-watch-starter/agent/tools/check_url.ts",
+          "type": "registry:file",
+          "target": "agent/tools/check_url.ts"
+        },
+        {
+          "path": "catalog/agents/uptime-watch-starter/evals/check-roundtrip.eval.ts",
+          "type": "registry:file",
+          "target": "evals/check-roundtrip.eval.ts"
+        },
+        {
+          "path": "catalog/agents/uptime-watch-starter/evals/evals.config.ts",
+          "type": "registry:file",
+          "target": "evals/evals.config.ts"
+        },
+        {
+          "path": "catalog/agents/uptime-watch-starter/examples/sample-input.md",
+          "type": "registry:file",
+          "target": "examples/sample-input.md"
+        },
+        {
+          "path": "catalog/agents/uptime-watch-starter/package.json",
+          "type": "registry:file",
+          "target": "package.json"
+        },
+        {
+          "path": "catalog/agents/uptime-watch-starter/tsconfig.json",
+          "type": "registry:file",
+          "target": "tsconfig.json"
+        }
+      ],
+      "categories": ["starters"],
+      "meta": {
+        "runtime": "eve",
+        "layout": "eve-app",
+        "version": "1.0.0",
+        "license": "MIT",
+        "category": "starters",
+        "integrations": ["telegram"]
+      }
+    },
+    {
+      "name": "sms-reminder-starter",
+      "type": "registry:block",
+      "title": "SMS Reminder Starter",
+      "description": "Text \"remind me Thursday at 9\" via Twilio and get texted back at that time. Demos dynamic scheduling.",
+      "dependencies": ["eve@^0.24.6", "zod@^4.4.3"],
+      "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+      "files": [
+        {
+          "path": "catalog/agents/sms-reminder-starter/.env.example",
+          "type": "registry:file",
+          "target": ".env.example"
+        },
+        {
+          "path": "catalog/agents/sms-reminder-starter/.gitignore",
+          "type": "registry:file",
+          "target": ".gitignore"
+        },
+        {
+          "path": "catalog/agents/sms-reminder-starter/README.md",
+          "type": "registry:file",
+          "target": "README.md"
+        },
+        {
+          "path": "catalog/agents/sms-reminder-starter/SETUP.md",
+          "type": "registry:file",
+          "target": "SETUP.md"
+        },
+        {
+          "path": "catalog/agents/sms-reminder-starter/agent/agent.ts",
+          "type": "registry:file",
+          "target": "agent/agent.ts"
+        },
+        {
+          "path": "catalog/agents/sms-reminder-starter/agent/channels/twilio.ts",
+          "type": "registry:file",
+          "target": "agent/channels/twilio.ts"
+        },
+        {
+          "path": "catalog/agents/sms-reminder-starter/agent/instructions.md",
+          "type": "registry:file",
+          "target": "agent/instructions.md"
+        },
+        {
+          "path": "catalog/agents/sms-reminder-starter/agent/lib/reminder-store.ts",
+          "type": "registry:file",
+          "target": "agent/lib/reminder-store.ts"
+        },
+        {
+          "path": "catalog/agents/sms-reminder-starter/agent/schedules/dispatch-reminders.ts",
+          "type": "registry:file",
+          "target": "agent/schedules/dispatch-reminders.ts"
+        },
+        {
+          "path": "catalog/agents/sms-reminder-starter/agent/tools/create_reminder.ts",
+          "type": "registry:file",
+          "target": "agent/tools/create_reminder.ts"
+        },
+        {
+          "path": "catalog/agents/sms-reminder-starter/evals/creates-reminder.eval.ts",
+          "type": "registry:file",
+          "target": "evals/creates-reminder.eval.ts"
+        },
+        {
+          "path": "catalog/agents/sms-reminder-starter/evals/deliver-reminder.eval.ts",
+          "type": "registry:file",
+          "target": "evals/deliver-reminder.eval.ts"
+        },
+        {
+          "path": "catalog/agents/sms-reminder-starter/evals/evals.config.ts",
+          "type": "registry:file",
+          "target": "evals/evals.config.ts"
+        },
+        {
+          "path": "catalog/agents/sms-reminder-starter/examples/sample-input.md",
+          "type": "registry:file",
+          "target": "examples/sample-input.md"
+        },
+        {
+          "path": "catalog/agents/sms-reminder-starter/package.json",
+          "type": "registry:file",
+          "target": "package.json"
+        },
+        {
+          "path": "catalog/agents/sms-reminder-starter/tsconfig.json",
+          "type": "registry:file",
+          "target": "tsconfig.json"
+        }
+      ],
+      "categories": ["starters"],
+      "meta": {
+        "runtime": "eve",
+        "layout": "eve-app",
+        "version": "1.0.0",
+        "license": "MIT",
+        "category": "starters",
+        "integrations": ["twilio"]
+      }
+    },
+    {
+      "name": "approval-gate-starter",
+      "type": "registry:block",
+      "title": "Approval Gate Starter",
+      "description": "Refunds always need Slack approval; service restarts use once(). Tool bodies log only — swap in real actions.",
+      "dependencies": ["@vercel/connect@^0.2.2", "eve@^0.24.6", "zod@^4.4.3"],
+      "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+      "files": [
+        {
+          "path": "catalog/agents/approval-gate-starter/.env.example",
+          "type": "registry:file",
+          "target": ".env.example"
+        },
+        {
+          "path": "catalog/agents/approval-gate-starter/.gitignore",
+          "type": "registry:file",
+          "target": ".gitignore"
+        },
+        {
+          "path": "catalog/agents/approval-gate-starter/README.md",
+          "type": "registry:file",
+          "target": "README.md"
+        },
+        {
+          "path": "catalog/agents/approval-gate-starter/SETUP.md",
+          "type": "registry:file",
+          "target": "SETUP.md"
+        },
+        {
+          "path": "catalog/agents/approval-gate-starter/agent/agent.ts",
+          "type": "registry:file",
+          "target": "agent/agent.ts"
+        },
+        {
+          "path": "catalog/agents/approval-gate-starter/agent/channels/slack.ts",
+          "type": "registry:file",
+          "target": "agent/channels/slack.ts"
+        },
+        {
+          "path": "catalog/agents/approval-gate-starter/agent/instructions.md",
+          "type": "registry:file",
+          "target": "agent/instructions.md"
+        },
+        {
+          "path": "catalog/agents/approval-gate-starter/agent/tools/issue_refund.ts",
+          "type": "registry:file",
+          "target": "agent/tools/issue_refund.ts"
+        },
+        {
+          "path": "catalog/agents/approval-gate-starter/agent/tools/restart_service.ts",
+          "type": "registry:file",
+          "target": "agent/tools/restart_service.ts"
+        },
+        {
+          "path": "catalog/agents/approval-gate-starter/evals/evals.config.ts",
+          "type": "registry:file",
+          "target": "evals/evals.config.ts"
+        },
+        {
+          "path": "catalog/agents/approval-gate-starter/evals/refund-requires-approval.eval.ts",
+          "type": "registry:file",
+          "target": "evals/refund-requires-approval.eval.ts"
+        },
+        {
+          "path": "catalog/agents/approval-gate-starter/evals/restart-requires-approval.eval.ts",
+          "type": "registry:file",
+          "target": "evals/restart-requires-approval.eval.ts"
+        },
+        {
+          "path": "catalog/agents/approval-gate-starter/examples/sample-input.md",
+          "type": "registry:file",
+          "target": "examples/sample-input.md"
+        },
+        {
+          "path": "catalog/agents/approval-gate-starter/package.json",
+          "type": "registry:file",
+          "target": "package.json"
+        },
+        {
+          "path": "catalog/agents/approval-gate-starter/tsconfig.json",
+          "type": "registry:file",
+          "target": "tsconfig.json"
+        }
+      ],
+      "categories": ["starters"],
+      "meta": {
+        "runtime": "eve",
+        "layout": "eve-app",
+        "version": "1.0.0",
+        "license": "MIT",
+        "category": "starters",
+        "integrations": ["slack"]
+      }
+    },
+    {
+      "name": "openapi-chat-starter",
+      "type": "registry:block",
+      "title": "OpenAPI Chat Starter",
+      "description": "Chat with any HTTP API in plain English. Ships on Swagger Petstore; swap OPENAPI_SPEC_URL for yours.",
+      "dependencies": ["eve@^0.24.6"],
+      "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+      "files": [
+        {
+          "path": "catalog/agents/openapi-chat-starter/.env.example",
+          "type": "registry:file",
+          "target": ".env.example"
+        },
+        {
+          "path": "catalog/agents/openapi-chat-starter/.gitignore",
+          "type": "registry:file",
+          "target": ".gitignore"
+        },
+        {
+          "path": "catalog/agents/openapi-chat-starter/README.md",
+          "type": "registry:file",
+          "target": "README.md"
+        },
+        {
+          "path": "catalog/agents/openapi-chat-starter/SETUP.md",
+          "type": "registry:file",
+          "target": "SETUP.md"
+        },
+        {
+          "path": "catalog/agents/openapi-chat-starter/agent/agent.ts",
+          "type": "registry:file",
+          "target": "agent/agent.ts"
+        },
+        {
+          "path": "catalog/agents/openapi-chat-starter/agent/connections/api.ts",
+          "type": "registry:file",
+          "target": "agent/connections/api.ts"
+        },
+        {
+          "path": "catalog/agents/openapi-chat-starter/agent/instructions.md",
+          "type": "registry:file",
+          "target": "agent/instructions.md"
+        },
+        {
+          "path": "catalog/agents/openapi-chat-starter/evals/evals.config.ts",
+          "type": "registry:file",
+          "target": "evals/evals.config.ts"
+        },
+        {
+          "path": "catalog/agents/openapi-chat-starter/evals/petstore-inventory.eval.ts",
+          "type": "registry:file",
+          "target": "evals/petstore-inventory.eval.ts"
+        },
+        {
+          "path": "catalog/agents/openapi-chat-starter/examples/sample-input.md",
+          "type": "registry:file",
+          "target": "examples/sample-input.md"
+        },
+        {
+          "path": "catalog/agents/openapi-chat-starter/package.json",
+          "type": "registry:file",
+          "target": "package.json"
+        },
+        {
+          "path": "catalog/agents/openapi-chat-starter/tsconfig.json",
+          "type": "registry:file",
+          "target": "tsconfig.json"
+        }
+      ],
+      "categories": ["starters"],
+      "meta": {
+        "runtime": "eve",
+        "layout": "eve-app",
+        "version": "1.0.0",
+        "license": "MIT",
+        "category": "starters",
+        "integrations": ["eve"]
+      }
+    },
+    {
+      "name": "webhook-summarizer-starter",
+      "type": "registry:block",
+      "title": "Webhook Summarizer Starter",
+      "description": "POST any text to a custom webhook and get a classified summary in Slack. Demos custom channels.",
+      "dependencies": ["@vercel/connect@^0.2.2", "eve@^0.24.6"],
+      "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+      "files": [
+        {
+          "path": "catalog/agents/webhook-summarizer-starter/.env.example",
+          "type": "registry:file",
+          "target": ".env.example"
+        },
+        {
+          "path": "catalog/agents/webhook-summarizer-starter/.gitignore",
+          "type": "registry:file",
+          "target": ".gitignore"
+        },
+        {
+          "path": "catalog/agents/webhook-summarizer-starter/README.md",
+          "type": "registry:file",
+          "target": "README.md"
+        },
+        {
+          "path": "catalog/agents/webhook-summarizer-starter/SETUP.md",
+          "type": "registry:file",
+          "target": "SETUP.md"
+        },
+        {
+          "path": "catalog/agents/webhook-summarizer-starter/agent/agent.ts",
+          "type": "registry:file",
+          "target": "agent/agent.ts"
+        },
+        {
+          "path": "catalog/agents/webhook-summarizer-starter/agent/channels/intake.ts",
+          "type": "registry:file",
+          "target": "agent/channels/intake.ts"
+        },
+        {
+          "path": "catalog/agents/webhook-summarizer-starter/agent/channels/slack.ts",
+          "type": "registry:file",
+          "target": "agent/channels/slack.ts"
+        },
+        {
+          "path": "catalog/agents/webhook-summarizer-starter/agent/instructions.md",
+          "type": "registry:file",
+          "target": "agent/instructions.md"
+        },
+        {
+          "path": "catalog/agents/webhook-summarizer-starter/evals/classifies-support.eval.ts",
+          "type": "registry:file",
+          "target": "evals/classifies-support.eval.ts"
+        },
+        {
+          "path": "catalog/agents/webhook-summarizer-starter/evals/evals.config.ts",
+          "type": "registry:file",
+          "target": "evals/evals.config.ts"
+        },
+        {
+          "path": "catalog/agents/webhook-summarizer-starter/examples/sample-input.md",
+          "type": "registry:file",
+          "target": "examples/sample-input.md"
+        },
+        {
+          "path": "catalog/agents/webhook-summarizer-starter/package.json",
+          "type": "registry:file",
+          "target": "package.json"
+        },
+        {
+          "path": "catalog/agents/webhook-summarizer-starter/tsconfig.json",
+          "type": "registry:file",
+          "target": "tsconfig.json"
+        }
+      ],
+      "categories": ["starters"],
+      "meta": {
+        "runtime": "eve",
+        "layout": "eve-app",
+        "version": "1.0.0",
+        "license": "MIT",
+        "category": "starters",
+        "integrations": ["slack"]
+      }
+    },
+    {
+      "name": "cron-task-starter",
+      "type": "registry:block",
+      "title": "Cron Task Starter",
+      "description": "A fire-and-forget weekly task as a plain markdown schedule — cron in frontmatter, prompt in the body.",
+      "dependencies": ["eve@^0.24.6", "zod@^4.4.3"],
+      "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+      "files": [
+        {
+          "path": "catalog/agents/cron-task-starter/.env.example",
+          "type": "registry:file",
+          "target": ".env.example"
+        },
+        {
+          "path": "catalog/agents/cron-task-starter/.gitignore",
+          "type": "registry:file",
+          "target": ".gitignore"
+        },
+        {
+          "path": "catalog/agents/cron-task-starter/README.md",
+          "type": "registry:file",
+          "target": "README.md"
+        },
+        {
+          "path": "catalog/agents/cron-task-starter/SETUP.md",
+          "type": "registry:file",
+          "target": "SETUP.md"
+        },
+        {
+          "path": "catalog/agents/cron-task-starter/agent/agent.ts",
+          "type": "registry:file",
+          "target": "agent/agent.ts"
+        },
+        {
+          "path": "catalog/agents/cron-task-starter/agent/instructions.md",
+          "type": "registry:file",
+          "target": "agent/instructions.md"
+        },
+        {
+          "path": "catalog/agents/cron-task-starter/agent/schedules/weekly-briefing.md",
+          "type": "registry:file",
+          "target": "agent/schedules/weekly-briefing.md"
+        },
+        {
+          "path": "catalog/agents/cron-task-starter/agent/tools/write_briefing.ts",
+          "type": "registry:file",
+          "target": "agent/tools/write_briefing.ts"
+        },
+        {
+          "path": "catalog/agents/cron-task-starter/evals/evals.config.ts",
+          "type": "registry:file",
+          "target": "evals/evals.config.ts"
+        },
+        {
+          "path": "catalog/agents/cron-task-starter/evals/writes-briefing.eval.ts",
+          "type": "registry:file",
+          "target": "evals/writes-briefing.eval.ts"
+        },
+        {
+          "path": "catalog/agents/cron-task-starter/examples/sample-input.md",
+          "type": "registry:file",
+          "target": "examples/sample-input.md"
+        },
+        {
+          "path": "catalog/agents/cron-task-starter/package.json",
+          "type": "registry:file",
+          "target": "package.json"
+        },
+        {
+          "path": "catalog/agents/cron-task-starter/tsconfig.json",
+          "type": "registry:file",
+          "target": "tsconfig.json"
+        }
+      ],
+      "categories": ["starters"],
+      "meta": {
+        "runtime": "eve",
+        "layout": "eve-app",
+        "version": "1.0.0",
+        "license": "MIT",
+        "category": "starters",
+        "integrations": ["eve"]
+      }
+    },
+    {
+      "name": "receipt-scanner-starter",
+      "type": "registry:block",
+      "title": "Receipt Scanner Starter",
+      "description": "Photo a receipt in Telegram and get merchant, total, category, and line items back. Demos attachments.",
+      "dependencies": ["eve@^0.24.6"],
+      "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+      "files": [
+        {
+          "path": "catalog/agents/receipt-scanner-starter/.env.example",
+          "type": "registry:file",
+          "target": ".env.example"
+        },
+        {
+          "path": "catalog/agents/receipt-scanner-starter/.gitignore",
+          "type": "registry:file",
+          "target": ".gitignore"
+        },
+        {
+          "path": "catalog/agents/receipt-scanner-starter/README.md",
+          "type": "registry:file",
+          "target": "README.md"
+        },
+        {
+          "path": "catalog/agents/receipt-scanner-starter/SETUP.md",
+          "type": "registry:file",
+          "target": "SETUP.md"
+        },
+        {
+          "path": "catalog/agents/receipt-scanner-starter/agent/agent.ts",
+          "type": "registry:file",
+          "target": "agent/agent.ts"
+        },
+        {
+          "path": "catalog/agents/receipt-scanner-starter/agent/channels/telegram.ts",
+          "type": "registry:file",
+          "target": "agent/channels/telegram.ts"
+        },
+        {
+          "path": "catalog/agents/receipt-scanner-starter/agent/instructions.md",
+          "type": "registry:file",
+          "target": "agent/instructions.md"
+        },
+        {
+          "path": "catalog/agents/receipt-scanner-starter/evals/evals.config.ts",
+          "type": "registry:file",
+          "target": "evals/evals.config.ts"
+        },
+        {
+          "path": "catalog/agents/receipt-scanner-starter/evals/text-receipt.eval.ts",
+          "type": "registry:file",
+          "target": "evals/text-receipt.eval.ts"
+        },
+        {
+          "path": "catalog/agents/receipt-scanner-starter/examples/sample-input.md",
+          "type": "registry:file",
+          "target": "examples/sample-input.md"
+        },
+        {
+          "path": "catalog/agents/receipt-scanner-starter/package.json",
+          "type": "registry:file",
+          "target": "package.json"
+        },
+        {
+          "path": "catalog/agents/receipt-scanner-starter/tsconfig.json",
+          "type": "registry:file",
+          "target": "tsconfig.json"
+        }
+      ],
+      "categories": ["starters"],
+      "meta": {
+        "runtime": "eve",
+        "layout": "eve-app",
+        "version": "1.0.0",
+        "license": "MIT",
+        "category": "starters",
+        "integrations": ["telegram"]
+      }
+    },
+    {
+      "name": "translator-starter",
+      "type": "registry:block",
+      "title": "Translator Starter",
+      "description": "Paste text, get it back in TARGET_LANGUAGE. Instructions-only — the entire product is the prompt.",
+      "dependencies": ["eve@^0.24.6"],
+      "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+      "files": [
+        {
+          "path": "catalog/agents/translator-starter/.env.example",
+          "type": "registry:file",
+          "target": ".env.example"
+        },
+        {
+          "path": "catalog/agents/translator-starter/.gitignore",
+          "type": "registry:file",
+          "target": ".gitignore"
+        },
+        {
+          "path": "catalog/agents/translator-starter/README.md",
+          "type": "registry:file",
+          "target": "README.md"
+        },
+        {
+          "path": "catalog/agents/translator-starter/SETUP.md",
+          "type": "registry:file",
+          "target": "SETUP.md"
+        },
+        {
+          "path": "catalog/agents/translator-starter/agent/agent.ts",
+          "type": "registry:file",
+          "target": "agent/agent.ts"
+        },
+        {
+          "path": "catalog/agents/translator-starter/agent/instructions.ts",
+          "type": "registry:file",
+          "target": "agent/instructions.ts"
+        },
+        {
+          "path": "catalog/agents/translator-starter/evals/evals.config.ts",
+          "type": "registry:file",
+          "target": "evals/evals.config.ts"
+        },
+        {
+          "path": "catalog/agents/translator-starter/evals/translates-greeting.eval.ts",
+          "type": "registry:file",
+          "target": "evals/translates-greeting.eval.ts"
+        },
+        {
+          "path": "catalog/agents/translator-starter/examples/sample-input.md",
+          "type": "registry:file",
+          "target": "examples/sample-input.md"
+        },
+        {
+          "path": "catalog/agents/translator-starter/package.json",
+          "type": "registry:file",
+          "target": "package.json"
+        },
+        {
+          "path": "catalog/agents/translator-starter/tsconfig.json",
+          "type": "registry:file",
+          "target": "tsconfig.json"
+        }
+      ],
+      "categories": ["starters"],
+      "meta": {
+        "runtime": "eve",
+        "layout": "eve-app",
+        "version": "1.0.0",
+        "license": "MIT",
+        "category": "starters",
+        "integrations": ["eve"]
+      }
+    },
+    {
+      "name": "headless-api-starter",
+      "type": "registry:block",
+      "title": "Headless API Starter",
+      "description": "Drive an agent with curl or eve/client — no chat UI. Demos the default HTTP session protocol.",
+      "dependencies": ["eve@^0.24.6"],
+      "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+      "files": [
+        {
+          "path": "catalog/agents/headless-api-starter/.env.example",
+          "type": "registry:file",
+          "target": ".env.example"
+        },
+        {
+          "path": "catalog/agents/headless-api-starter/.gitignore",
+          "type": "registry:file",
+          "target": ".gitignore"
+        },
+        {
+          "path": "catalog/agents/headless-api-starter/README.md",
+          "type": "registry:file",
+          "target": "README.md"
+        },
+        {
+          "path": "catalog/agents/headless-api-starter/SETUP.md",
+          "type": "registry:file",
+          "target": "SETUP.md"
+        },
+        {
+          "path": "catalog/agents/headless-api-starter/agent/agent.ts",
+          "type": "registry:file",
+          "target": "agent/agent.ts"
+        },
+        {
+          "path": "catalog/agents/headless-api-starter/agent/instructions.md",
+          "type": "registry:file",
+          "target": "agent/instructions.md"
+        },
+        {
+          "path": "catalog/agents/headless-api-starter/evals/evals.config.ts",
+          "type": "registry:file",
+          "target": "evals/evals.config.ts"
+        },
+        {
+          "path": "catalog/agents/headless-api-starter/evals/smoke.eval.ts",
+          "type": "registry:file",
+          "target": "evals/smoke.eval.ts"
+        },
+        {
+          "path": "catalog/agents/headless-api-starter/examples/chat.mjs",
+          "type": "registry:file",
+          "target": "examples/chat.mjs"
+        },
+        {
+          "path": "catalog/agents/headless-api-starter/examples/curl.sh",
+          "type": "registry:file",
+          "target": "examples/curl.sh"
+        },
+        {
+          "path": "catalog/agents/headless-api-starter/examples/sample-input.md",
+          "type": "registry:file",
+          "target": "examples/sample-input.md"
+        },
+        {
+          "path": "catalog/agents/headless-api-starter/package.json",
+          "type": "registry:file",
+          "target": "package.json"
+        },
+        {
+          "path": "catalog/agents/headless-api-starter/tsconfig.json",
+          "type": "registry:file",
+          "target": "tsconfig.json"
+        }
+      ],
+      "categories": ["starters"],
+      "meta": {
+        "runtime": "eve",
+        "layout": "eve-app",
+        "version": "1.0.0",
+        "license": "MIT",
+        "category": "starters",
+        "integrations": ["eve"]
+      }
+    },
+    {
+      "name": "evals-playground-starter",
+      "type": "registry:block",
+      "title": "Evals Playground Starter",
+      "description": "A tiny agent plus numbered evals teaching succeeded, calledTool, parked, check, and judge.",
+      "dependencies": ["eve@^0.24.6", "zod@^4.4.3"],
+      "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+      "files": [
+        {
+          "path": "catalog/agents/evals-playground-starter/.env.example",
+          "type": "registry:file",
+          "target": ".env.example"
+        },
+        {
+          "path": "catalog/agents/evals-playground-starter/.gitignore",
+          "type": "registry:file",
+          "target": ".gitignore"
+        },
+        {
+          "path": "catalog/agents/evals-playground-starter/README.md",
+          "type": "registry:file",
+          "target": "README.md"
+        },
+        {
+          "path": "catalog/agents/evals-playground-starter/SETUP.md",
+          "type": "registry:file",
+          "target": "SETUP.md"
+        },
+        {
+          "path": "catalog/agents/evals-playground-starter/agent/agent.ts",
+          "type": "registry:file",
+          "target": "agent/agent.ts"
+        },
+        {
+          "path": "catalog/agents/evals-playground-starter/agent/instructions.md",
+          "type": "registry:file",
+          "target": "agent/instructions.md"
+        },
+        {
+          "path": "catalog/agents/evals-playground-starter/agent/tools/get_weather.ts",
+          "type": "registry:file",
+          "target": "agent/tools/get_weather.ts"
+        },
+        {
+          "path": "catalog/agents/evals-playground-starter/agent/tools/issue_refund.ts",
+          "type": "registry:file",
+          "target": "agent/tools/issue_refund.ts"
+        },
+        {
+          "path": "catalog/agents/evals-playground-starter/evals/01-succeeded.eval.ts",
+          "type": "registry:file",
+          "target": "evals/01-succeeded.eval.ts"
+        },
+        {
+          "path": "catalog/agents/evals-playground-starter/evals/02-called-tool.eval.ts",
+          "type": "registry:file",
+          "target": "evals/02-called-tool.eval.ts"
+        },
+        {
+          "path": "catalog/agents/evals-playground-starter/evals/03-parked.eval.ts",
+          "type": "registry:file",
+          "target": "evals/03-parked.eval.ts"
+        },
+        {
+          "path": "catalog/agents/evals-playground-starter/evals/04-check-includes.eval.ts",
+          "type": "registry:file",
+          "target": "evals/04-check-includes.eval.ts"
+        },
+        {
+          "path": "catalog/agents/evals-playground-starter/evals/05-judge.eval.ts",
+          "type": "registry:file",
+          "target": "evals/05-judge.eval.ts"
+        },
+        {
+          "path": "catalog/agents/evals-playground-starter/evals/evals.config.ts",
+          "type": "registry:file",
+          "target": "evals/evals.config.ts"
+        },
+        {
+          "path": "catalog/agents/evals-playground-starter/examples/sample-input.md",
+          "type": "registry:file",
+          "target": "examples/sample-input.md"
+        },
+        {
+          "path": "catalog/agents/evals-playground-starter/package.json",
+          "type": "registry:file",
+          "target": "package.json"
+        },
+        {
+          "path": "catalog/agents/evals-playground-starter/tsconfig.json",
+          "type": "registry:file",
+          "target": "tsconfig.json"
+        }
+      ],
+      "categories": ["starters"],
+      "meta": {
+        "runtime": "eve",
+        "layout": "eve-app",
+        "version": "1.0.0",
+        "license": "MIT",
+        "category": "starters",
+        "integrations": ["eve"]
+      }
     }
   ]
 }

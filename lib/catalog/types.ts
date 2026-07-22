@@ -14,6 +14,35 @@ export interface AgentListing {
   integrations: string[];
 }
 
+/** Community prompt-agent listing (Postgres-backed). */
+export interface CommunityAgentListing {
+  id: string;
+  name: string;
+  slug: string;
+  summary: string;
+  version: string;
+  license: string;
+  category: Category;
+  integrations: string[];
+  handle: string;
+  authorName: string;
+  authorImage: string | null;
+  installCount: number;
+  instructions: string;
+  featured: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type OfficialDirectoryAgent = AgentListing & { tier: "official" };
+
+export type CommunityDirectoryAgent = CommunityAgentListing & {
+  tier: "community";
+};
+
+/** Unified listing for directory index / search / filters. */
+export type DirectoryAgent = OfficialDirectoryAgent | CommunityDirectoryAgent;
+
 export interface ExtensionListing {
   name: string;
   slug: string;

@@ -11,7 +11,7 @@ Browse full agent source without login, install into a project with the shadcn C
 One-time registry setup:
 
 ```bash
-npx shadcn@latest registry add @evedirectory=https://evedirectory.com/r/{name}.json
+npx shadcn@latest registry add @evedirectory=https://www.evedirectory.com/r/{name}.json
 ```
 
 Then install by slug (from `/agents/<slug>`):

@@ -1,0 +1,98 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "github-issue-labeler-starter",
+  "title": "GitHub Issue Labeler Starter",
+  "description": "New issue opened → applies one label from your taxonomy and asks for repro steps when a bug report is thin.",
+  "dependencies": ["eve@^0.24.6"],
+  "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+  "files": [
+    {
+      "path": "catalog/agents/github-issue-labeler-starter/.env.example",
+      "content": "# GitHub App credentials (create the app under Settings → Developer settings).\nGITHUB_APP_ID=replace-me\nGITHUB_APP_PRIVATE_KEY=\"-----BEGIN RSA PRIVATE KEY-----\\nreplace-me\\n-----END RSA PRIVATE KEY-----\"\nGITHUB_WEBHOOK_SECRET=replace-me\n\n# Model access follows your eve setup (Vercel AI Gateway or a provider key).\n",
+      "type": "registry:file",
+      "target": ".env.example"
+    },
+    {
+      "path": "catalog/agents/github-issue-labeler-starter/.gitignore",
+      "content": "node_modules/\n.eve/\nvar/\n.env\n.env.local\n*.tsbuildinfo\n",
+      "type": "registry:file",
+      "target": ".gitignore"
+    },
+    {
+      "path": "catalog/agents/github-issue-labeler-starter/README.md",
+      "content": "# GitHub Issue Labeler Starter\n\nNew issue opened → the agent applies one label from your taxonomy and asks for reproduction steps when a bug report is missing them.\n\nOne channel file, no tools. The label taxonomy lives in `agent/instructions.md`; the label is applied by the channel's `message.completed` handler, which parses the agent's final `LABEL:` line and calls the GitHub API.\n\n## Layout\n\n```text\ngithub-issue-labeler-starter/\n├── package.json\n├── agent/\n│   ├── agent.ts              # model choice\n│   ├── instructions.md       # ← edit the taxonomy here\n│   └── channels/github.ts    # dispatch on issues.opened + label application\n├── evals/\n```\n\n## Run\n\n```bash\nnpm install\nnpm run dev\n```\n\nYou can exercise the triage behavior in the dev terminal by pasting an issue (see `examples/sample-input.md`). See `SETUP.md` to connect a GitHub App.\n\n## Make it yours\n\nEdit the `Label taxonomy` section of `agent/instructions.md` to match the labels that exist in your repository. That is the only required change.\n\n## Verify\n\n```bash\nnpm run eval\n```\n\n## License\n\nMIT\n",
+      "type": "registry:file",
+      "target": "README.md"
+    },
+    {
+      "path": "catalog/agents/github-issue-labeler-starter/SETUP.md",
+      "content": "# Set up GitHub Issue Labeler Starter\n\n## 1. Install and run\n\n```bash\nnpm install\nnpm run dev\n```\n\n## 2. Create a GitHub App\n\n1. GitHub → Settings → Developer settings → GitHub Apps → New GitHub App.\n2. Permissions: **Issues: Read and write**.\n3. Subscribe to the **Issues** webhook event.\n4. Set the webhook URL to `https://<your-deployment>/eve/v1/github` and pick a webhook secret.\n5. Generate a private key.\n6. Fill `.env` from `.env.example` with the App ID, private key, and webhook secret.\n7. Install the app on the repository you want triaged.\n\nAlternatively, use [Vercel Connect](https://vercel.com/docs/connect) (`vercel connect create github --triggers`) and swap the channel to `connectGitHubCredentials` — see the eve GitHub channel docs.\n\n## 3. Match the taxonomy to your repo\n\nThe labels in `agent/instructions.md` (`bug`, `feature`, `question`, `docs`) must exist in the repository — the agent applies them but does not create them. Edit the taxonomy to your labels.\n\n## 4. Try it\n\nOpen a new issue in the repository. The agent applies a label and posts a triage comment, asking for reproduction steps when a bug report lacks them.\n\n## Verify\n\n```bash\nnpm run eval\n```\n\nEvals exercise the triage contract (label choice and the `LABEL:` line) over eve's local HTTP channel — model credentials required, GitHub credentials not.\n",
+      "type": "registry:file",
+      "target": "SETUP.md"
+    },
+    {
+      "path": "catalog/agents/github-issue-labeler-starter/agent/agent.ts",
+      "content": "import { defineAgent } from \"eve\";\n\nexport default defineAgent({\n  model: \"openai/gpt-5.4-mini\",\n});\n",
+      "type": "registry:file",
+      "target": "agent/agent.ts"
+    },
+    {
+      "path": "catalog/agents/github-issue-labeler-starter/agent/channels/github.ts",
+      "content": "import { defaultGitHubAuth, githubChannel } from \"eve/channels/github\";\n\n// Credentials come from env: GITHUB_APP_ID, GITHUB_APP_PRIVATE_KEY, and\n// GITHUB_WEBHOOK_SECRET. See SETUP.md.\n//\n// The agent ends its triage reply with a \"LABEL: <name>\" line (see\n// instructions.md). The message.completed handler below extracts that line,\n// applies the label through the GitHub API, and posts the rest as the\n// triage comment.\nconst LABEL_LINE = /^LABEL:[ \\t]*(.+)$/m;\n\nexport default githubChannel({\n  onIssue: (ctx, issue) => {\n    if (issue.action !== \"opened\") return null;\n    const raw = issue.raw.issue as\n      | { title?: string; body?: string | null }\n      | undefined;\n    return {\n      auth: defaultGitHubAuth(ctx),\n      context: [\n        [\n          `A new issue (#${issue.issueNumber}) was just opened in`,\n          `${ctx.repository.owner}/${ctx.repository.name}. Triage it now.`,\n          \"\",\n          `Title: ${raw?.title ?? \"(missing)\"}`,\n          \"\",\n          `Body:\\n${raw?.body ?? \"(empty)\"}`,\n        ].join(\"\\n\"),\n      ],\n    };\n  },\n  events: {\n    async \"message.completed\"(eventData, channel) {\n      if (eventData.finishReason === \"tool-calls\" || !eventData.message) return;\n\n      const label = eventData.message.match(LABEL_LINE)?.[1]?.trim();\n      const comment = eventData.message.replace(LABEL_LINE, \"\").trim();\n\n      if (label && channel.state.issueNumber !== null) {\n        const { owner, repo, issueNumber } = channel.state;\n        await channel.github.request({\n          method: \"POST\",\n          path: `/repos/${owner}/${repo}/issues/${issueNumber}/labels`,\n          body: { labels: [label] },\n        });\n      }\n      if (comment.length > 0) await channel.thread.post(comment);\n    },\n  },\n});\n",
+      "type": "registry:file",
+      "target": "agent/channels/github.ts"
+    },
+    {
+      "path": "catalog/agents/github-issue-labeler-starter/agent/instructions.md",
+      "content": "# Identity\n\nYou are an issue triage bot for a GitHub repository. When a new issue is opened, you pick exactly one label from the taxonomy and, if the report is missing reproduction details, ask for them.\n\n<!-- CUSTOMIZE HERE: replace the taxonomy with your repo's labels. -->\n\n# Label taxonomy\n\nPick exactly one. Labels must already exist in the repository.\n\n- `bug` — something is broken: errors, crashes, wrong behavior.\n- `feature` — a request for new functionality or an enhancement.\n- `question` — a usage or support question, not a defect or request.\n- `docs` — a problem or gap in documentation.\n\n# Output format (required)\n\nYour reply is posted as a comment on the issue, and the final line is parsed by code — follow it exactly:\n\n1. A short triage comment (2–5 sentences). Thank the reporter briefly, state how you categorized the issue, and — only if the issue looks like a bug without reproduction steps — ask for: exact steps to reproduce, expected vs. actual behavior, and version/environment.\n2. The very last line must be exactly `LABEL: <name>` with one label from the taxonomy, nothing after it.\n\nExample ending: `LABEL: bug`\n\n# Rules\n\n- Exactly one label, always from the taxonomy. When torn between two, prefer `bug` over `question` and `feature` over `docs`.\n- Do not ask for reproduction steps on feature requests, questions, or docs issues.\n- Never promise fixes, timelines, or priority.\n",
+      "type": "registry:file",
+      "target": "agent/instructions.md"
+    },
+    {
+      "path": "catalog/agents/github-issue-labeler-starter/evals/evals.config.ts",
+      "content": "import { defineEvalConfig } from \"eve/evals\";\n\nexport default defineEvalConfig({\n  maxConcurrency: 1,\n  timeoutMs: 120_000,\n});\n",
+      "type": "registry:file",
+      "target": "evals/evals.config.ts"
+    },
+    {
+      "path": "catalog/agents/github-issue-labeler-starter/evals/labels-bug.eval.ts",
+      "content": "import { defineEval } from \"eve/evals\";\nimport { includes } from \"eve/evals/expect\";\n\nexport default defineEval({\n  description: \"A crash report gets the bug label and a repro-steps request.\",\n  async test(t) {\n    await t.send(\n      [\n        \"A new issue (#42) was just opened. Triage it now.\",\n        \"\",\n        \"Title: App crashes when uploading a 2GB file\",\n        \"\",\n        \"Body:\\nIt just crashes. Please fix.\",\n      ].join(\"\\n\")\n    );\n    t.succeeded();\n    t.check(t.reply, includes(/^LABEL:[ \\t]*bug\\s*$/m));\n    t.check(t.reply, includes(/reproduc|steps/i)).soft();\n  },\n});\n",
+      "type": "registry:file",
+      "target": "evals/labels-bug.eval.ts"
+    },
+    {
+      "path": "catalog/agents/github-issue-labeler-starter/evals/labels-feature.eval.ts",
+      "content": "import { defineEval } from \"eve/evals\";\nimport { includes, satisfies } from \"eve/evals/expect\";\n\nexport default defineEval({\n  description: \"A feature request gets the feature label and no repro request.\",\n  async test(t) {\n    await t.send(\n      [\n        \"A new issue (#43) was just opened. Triage it now.\",\n        \"\",\n        \"Title: Add dark mode\",\n        \"\",\n        \"Body:\\nWould love a dark theme option in settings.\",\n      ].join(\"\\n\")\n    );\n    t.succeeded();\n    t.check(t.reply, includes(/^LABEL:[ \\t]*feature\\s*$/m));\n    t.check(\n      t.reply,\n      satisfies(\n        (reply: string) => !/steps to reproduce/i.test(reply),\n        \"does not ask feature requests for repro steps\"\n      )\n    ).soft();\n  },\n});\n",
+      "type": "registry:file",
+      "target": "evals/labels-feature.eval.ts"
+    },
+    {
+      "path": "catalog/agents/github-issue-labeler-starter/examples/sample-input.md",
+      "content": "# Example request\n\nA new issue (#42) was just opened. Triage it now.\n\nTitle: App crashes when uploading a 2GB file\n\nBody: It just crashes. Please fix.\n\n# Expected behavior\n\nA short triage comment thanking the reporter, categorizing it as a bug, and asking for exact steps to reproduce, expected vs. actual behavior, and version/environment — ending with the line `LABEL: bug`.\n",
+      "type": "registry:file",
+      "target": "examples/sample-input.md"
+    },
+    {
+      "path": "catalog/agents/github-issue-labeler-starter/package.json",
+      "content": "{\n  \"name\": \"github-issue-labeler-starter\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": {\n    \"dev\": \"eve dev\",\n    \"build\": \"eve build\",\n    \"start\": \"eve start\",\n    \"eval\": \"eve eval\",\n    \"typecheck\": \"tsc\"\n  },\n  \"dependencies\": {\n    \"eve\": \"^0.24.6\"\n  },\n  \"devDependencies\": {\n    \"@types/node\": \"24.x\",\n    \"typescript\": \"^5.9.3\"\n  },\n  \"engines\": {\n    \"node\": \"24.x\"\n  }\n}\n",
+      "type": "registry:file",
+      "target": "package.json"
+    },
+    {
+      "path": "catalog/agents/github-issue-labeler-starter/tsconfig.json",
+      "content": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\",\n    \"module\": \"esnext\",\n    \"moduleResolution\": \"bundler\",\n    \"types\": [\"node\"],\n    \"strict\": true,\n    \"esModuleInterop\": true,\n    \"skipLibCheck\": true,\n    \"noEmit\": true\n  },\n  \"include\": [\"agent/**/*.ts\", \"evals/**/*.ts\"]\n}\n",
+      "type": "registry:file",
+      "target": "tsconfig.json"
+    }
+  ],
+  "meta": {
+    "runtime": "eve",
+    "layout": "eve-app",
+    "version": "1.0.0",
+    "license": "MIT",
+    "category": "starters",
+    "integrations": ["github"]
+  },
+  "categories": ["starters"],
+  "type": "registry:block"
+}

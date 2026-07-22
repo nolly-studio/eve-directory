@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import { AdSlot, sponsorSlotsEnabled } from "@/components/ad-slot";
 import { HomeCategoryStrip } from "@/components/home-category-strip";
 import { HomeComposeTeaser } from "@/components/home-compose-teaser";
@@ -12,6 +14,15 @@ import {
   getExtensions,
   getOfficialIntegrations,
 } from "@/lib/catalog";
+import { pageMetadata } from "@/lib/seo";
+import { SITE } from "@/lib/site";
+
+export const metadata: Metadata = pageMetadata({
+  absoluteTitle: true,
+  description: SITE.description,
+  pathname: "/",
+  title: SITE.title,
+});
 
 /** Hand-picked, recognizable marks for the landing integration cards. */
 const FEATURED_INTEGRATION_SLUGS = [

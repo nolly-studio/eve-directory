@@ -1,6 +1,16 @@
+import type { Metadata } from "next";
+
 import { IntegrationCard } from "@/components/integration-card";
 import { PageHeader, PageShell } from "@/components/page-shell";
 import { getAgents, getOfficialIntegrations } from "@/lib/catalog";
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = pageMetadata({
+  description:
+    "Vercel Eve integrations — official channels and connections. Open a page for setup context and the Eve agents that use it.",
+  pathname: "/integrations",
+  title: "Vercel Eve integrations",
+});
 
 export default async function IntegrationsPage() {
   const [integrations, agents] = await Promise.all([

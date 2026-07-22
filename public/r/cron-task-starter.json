@@ -1,0 +1,98 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "cron-task-starter",
+  "title": "Cron Task Starter",
+  "description": "A fire-and-forget weekly task as a plain markdown schedule — cron in frontmatter, prompt in the body.",
+  "dependencies": ["eve@^0.24.6", "zod@^4.4.3"],
+  "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+  "files": [
+    {
+      "path": "catalog/agents/cron-task-starter/.env.example",
+      "content": "# No channel credentials required. Model access follows your eve setup\n# (Vercel AI Gateway or a provider key).\n",
+      "type": "registry:file",
+      "target": ".env.example"
+    },
+    {
+      "path": "catalog/agents/cron-task-starter/.gitignore",
+      "content": "node_modules/\n.eve/\nvar/\n.env\n.env.local\n*.tsbuildinfo\n",
+      "type": "registry:file",
+      "target": ".gitignore"
+    },
+    {
+      "path": "catalog/agents/cron-task-starter/README.md",
+      "content": "# Cron Task Starter\n\nA fire-and-forget weekly task defined as a plain markdown schedule — cron in the frontmatter, prompt in the body. No TypeScript schedule handler.\n\nOne `.md` schedule, one tool. Demos: markdown schedules (task mode).\n\n## Layout\n\n```text\ncron-task-starter/\n├── package.json\n├── agent/\n│   ├── agent.ts\n│   ├── instructions.md\n│   ├── tools/write_briefing.ts\n│   └── schedules/weekly-briefing.md   # ← edit cron + prompt here\n├── evals/\n```\n\n## Run\n\n```bash\nnpm install\nnpm run dev\n```\n\n`eve dev` never fires cron automatically. Trigger once:\n\n```bash\ncurl -X POST http://localhost:3000/eve/v1/dev/schedules/weekly-briefing\n```\n\nBriefings append to `var/briefings.log`.\n\n## Make it yours\n\nChange the `cron` expression (UTC on Vercel) and the prompt body in `agent/schedules/weekly-briefing.md`. Swap `write_briefing` for whatever side effect your task needs.\n\n## Verify\n\n```bash\nnpm run eval\n```\n\n## License\n\nMIT\n",
+      "type": "registry:file",
+      "target": "README.md"
+    },
+    {
+      "path": "catalog/agents/cron-task-starter/SETUP.md",
+      "content": "# Set up Cron Task Starter\n\n## 1. Install and run\n\n```bash\nnpm install\nnpm run dev\n```\n\n## 2. Fire the schedule in dev\n\n```bash\ncurl -X POST http://localhost:3000/eve/v1/dev/schedules/weekly-briefing\n```\n\nInspect `var/briefings.log` for the written line.\n\n## 3. Deploy\n\n```bash\nVERCEL_USE_EXPERIMENTAL_FRAMEWORKS=1 vercel deploy --prod\n```\n\nThe markdown schedule becomes a Vercel Cron Job (Settings → Cron Jobs). Default cadence is Sundays at 09:00 UTC.\n\n## Verify\n\n```bash\nnpm run eval\n```\n",
+      "type": "registry:file",
+      "target": "SETUP.md"
+    },
+    {
+      "path": "catalog/agents/cron-task-starter/agent/agent.ts",
+      "content": "import { defineAgent } from \"eve\";\n\nexport default defineAgent({\n  model: \"openai/gpt-5.4-mini\",\n});\n",
+      "type": "registry:file",
+      "target": "agent/agent.ts"
+    },
+    {
+      "path": "catalog/agents/cron-task-starter/agent/instructions.md",
+      "content": "# Identity\n\nYou are a scheduled task runner. Cron fires a markdown prompt; you carry it out with tools and finish. There is no chat surface — this is task mode.\n\n# Rules\n\n- Follow the schedule prompt exactly.\n- Prefer the authored tools over inventing side effects.\n- Keep written briefings to a few short lines.\n- Never invent that work succeeded without calling the tool that records it.\n",
+      "type": "registry:file",
+      "target": "agent/instructions.md"
+    },
+    {
+      "path": "catalog/agents/cron-task-starter/agent/schedules/weekly-briefing.md",
+      "content": "---\ncron: \"0 9 * * 0\"\n---\n\nWrite this week's briefing.\n\n1. Call `write_briefing` with a short status line for the week (what to watch, one risk, one win). Invent nothing about real systems — use a generic placeholder briefing suitable for a starter demo.\n2. Confirm the briefing was saved.\n\n<!-- CUSTOMIZE HERE: change the cron (UTC) or the prompt body. -->\n",
+      "type": "registry:file",
+      "target": "agent/schedules/weekly-briefing.md"
+    },
+    {
+      "path": "catalog/agents/cron-task-starter/agent/tools/write_briefing.ts",
+      "content": "import { appendFile, mkdir } from \"node:fs/promises\";\nimport path from \"node:path\";\n\nimport { defineTool } from \"eve/tools\";\nimport { z } from \"zod\";\n\nconst STORE_PATH = path.join(process.cwd(), \"var\", \"briefings.log\");\n\nexport default defineTool({\n  description:\n    \"Append a dated weekly briefing line to the local log. Call once per schedule run.\",\n  inputSchema: z.object({\n    line: z.string().min(1).max(500),\n  }),\n  async execute({ line }) {\n    const stamped = `${new Date().toISOString()} ${line.trim()}\\n`;\n    await mkdir(path.dirname(STORE_PATH), { recursive: true });\n    await appendFile(STORE_PATH, stamped, \"utf-8\");\n    return { saved: true, path: \"var/briefings.log\", line: stamped.trim() };\n  },\n});\n",
+      "type": "registry:file",
+      "target": "agent/tools/write_briefing.ts"
+    },
+    {
+      "path": "catalog/agents/cron-task-starter/evals/evals.config.ts",
+      "content": "import { defineEvalConfig } from \"eve/evals\";\n\nexport default defineEvalConfig({\n  maxConcurrency: 1,\n  timeoutMs: 120_000,\n});\n",
+      "type": "registry:file",
+      "target": "evals/evals.config.ts"
+    },
+    {
+      "path": "catalog/agents/cron-task-starter/evals/writes-briefing.eval.ts",
+      "content": "import { defineEval } from \"eve/evals\";\n\nexport default defineEval({\n  description: \"Schedule prompt causes write_briefing to be called.\",\n  async test(t) {\n    await t.send(\n      [\n        \"Write this week's briefing.\",\n        \"Call write_briefing with a short status line, then confirm it was saved.\",\n      ].join(\" \")\n    );\n    t.succeeded();\n    t.calledTool(\"write_briefing\");\n  },\n});\n",
+      "type": "registry:file",
+      "target": "evals/writes-briefing.eval.ts"
+    },
+    {
+      "path": "catalog/agents/cron-task-starter/examples/sample-input.md",
+      "content": "# Example request\n\nWrite this week's briefing. Call write_briefing with a short status line, then confirm it was saved.\n\n# Expected behavior\n\nCall `write_briefing` once with a short generic status line and confirm the save. Do not invent real production metrics.\n",
+      "type": "registry:file",
+      "target": "examples/sample-input.md"
+    },
+    {
+      "path": "catalog/agents/cron-task-starter/package.json",
+      "content": "{\n  \"name\": \"cron-task-starter\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": {\n    \"dev\": \"eve dev\",\n    \"build\": \"eve build\",\n    \"start\": \"eve start\",\n    \"eval\": \"eve eval\",\n    \"typecheck\": \"tsc\"\n  },\n  \"dependencies\": {\n    \"eve\": \"^0.24.6\",\n    \"zod\": \"^4.4.3\"\n  },\n  \"devDependencies\": {\n    \"@types/node\": \"24.x\",\n    \"typescript\": \"^5.9.3\"\n  },\n  \"engines\": {\n    \"node\": \"24.x\"\n  }\n}\n",
+      "type": "registry:file",
+      "target": "package.json"
+    },
+    {
+      "path": "catalog/agents/cron-task-starter/tsconfig.json",
+      "content": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\",\n    \"module\": \"esnext\",\n    \"moduleResolution\": \"bundler\",\n    \"types\": [\"node\"],\n    \"strict\": true,\n    \"esModuleInterop\": true,\n    \"skipLibCheck\": true,\n    \"noEmit\": true\n  },\n  \"include\": [\"agent/**/*.ts\", \"evals/**/*.ts\"]\n}\n",
+      "type": "registry:file",
+      "target": "tsconfig.json"
+    }
+  ],
+  "meta": {
+    "runtime": "eve",
+    "layout": "eve-app",
+    "version": "1.0.0",
+    "license": "MIT",
+    "category": "starters",
+    "integrations": ["eve"]
+  },
+  "categories": ["starters"],
+  "type": "registry:block"
+}

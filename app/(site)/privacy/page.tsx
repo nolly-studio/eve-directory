@@ -1,5 +1,14 @@
+import type { Metadata } from "next";
+
 import { PageShell } from "@/components/page-shell";
+import { pageMetadata } from "@/lib/seo";
 import { SITE } from "@/lib/site";
+
+export const metadata: Metadata = pageMetadata({
+  description: `How ${SITE.name} handles privacy for the open Eve agent catalog.`,
+  pathname: "/privacy",
+  title: "Privacy Policy",
+});
 
 export default function PrivacyPage() {
   return (

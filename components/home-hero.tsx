@@ -306,7 +306,7 @@ export function HomeHero({ featuredAgent }: HomeHeroProps) {
           className="mt-8 max-w-3xl animate-enter text-heading-40 font-semibold text-center text-gray-1000 [--font-weight-semibold:450] md:text-heading-64"
           style={{ "--stagger": 1 } as CSSProperties}
         >
-          Open registry for Eve agents and extensions
+          Eve agents & templates for Vercel Eve
         </h1>
 
         <p

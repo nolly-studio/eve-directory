@@ -9,6 +9,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { Surface } from "@/components/ui/surface";
 import { getIntegrationDirectorySlugs } from "@/lib/catalog";
 import { getIntegrationPageModel } from "@/lib/integrations/page-model";
+import { pageMetadata } from "@/lib/seo";
 
 export async function generateStaticParams() {
   const slugs = await getIntegrationDirectorySlugs();
@@ -27,10 +28,13 @@ export async function generateMetadata({
     return {};
   }
 
-  return {
-    description: model.description ?? `Agents that use ${model.title}.`,
-    title: model.title,
-  };
+  return pageMetadata({
+    description:
+      model.description ??
+      `${model.title} for Vercel Eve agents — setup context and catalog agents that use this integration.`,
+    pathname: `/integrations/${name}`,
+    title: `${model.title} for Vercel Eve`,
+  });
 }
 
 export default async function IntegrationPage({

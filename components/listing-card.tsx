@@ -5,10 +5,28 @@ import {
   IntegrationMark,
 } from "@/components/integration-badge";
 import { Badge } from "@/components/ui/badge";
-import type { AgentListing, ExtensionListing } from "@/lib/catalog/types";
+import type {
+  AgentListing,
+  DirectoryAgent,
+  ExtensionListing,
+} from "@/lib/catalog/types";
+import { directoryAgentHref, directoryAgentKey } from "@/lib/community/paths";
 import { getIntegrationLogo } from "@/lib/integrations/resolve";
 import { integrationLabel } from "@/lib/site";
 import { cn } from "@/lib/utils";
+
+function asDirectoryAgent(
+  agent: AgentListing | DirectoryAgent
+): DirectoryAgent {
+  if ("tier" in agent) {
+    return agent;
+  }
+
+  return {
+    ...agent,
+    tier: "official",
+  };
+}
 
 const VISIBLE_INTEGRATIONS = 4;
 
@@ -25,6 +43,7 @@ function ListingCard({
   markSlug,
   badges,
   integrations,
+  meta,
 }: {
   href: string;
   title: string;
@@ -32,6 +51,7 @@ function ListingCard({
   markSlug?: string;
   badges?: string[];
   integrations: string[];
+  meta?: string;
 }) {
   const withLogos = integrations.filter((slug) => getIntegrationLogo(slug));
   const visible = withLogos.slice(0, VISIBLE_INTEGRATIONS);
@@ -66,6 +86,10 @@ function ListingCard({
         {summary}
       </p>
 
+      {meta ? (
+        <p className="mt-2 text-label-12 text-muted-foreground">{meta}</p>
+      ) : null}
+
       {visible.length > 0 ? (
         <div className="mt-auto flex items-center gap-1.5 pt-4">
           {visible.map((integration) => (
@@ -88,17 +112,44 @@ function ListingCard({
   );
 }
 
-export function AgentCard({ agent }: { agent: AgentListing }) {
-  return (
-    <ListingCard
-      href={`/agents/${agent.slug}`}
-      title={agent.name}
-      summary={agent.summary}
-      markSlug={pickMarkSlug(agent.integrations)}
-      badges={[agent.category.name]}
-      integrations={agent.integrations}
-    />
-  );
+export function AgentCard({ agent }: { agent: AgentListing | DirectoryAgent }) {
+  const listing = asDirectoryAgent(agent);
+
+  switch (listing.tier) {
+    case "official": {
+      return (
+        <ListingCard
+          href={directoryAgentHref(listing)}
+          title={listing.name}
+          summary={listing.summary}
+          markSlug={pickMarkSlug(listing.integrations)}
+          badges={[listing.category.name]}
+          integrations={listing.integrations}
+        />
+      );
+    }
+    case "community": {
+      return (
+        <ListingCard
+          href={directoryAgentHref(listing)}
+          title={listing.name}
+          summary={listing.summary}
+          markSlug={pickMarkSlug(listing.integrations)}
+          badges={["Community", listing.category.name]}
+          integrations={listing.integrations}
+          meta={`@${listing.handle} · ${listing.installCount} installs`}
+        />
+      );
+    }
+    default: {
+      const _exhaustive: never = listing;
+      return _exhaustive;
+    }
+  }
+}
+
+export function agentCardKey(agent: AgentListing | DirectoryAgent): string {
+  return directoryAgentKey(asDirectoryAgent(agent));
 }
 
 export function ExtensionCard({ extension }: { extension: ExtensionListing }) {

@@ -1,0 +1,98 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "telegram-assistant-starter",
+  "title": "Telegram Assistant Starter",
+  "description": "Message a Telegram bot and it replies per your instructions. The blank canvas — edit instructions.md and nothing else.",
+  "dependencies": ["eve@^0.24.6"],
+  "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+  "files": [
+    {
+      "path": "catalog/agents/telegram-assistant-starter/.env.example",
+      "content": "# Telegram bot credentials (create a bot with @BotFather).\nTELEGRAM_BOT_TOKEN=123456:replace-me\n# Any random string; must match the secret_token you pass to setWebhook.\nTELEGRAM_WEBHOOK_SECRET_TOKEN=replace-me\n\n# Model access follows your eve setup (Vercel AI Gateway or a provider key).\n",
+      "type": "registry:file",
+      "target": ".env.example"
+    },
+    {
+      "path": "catalog/agents/telegram-assistant-starter/.gitignore",
+      "content": "node_modules/\n.eve/\nvar/\n.env\n.env.local\n*.tsbuildinfo\n",
+      "type": "registry:file",
+      "target": ".gitignore"
+    },
+    {
+      "path": "catalog/agents/telegram-assistant-starter/README.md",
+      "content": "# Telegram Assistant Starter\n\nMessage a Telegram bot, it replies per your instructions. This is the blank canvas: edit `agent/instructions.md` and nothing else.\n\nOne channel, no tools — the smallest useful eve agent.\n\n## Layout\n\n```text\ntelegram-assistant-starter/\n├── package.json\n├── agent/\n│   ├── agent.ts              # model choice\n│   ├── instructions.md       # ← edit this\n│   └── channels/telegram.ts  # Telegram webhook channel\n├── evals/\n```\n\n## Run\n\n```bash\nnpm install\nnpm run dev\n```\n\nYou can chat with the agent immediately in the dev terminal, before any Telegram setup. See `SETUP.md` to connect the bot.\n\n## Make it yours\n\nEverything the agent is lives in `agent/instructions.md` — persona, duties, boundaries. Change the `CUSTOMIZE HERE` section and the agent updates as you save.\n\n## Verify\n\n```bash\nnpm run eval\n```\n\n## License\n\nMIT\n",
+      "type": "registry:file",
+      "target": "README.md"
+    },
+    {
+      "path": "catalog/agents/telegram-assistant-starter/SETUP.md",
+      "content": "# Set up Telegram Assistant Starter\n\n## 1. Install and run\n\n```bash\nnpm install\nnpm run dev\n```\n\nThe dev server includes a local chat, so you can talk to the agent before Telegram is connected.\n\n## 2. Create the Telegram bot\n\n1. Message [@BotFather](https://t.me/BotFather) on Telegram and run `/newbot`.\n2. Copy the bot token into `.env` as `TELEGRAM_BOT_TOKEN`.\n3. Pick any random string for `TELEGRAM_WEBHOOK_SECRET_TOKEN` (see `.env.example`).\n\n## 3. Register the webhook\n\nDeploy (or expose your dev server publicly), then point Telegram at eve's route:\n\n```bash\ncurl -X POST \"https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/setWebhook\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"url\":\"https://<your-deployment>/eve/v1/telegram\",\n       \"secret_token\":\"'\"$TELEGRAM_WEBHOOK_SECRET_TOKEN\"'\",\n       \"allowed_updates\":[\"message\",\"callback_query\"]}'\n```\n\nDM the bot and it replies. To use it in groups, pass `botUsername` in `agent/channels/telegram.ts` so it can detect `@mentions`.\n\n## Verify\n\n```bash\nnpm run eval\n```\n\nEvals drive the agent over eve's local HTTP channel, so they need model credentials but no Telegram credentials.\n",
+      "type": "registry:file",
+      "target": "SETUP.md"
+    },
+    {
+      "path": "catalog/agents/telegram-assistant-starter/agent/agent.ts",
+      "content": "import { defineAgent } from \"eve\";\n\nexport default defineAgent({\n  model: \"openai/gpt-5.4-mini\",\n});\n",
+      "type": "registry:file",
+      "target": "agent/agent.ts"
+    },
+    {
+      "path": "catalog/agents/telegram-assistant-starter/agent/channels/telegram.ts",
+      "content": "import { telegramChannel } from \"eve/channels/telegram\";\n\n// Credentials come from env: TELEGRAM_BOT_TOKEN and\n// TELEGRAM_WEBHOOK_SECRET_TOKEN. See SETUP.md.\nexport default telegramChannel();\n",
+      "type": "registry:file",
+      "target": "agent/channels/telegram.ts"
+    },
+    {
+      "path": "catalog/agents/telegram-assistant-starter/agent/instructions.md",
+      "content": "# Identity\n\nYou are a personal assistant reachable over Telegram. You are the \"blank canvas\" starter: everything about your personality and duties lives in this one file.\n\n<!-- CUSTOMIZE HERE: replace the persona below with your own. -->\n\n# Persona\n\n- Friendly, direct, and brief. Telegram is a chat surface, so answer in a few short sentences unless the user asks for detail.\n- Plain text only. Telegram renders no Markdown from this bot, so never use headings, asterisks, or backticks in replies.\n\n# What you do\n\n- Answer questions, brainstorm, summarize text the user pastes, and help draft short messages.\n- If a request needs information you do not have (private data, live web content), say so plainly instead of guessing.\n\n# Boundaries\n\n- Never invent facts. If unsure, say you are unsure.\n- Keep every reply under roughly 150 words unless the user explicitly asks for more.\n",
+      "type": "registry:file",
+      "target": "agent/instructions.md"
+    },
+    {
+      "path": "catalog/agents/telegram-assistant-starter/evals/evals.config.ts",
+      "content": "import { defineEvalConfig } from \"eve/evals\";\n\nexport default defineEvalConfig({\n  maxConcurrency: 1,\n  timeoutMs: 120_000,\n});\n",
+      "type": "registry:file",
+      "target": "evals/evals.config.ts"
+    },
+    {
+      "path": "catalog/agents/telegram-assistant-starter/evals/smoke.eval.ts",
+      "content": "import { defineEval } from \"eve/evals\";\n\nexport default defineEval({\n  description: \"Agent boots, accepts a message, and replies in persona.\",\n  async test(t) {\n    await t.send(\n      \"In one short sentence, who are you and what can you help with?\"\n    );\n    t.succeeded();\n  },\n});\n",
+      "type": "registry:file",
+      "target": "evals/smoke.eval.ts"
+    },
+    {
+      "path": "catalog/agents/telegram-assistant-starter/evals/stays-brief.eval.ts",
+      "content": "import { defineEval } from \"eve/evals\";\nimport { satisfies } from \"eve/evals/expect\";\n\nexport default defineEval({\n  description: \"Replies stay short, matching the persona's brevity rule.\",\n  async test(t) {\n    await t.send(\"Give me three ideas for a Saturday afternoon.\");\n    t.succeeded();\n    t.check(\n      t.reply,\n      satisfies(\n        (reply: string) => reply.split(/\\s+/).length < 200,\n        \"reply is under 200 words\"\n      )\n    ).soft();\n  },\n});\n",
+      "type": "registry:file",
+      "target": "evals/stays-brief.eval.ts"
+    },
+    {
+      "path": "catalog/agents/telegram-assistant-starter/examples/sample-input.md",
+      "content": "# Example request\n\nHey — I have 45 minutes between meetings. Can you help me draft a short, friendly message to my landlord asking to fix the kitchen faucet this week?\n\n# Expected behavior\n\nReply in plain text (no Markdown), briefly, with a ready-to-send draft that is polite, specific about the faucet, and proposes a time window this week.\n",
+      "type": "registry:file",
+      "target": "examples/sample-input.md"
+    },
+    {
+      "path": "catalog/agents/telegram-assistant-starter/package.json",
+      "content": "{\n  \"name\": \"telegram-assistant-starter\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": {\n    \"dev\": \"eve dev\",\n    \"build\": \"eve build\",\n    \"start\": \"eve start\",\n    \"eval\": \"eve eval\",\n    \"typecheck\": \"tsc\"\n  },\n  \"dependencies\": {\n    \"eve\": \"^0.24.6\"\n  },\n  \"devDependencies\": {\n    \"@types/node\": \"24.x\",\n    \"typescript\": \"^5.9.3\"\n  },\n  \"engines\": {\n    \"node\": \"24.x\"\n  }\n}\n",
+      "type": "registry:file",
+      "target": "package.json"
+    },
+    {
+      "path": "catalog/agents/telegram-assistant-starter/tsconfig.json",
+      "content": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\",\n    \"module\": \"esnext\",\n    \"moduleResolution\": \"bundler\",\n    \"types\": [\"node\"],\n    \"strict\": true,\n    \"esModuleInterop\": true,\n    \"skipLibCheck\": true,\n    \"noEmit\": true\n  },\n  \"include\": [\"agent/**/*.ts\", \"evals/**/*.ts\"]\n}\n",
+      "type": "registry:file",
+      "target": "tsconfig.json"
+    }
+  ],
+  "meta": {
+    "runtime": "eve",
+    "layout": "eve-app",
+    "version": "1.0.0",
+    "license": "MIT",
+    "category": "starters",
+    "integrations": ["telegram"]
+  },
+  "categories": ["starters"],
+  "type": "registry:block"
+}

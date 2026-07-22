@@ -1,0 +1,92 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "openapi-chat-starter",
+  "title": "OpenAPI Chat Starter",
+  "description": "Chat with any HTTP API in plain English. Ships on Swagger Petstore; swap OPENAPI_SPEC_URL for yours.",
+  "dependencies": ["eve@^0.24.6"],
+  "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+  "files": [
+    {
+      "path": "catalog/agents/openapi-chat-starter/.env.example",
+      "content": "# Point at any OpenAPI 3.x / Swagger 2.0 document. Defaults to Petstore.\nOPENAPI_SPEC_URL=https://petstore3.swagger.io/api/v3/openapi.json\n\n# Optional: override the server base URL from the spec.\n# OPENAPI_BASE_URL=https://petstore3.swagger.io/api/v3\n\n# Optional: Bearer token for private APIs.\n# OPENAPI_TOKEN=replace-me\n\n# Optional: description shown to the model for this connection.\n# OPENAPI_DESCRIPTION=My internal ops API.\n\n# Model access follows your eve setup (Vercel AI Gateway or a provider key).\n",
+      "type": "registry:file",
+      "target": ".env.example"
+    },
+    {
+      "path": "catalog/agents/openapi-chat-starter/.gitignore",
+      "content": "node_modules/\n.eve/\nvar/\n.env\n.env.local\n*.tsbuildinfo\n",
+      "type": "registry:file",
+      "target": ".gitignore"
+    },
+    {
+      "path": "catalog/agents/openapi-chat-starter/README.md",
+      "content": "# OpenAPI Chat Starter\n\nChat with any HTTP API in plain English. Ships pointed at the public Swagger Petstore — change one env var to your own OpenAPI spec URL.\n\nOne connection, default eve HTTP channel. Demos: OpenAPI connections.\n\n## Layout\n\n```text\nopenapi-chat-starter/\n├── package.json\n├── agent/\n│   ├── agent.ts\n│   ├── instructions.md\n│   └── connections/api.ts   # ← OPENAPI_SPEC_URL lands here\n├── evals/\n```\n\n## Run\n\n```bash\nnpm install\nnpm run dev\n```\n\nAsk in the dev terminal: `What is in the petstore inventory?`\n\n## Make it yours\n\nSet `OPENAPI_SPEC_URL` (and optionally `OPENAPI_BASE_URL` / `OPENAPI_TOKEN`). When you leave the default Petstore URL, the starter drops its read-only operation filter so your full spec is available — narrow it again in `agent/connections/api.ts` if you want.\n\n## Verify\n\n```bash\nnpm run eval\n```\n\nNeeds network access to reach Petstore.\n\n## License\n\nMIT\n",
+      "type": "registry:file",
+      "target": "README.md"
+    },
+    {
+      "path": "catalog/agents/openapi-chat-starter/SETUP.md",
+      "content": "# Set up OpenAPI Chat Starter\n\n## 1. Install and run\n\n```bash\nnpm install\nnpm run dev\n```\n\nNo extra credentials are required for the default Petstore demo.\n\n## 2. Point at your API\n\n```bash\n# .env\nOPENAPI_SPEC_URL=https://api.example.com/openapi.json\nOPENAPI_BASE_URL=https://api.example.com   # optional\nOPENAPI_TOKEN=your-bearer-token            # optional\n```\n\nRestart `npm run dev`. Ask natural-language questions; the agent calls `api__<operationId>` tools derived from the spec.\n\nFor OAuth APIs, prefer Vercel Connect with `auth: connect(\"…\")` — see the eve OpenAPI connection docs.\n\n## Verify\n\n```bash\nnpm run eval\n```\n\nHits the live Petstore inventory endpoint — model credentials + network required.\n",
+      "type": "registry:file",
+      "target": "SETUP.md"
+    },
+    {
+      "path": "catalog/agents/openapi-chat-starter/agent/agent.ts",
+      "content": "import { defineAgent } from \"eve\";\n\nexport default defineAgent({\n  model: \"openai/gpt-5.4-mini\",\n});\n",
+      "type": "registry:file",
+      "target": "agent/agent.ts"
+    },
+    {
+      "path": "catalog/agents/openapi-chat-starter/agent/connections/api.ts",
+      "content": "import { defineOpenAPIConnection } from \"eve/connections\";\n\n// CUSTOMIZE HERE: set OPENAPI_SPEC_URL (and optionally OPENAPI_BASE_URL /\n// OPENAPI_TOKEN) in .env. Ships pointed at the public Swagger Petstore.\nconst DEFAULT_SPEC = \"https://petstore3.swagger.io/api/v3/openapi.json\";\n\nconst spec = process.env.OPENAPI_SPEC_URL ?? DEFAULT_SPEC;\nconst token = process.env.OPENAPI_TOKEN;\nconst isDefaultPetstore = spec === DEFAULT_SPEC;\n\nexport default defineOpenAPIConnection({\n  spec,\n  ...(process.env.OPENAPI_BASE_URL\n    ? { baseUrl: process.env.OPENAPI_BASE_URL }\n    : {}),\n  description:\n    process.env.OPENAPI_DESCRIPTION ??\n    \"HTTP API exposed to the agent as tools (default: Swagger Petstore).\",\n  ...(token ? { auth: { getToken: async () => ({ token }) } } : {}),\n  // Narrow the demo Petstore surface; drop the filter for your own API.\n  ...(isDefaultPetstore\n    ? {\n        operations: {\n          allow: [\n            \"getInventory\",\n            \"getPetById\",\n            \"findPetsByStatus\",\n            \"findPetsByTags\",\n            \"getOrderById\",\n            \"getUserByName\",\n          ],\n        },\n      }\n    : {}),\n});\n",
+      "type": "registry:file",
+      "target": "agent/connections/api.ts"
+    },
+    {
+      "path": "catalog/agents/openapi-chat-starter/agent/instructions.md",
+      "content": "# Identity\n\nYou are an API chat agent. You talk to one HTTP API through OpenAPI-generated tools (connection name `api`). By default that API is the public Swagger Petstore — users point `OPENAPI_SPEC_URL` at their own spec to reuse you.\n\n# Workflow\n\n1. Translate the user's request into the right `api__…` tool call(s).\n2. Call the tool; do not invent response bodies.\n3. Summarize the result in plain language. Quote ids and status codes when useful.\n\n# Rules\n\n- Prefer read operations. Do not invent write side effects the tools do not perform.\n- If a needed operation is missing from the tool list, say so and suggest widening `operations.allow` in `agent/connections/api.ts`.\n- On auth or network errors, report the failure clearly and stop.\n- Keep answers short unless the user asks for the raw JSON.\n",
+      "type": "registry:file",
+      "target": "agent/instructions.md"
+    },
+    {
+      "path": "catalog/agents/openapi-chat-starter/evals/evals.config.ts",
+      "content": "import { defineEvalConfig } from \"eve/evals\";\n\nexport default defineEvalConfig({\n  maxConcurrency: 1,\n  timeoutMs: 180_000,\n});\n",
+      "type": "registry:file",
+      "target": "evals/evals.config.ts"
+    },
+    {
+      "path": "catalog/agents/openapi-chat-starter/evals/petstore-inventory.eval.ts",
+      "content": "import { defineEval } from \"eve/evals\";\n\nexport default defineEval({\n  description: \"Asks Petstore inventory via the OpenAPI connection tool.\",\n  async test(t) {\n    await t.send(\n      \"What is in the petstore inventory? Use the api tools — do not guess.\"\n    );\n    t.succeeded();\n    t.calledTool(\"api__getInventory\");\n  },\n});\n",
+      "type": "registry:file",
+      "target": "evals/petstore-inventory.eval.ts"
+    },
+    {
+      "path": "catalog/agents/openapi-chat-starter/examples/sample-input.md",
+      "content": "# Example request\n\nWhat is in the petstore inventory right now?\n\n# Expected behavior\n\nCall `api__getInventory` and summarize the returned status → count map in plain language. Do not invent numbers.\n",
+      "type": "registry:file",
+      "target": "examples/sample-input.md"
+    },
+    {
+      "path": "catalog/agents/openapi-chat-starter/package.json",
+      "content": "{\n  \"name\": \"openapi-chat-starter\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": {\n    \"dev\": \"eve dev\",\n    \"build\": \"eve build\",\n    \"start\": \"eve start\",\n    \"eval\": \"eve eval\",\n    \"typecheck\": \"tsc\"\n  },\n  \"dependencies\": {\n    \"eve\": \"^0.24.6\"\n  },\n  \"devDependencies\": {\n    \"@types/node\": \"24.x\",\n    \"typescript\": \"^5.9.3\"\n  },\n  \"engines\": {\n    \"node\": \"24.x\"\n  }\n}\n",
+      "type": "registry:file",
+      "target": "package.json"
+    },
+    {
+      "path": "catalog/agents/openapi-chat-starter/tsconfig.json",
+      "content": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\",\n    \"module\": \"esnext\",\n    \"moduleResolution\": \"bundler\",\n    \"types\": [\"node\"],\n    \"strict\": true,\n    \"esModuleInterop\": true,\n    \"skipLibCheck\": true,\n    \"noEmit\": true\n  },\n  \"include\": [\"agent/**/*.ts\", \"evals/**/*.ts\"]\n}\n",
+      "type": "registry:file",
+      "target": "tsconfig.json"
+    }
+  ],
+  "meta": {
+    "runtime": "eve",
+    "layout": "eve-app",
+    "version": "1.0.0",
+    "license": "MIT",
+    "category": "starters",
+    "integrations": ["eve"]
+  },
+  "categories": ["starters"],
+  "type": "registry:block"
+}

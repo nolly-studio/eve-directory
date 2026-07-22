@@ -16,22 +16,25 @@ import { cn } from "@/lib/utils";
 export const metadata: Metadata = {
   description: SITE.description,
   metadataBase: new URL(siteOrigin()),
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     description: SITE.description,
     locale: "en_US",
     siteName: SITE.name,
-    title: SITE.name,
+    title: SITE.title,
     type: "website",
     url: siteOrigin(),
   },
   title: {
-    default: SITE.name,
+    default: SITE.title,
     template: `%s · ${SITE.name}`,
   },
   twitter: {
     card: "summary_large_image",
     description: SITE.description,
-    title: SITE.name,
+    title: SITE.title,
   },
 };
 

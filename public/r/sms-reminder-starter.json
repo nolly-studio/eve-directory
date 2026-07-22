@@ -1,0 +1,116 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "sms-reminder-starter",
+  "title": "SMS Reminder Starter",
+  "description": "Text \"remind me Thursday at 9\" via Twilio and get texted back at that time. Demos dynamic scheduling.",
+  "dependencies": ["eve@^0.24.6", "zod@^4.4.3"],
+  "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+  "files": [
+    {
+      "path": "catalog/agents/sms-reminder-starter/.env.example",
+      "content": "# Twilio account + Auth Token (Console → Account → API keys & tokens).\nTWILIO_ACCOUNT_SID=ACreplace-me\nTWILIO_AUTH_TOKEN=replace-me\n\n# Your Twilio phone number in E.164 (outbound SMS sender).\nTWILIO_FROM_NUMBER=+15557654321\n\n# Who may text the agent. Comma-separated E.164 numbers, or \"*\" for demos only.\nTWILIO_ALLOW_FROM=+15551234567\n\n# Model access follows your eve setup (Vercel AI Gateway or a provider key).\n",
+      "type": "registry:file",
+      "target": ".env.example"
+    },
+    {
+      "path": "catalog/agents/sms-reminder-starter/.gitignore",
+      "content": "node_modules/\n.eve/\nvar/\n.env\n.env.local\n*.tsbuildinfo\n",
+      "type": "registry:file",
+      "target": ".gitignore"
+    },
+    {
+      "path": "catalog/agents/sms-reminder-starter/README.md",
+      "content": "# SMS Reminder Starter\n\nText \"remind me Thursday at 9\" via Twilio and get texted back at that time.\n\nOne tool (`create_reminder`) writes a row; a one-minute schedule claims due rows and `receive`s Twilio. Demos: dynamic scheduling.\n\n## Layout\n\n```text\nsms-reminder-starter/\n├── package.json\n├── agent/\n│   ├── agent.ts\n│   ├── instructions.md\n│   ├── channels/twilio.ts\n│   ├── lib/reminder-store.ts       # file-backed reminder rows\n│   ├── tools/create_reminder.ts    # ← the one tool\n│   └── schedules/dispatch-reminders.ts\n├── evals/\n```\n\n## Run\n\n```bash\nnpm install\nnpm run dev\n```\n\nSee `SETUP.md` to connect Twilio. In production the dispatcher fires every minute; in dev, trigger it with:\n\n```bash\ncurl -X POST http://localhost:3000/eve/v1/dev/schedules/dispatch-reminders\n```\n\n## Make it yours\n\nSwap the reminder body for any deferred SMS action — the pattern is the same: tool writes a row, cron claims it, channel delivers.\n\n## Verify\n\n```bash\nnpm run eval\n```\n\n## License\n\nMIT\n",
+      "type": "registry:file",
+      "target": "README.md"
+    },
+    {
+      "path": "catalog/agents/sms-reminder-starter/SETUP.md",
+      "content": "# Set up SMS Reminder Starter\n\n## 1. Install and run\n\n```bash\nnpm install\nnpm run dev\n```\n\n## 2. Twilio\n\n1. Create a Twilio account and buy a phone number with SMS.\n2. Fill `.env` from `.env.example` (`TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM_NUMBER`, `TWILIO_ALLOW_FROM`).\n3. Point the number's Messaging webhook at `https://<your-deployment>/eve/v1/twilio/messages`.\n\nRestrict `TWILIO_ALLOW_FROM` to your own number for demos. `\"*\"` accepts anyone and is not safe for production.\n\n## 3. Try it\n\nText the Twilio number: `remind me tomorrow at 9am ET to call the plumber`. Confirm the reply, then wait (or nudge the dispatcher in dev). You should get an SMS with the reminder text at the scheduled time.\n\nOutbound SMS may require carrier registration and prior consent — follow Twilio's and local legal requirements.\n\n## Verify\n\n```bash\nnpm run eval\n```\n\nEvals exercise `create_reminder` and delivery phrasing over eve's local HTTP channel — model credentials required, Twilio credentials not.\n",
+      "type": "registry:file",
+      "target": "SETUP.md"
+    },
+    {
+      "path": "catalog/agents/sms-reminder-starter/agent/agent.ts",
+      "content": "import { defineAgent } from \"eve\";\n\nexport default defineAgent({\n  model: \"openai/gpt-5.4-mini\",\n});\n",
+      "type": "registry:file",
+      "target": "agent/agent.ts"
+    },
+    {
+      "path": "catalog/agents/sms-reminder-starter/agent/channels/twilio.ts",
+      "content": "import { twilioChannel } from \"eve/channels/twilio\";\n\n// Credentials come from env: TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN.\n// TWILIO_FROM_NUMBER is the outbound sender. TWILIO_ALLOW_FROM gates who\n// can text the agent (\"*\" only for local demos). See SETUP.md.\nconst allowFrom = process.env.TWILIO_ALLOW_FROM ?? \"*\";\n\nexport default twilioChannel({\n  allowFrom:\n    allowFrom === \"*\" ? \"*\" : allowFrom.split(\",\").map((n) => n.trim()),\n  messaging: {\n    from: process.env.TWILIO_FROM_NUMBER!,\n  },\n});\n",
+      "type": "registry:file",
+      "target": "agent/channels/twilio.ts"
+    },
+    {
+      "path": "catalog/agents/sms-reminder-starter/agent/instructions.md",
+      "content": "# Identity\n\nYou are an SMS reminder bot. People text you something like \"remind me Thursday at 9 to call the plumber\" and you schedule a text back at that time.\n\n# Creating reminders\n\n1. Confirm the reminder text and the time (including timezone if unclear).\n2. Convert the time to ISO 8601 with an explicit offset (e.g. `2026-07-24T09:00:00-04:00`).\n3. Call `create_reminder` with that `text` and `runAt`.\n4. Confirm it was scheduled, restating the time in plain language.\n\nIf the user does not specify a timezone, ask once, then remember it for the rest of the conversation.\n\n# Delivering reminders\n\nWhen a message starts with `DELIVER_REMINDER`, reply with **only** the reminder text on the `Text:` line — nothing else. That reply is sent as the SMS.\n\n# Rules\n\n- Never invent that a reminder was scheduled without calling `create_reminder`.\n- Keep confirmations under 2 short sentences — this is SMS.\n- One reminder per tool call. For multiple times, call the tool multiple times.\n",
+      "type": "registry:file",
+      "target": "agent/instructions.md"
+    },
+    {
+      "path": "catalog/agents/sms-reminder-starter/agent/lib/reminder-store.ts",
+      "content": "import { randomUUID } from \"node:crypto\";\nimport { mkdir, readFile, writeFile } from \"node:fs/promises\";\nimport path from \"node:path\";\n\nexport type Reminder = {\n  id: string;\n  phoneNumber: string;\n  text: string;\n  runAt: string;\n  status: \"pending\" | \"claimed\" | \"done\";\n  leaseUntil: string | null;\n};\n\nconst STORE_PATH = path.join(process.cwd(), \"var\", \"reminders.json\");\n\nasync function load(): Promise<Reminder[]> {\n  try {\n    return JSON.parse(await readFile(STORE_PATH, \"utf-8\")) as Reminder[];\n  } catch {\n    return [];\n  }\n}\n\nasync function save(reminders: Reminder[]): Promise<void> {\n  await mkdir(path.dirname(STORE_PATH), { recursive: true });\n  await writeFile(\n    STORE_PATH,\n    `${JSON.stringify(reminders, null, 2)}\\n`,\n    \"utf-8\"\n  );\n}\n\nexport async function createReminder(input: {\n  phoneNumber: string;\n  text: string;\n  runAt: Date;\n}): Promise<Reminder> {\n  const reminders = await load();\n  const reminder: Reminder = {\n    id: randomUUID(),\n    phoneNumber: input.phoneNumber,\n    text: input.text,\n    runAt: input.runAt.toISOString(),\n    status: \"pending\",\n    leaseUntil: null,\n  };\n  reminders.push(reminder);\n  await save(reminders);\n  return reminder;\n}\n\n/** Atomically claim due reminders so overlapping minute ticks do not double-send. */\nexport async function claimDue(options: {\n  now: Date;\n  limit: number;\n  leaseForMs: number;\n}): Promise<Reminder[]> {\n  const reminders = await load();\n  const nowMs = options.now.getTime();\n  const leaseUntil = new Date(nowMs + options.leaseForMs).toISOString();\n  const claimed: Reminder[] = [];\n\n  for (const reminder of reminders) {\n    if (claimed.length >= options.limit) break;\n    if (reminder.status === \"done\") continue;\n    if (new Date(reminder.runAt).getTime() > nowMs) continue;\n    if (\n      reminder.status === \"claimed\" &&\n      reminder.leaseUntil &&\n      new Date(reminder.leaseUntil).getTime() > nowMs\n    ) {\n      continue;\n    }\n    reminder.status = \"claimed\";\n    reminder.leaseUntil = leaseUntil;\n    claimed.push(reminder);\n  }\n\n  if (claimed.length > 0) await save(reminders);\n  return claimed;\n}\n\nexport async function completeReminder(id: string): Promise<void> {\n  const reminders = await load();\n  const reminder = reminders.find((r) => r.id === id);\n  if (!reminder) return;\n  reminder.status = \"done\";\n  reminder.leaseUntil = null;\n  await save(reminders);\n}\n\nexport async function releaseReminder(\n  id: string,\n  retryAt: Date\n): Promise<void> {\n  const reminders = await load();\n  const reminder = reminders.find((r) => r.id === id);\n  if (!reminder) return;\n  reminder.status = \"pending\";\n  reminder.leaseUntil = null;\n  reminder.runAt = retryAt.toISOString();\n  await save(reminders);\n}\n",
+      "type": "registry:file",
+      "target": "agent/lib/reminder-store.ts"
+    },
+    {
+      "path": "catalog/agents/sms-reminder-starter/agent/schedules/dispatch-reminders.ts",
+      "content": "import { defineSchedule } from \"eve/schedules\";\n\nimport twilio from \"../channels/twilio\";\nimport {\n  claimDue,\n  completeReminder,\n  releaseReminder,\n} from \"../lib/reminder-store\";\n\n// One-minute dispatcher for application-managed reminders.\n// Demos: dynamic scheduling (CRUD row + cron claim + receive).\nexport default defineSchedule({\n  cron: \"* * * * *\",\n  run({ receive, waitUntil, appAuth }) {\n    waitUntil(\n      (async () => {\n        const jobs = await claimDue({\n          now: new Date(),\n          limit: 25,\n          leaseForMs: 5 * 60_000,\n        });\n\n        await Promise.all(\n          jobs.map(async (job) => {\n            try {\n              await receive(twilio, {\n                message: [\n                  \"DELIVER_REMINDER\",\n                  `Reminder id: ${job.id}`,\n                  `Text: ${job.text}`,\n                ].join(\"\\n\"),\n                target: { phoneNumber: job.phoneNumber },\n                auth: appAuth,\n              });\n              await completeReminder(job.id);\n            } catch (error) {\n              console.error(\"sms-reminder: deliver failed\", job.id, error);\n              await releaseReminder(job.id, new Date(Date.now() + 60_000));\n            }\n          })\n        );\n      })()\n    );\n  },\n});\n",
+      "type": "registry:file",
+      "target": "agent/schedules/dispatch-reminders.ts"
+    },
+    {
+      "path": "catalog/agents/sms-reminder-starter/agent/tools/create_reminder.ts",
+      "content": "import { defineTool } from \"eve/tools\";\nimport { z } from \"zod\";\n\nimport { createReminder } from \"../lib/reminder-store\";\n\nexport default defineTool({\n  description:\n    \"Schedule a one-time SMS reminder. Convert local time to ISO 8601 with an explicit offset before calling. On SMS, the recipient is the texter; elsewhere, pass phoneNumber in E.164.\",\n  inputSchema: z.object({\n    text: z.string().min(1).max(1000),\n    runAt: z\n      .string()\n      .datetime({ offset: true })\n      .describe(\"When to send the reminder, ISO 8601 with offset\"),\n    phoneNumber: z\n      .string()\n      .regex(/^\\+[1-9]\\d{6,14}$/)\n      .optional()\n      .describe(\"E.164 phone; required when not called from an inbound SMS\"),\n  }),\n  async execute({ text, runAt, phoneNumber }, ctx) {\n    const auth = ctx.session.auth.current;\n    const fromSms =\n      auth?.principalType === \"user\" && auth.authenticator === \"twilio\"\n        ? auth.principalId\n        : null;\n    const recipient = fromSms ?? phoneNumber ?? null;\n    if (!recipient) {\n      throw new Error(\n        \"phoneNumber is required when the session is not an inbound SMS.\"\n      );\n    }\n\n    const when = new Date(runAt);\n    if (Number.isNaN(when.getTime()) || when.getTime() <= Date.now()) {\n      throw new Error(\n        \"runAt must be a future timestamp with a timezone offset.\"\n      );\n    }\n\n    const reminder = await createReminder({\n      phoneNumber: recipient,\n      text,\n      runAt: when,\n    });\n\n    return {\n      id: reminder.id,\n      runAt: reminder.runAt,\n      text: reminder.text,\n      phoneNumber: reminder.phoneNumber,\n    };\n  },\n});\n",
+      "type": "registry:file",
+      "target": "agent/tools/create_reminder.ts"
+    },
+    {
+      "path": "catalog/agents/sms-reminder-starter/evals/creates-reminder.eval.ts",
+      "content": "import { defineEval } from \"eve/evals\";\n\nexport default defineEval({\n  description: \"Schedules a one-time reminder via create_reminder.\",\n  async test(t) {\n    await t.send(\n      [\n        \"Schedule a reminder for +15551234567 at 2099-01-15T09:00:00Z\",\n        'with the text \"Call the plumber\".',\n        \"Call create_reminder now — do not ask clarifying questions.\",\n      ].join(\" \")\n    );\n    t.succeeded();\n    t.calledTool(\"create_reminder\", {\n      input: {\n        text: /plumber/i,\n        phoneNumber: \"+15551234567\",\n      },\n    });\n  },\n});\n",
+      "type": "registry:file",
+      "target": "evals/creates-reminder.eval.ts"
+    },
+    {
+      "path": "catalog/agents/sms-reminder-starter/evals/deliver-reminder.eval.ts",
+      "content": "import { defineEval } from \"eve/evals\";\nimport { includes } from \"eve/evals/expect\";\n\nexport default defineEval({\n  description: \"DELIVER_REMINDER turns reply with only the reminder text.\",\n  async test(t) {\n    await t.send(\n      [\"DELIVER_REMINDER\", \"Reminder id: demo\", \"Text: Call the plumber\"].join(\n        \"\\n\"\n      )\n    );\n    t.succeeded();\n    t.check(t.reply, includes(/Call the plumber/i));\n  },\n});\n",
+      "type": "registry:file",
+      "target": "evals/deliver-reminder.eval.ts"
+    },
+    {
+      "path": "catalog/agents/sms-reminder-starter/evals/evals.config.ts",
+      "content": "import { defineEvalConfig } from \"eve/evals\";\n\nexport default defineEvalConfig({\n  maxConcurrency: 1,\n  timeoutMs: 120_000,\n});\n",
+      "type": "registry:file",
+      "target": "evals/evals.config.ts"
+    },
+    {
+      "path": "catalog/agents/sms-reminder-starter/examples/sample-input.md",
+      "content": "# Example request\n\nRemind me tomorrow at 9am America/New_York to call the plumber.\n\n# Expected behavior\n\nAsk for timezone only if missing, convert to ISO 8601 with offset, call `create_reminder`, and confirm the scheduled time in plain language.\n",
+      "type": "registry:file",
+      "target": "examples/sample-input.md"
+    },
+    {
+      "path": "catalog/agents/sms-reminder-starter/package.json",
+      "content": "{\n  \"name\": \"sms-reminder-starter\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": {\n    \"dev\": \"eve dev\",\n    \"build\": \"eve build\",\n    \"start\": \"eve start\",\n    \"eval\": \"eve eval\",\n    \"typecheck\": \"tsc\"\n  },\n  \"dependencies\": {\n    \"eve\": \"^0.24.6\",\n    \"zod\": \"^4.4.3\"\n  },\n  \"devDependencies\": {\n    \"@types/node\": \"24.x\",\n    \"typescript\": \"^5.9.3\"\n  },\n  \"engines\": {\n    \"node\": \"24.x\"\n  }\n}\n",
+      "type": "registry:file",
+      "target": "package.json"
+    },
+    {
+      "path": "catalog/agents/sms-reminder-starter/tsconfig.json",
+      "content": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\",\n    \"module\": \"esnext\",\n    \"moduleResolution\": \"bundler\",\n    \"types\": [\"node\"],\n    \"strict\": true,\n    \"esModuleInterop\": true,\n    \"skipLibCheck\": true,\n    \"noEmit\": true\n  },\n  \"include\": [\"agent/**/*.ts\", \"evals/**/*.ts\"]\n}\n",
+      "type": "registry:file",
+      "target": "tsconfig.json"
+    }
+  ],
+  "meta": {
+    "runtime": "eve",
+    "layout": "eve-app",
+    "version": "1.0.0",
+    "license": "MIT",
+    "category": "starters",
+    "integrations": ["twilio"]
+  },
+  "categories": ["starters"],
+  "type": "registry:block"
+}

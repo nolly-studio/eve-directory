@@ -1,0 +1,98 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "webhook-summarizer-starter",
+  "title": "Webhook Summarizer Starter",
+  "description": "POST any text to a custom webhook and get a classified summary in Slack. Demos custom channels.",
+  "dependencies": ["@vercel/connect@^0.2.2", "eve@^0.24.6"],
+  "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+  "files": [
+    {
+      "path": "catalog/agents/webhook-summarizer-starter/.env.example",
+      "content": "# Slack channel that receives classified summaries (id starts with C).\nSLACK_SUMMARY_CHANNEL_ID=C0123456789\n\n# Optional shared secret. When set, require Authorization: Bearer <secret>.\n# WEBHOOK_SECRET=replace-me\n\n# Slack credentials are managed by Vercel Connect:\n#   vercel link\n#   vercel connect create slack --triggers\n#   vercel env pull\n# Then update the Connect UID in agent/channels/slack.ts.\n\n# Model access follows your eve setup (Vercel AI Gateway or a provider key).\n",
+      "type": "registry:file",
+      "target": ".env.example"
+    },
+    {
+      "path": "catalog/agents/webhook-summarizer-starter/.gitignore",
+      "content": "node_modules/\n.eve/\nvar/\n.env\n.env.local\n*.tsbuildinfo\n",
+      "type": "registry:file",
+      "target": ".gitignore"
+    },
+    {
+      "path": "catalog/agents/webhook-summarizer-starter/README.md",
+      "content": "# Webhook Summarizer Starter\n\nPOST any text (form submission, support ticket) to a webhook and get a classified summary in Slack.\n\nOne custom channel (`intake`) that hands off to Slack. Demos: custom channels.\n\n## Layout\n\n```text\nwebhook-summarizer-starter/\n├── package.json\n├── agent/\n│   ├── agent.ts\n│   ├── instructions.md            # ← summary format / categories\n│   ├── channels/intake.ts         # POST /eve/v1/intake/submit\n│   └── channels/slack.ts          # delivery target\n├── evals/\n```\n\n## Run\n\n```bash\nnpm install\nnpm run dev\n```\n\nWith Slack connected and `SLACK_SUMMARY_CHANNEL_ID` set:\n\n```bash\ncurl -X POST http://localhost:3000/eve/v1/intake/submit \\\n  -H \"content-type: application/json\" \\\n  -d '{\"text\":\"Cannot log in after password reset\",\"source\":\"contact-form\"}'\n```\n\n## Make it yours\n\nEdit categories and output shape in `agent/instructions.md`. Optionally set `WEBHOOK_SECRET` so callers must send `Authorization: Bearer …`.\n\n## Verify\n\n```bash\nnpm run eval\n```\n\n## License\n\nMIT\n",
+      "type": "registry:file",
+      "target": "README.md"
+    },
+    {
+      "path": "catalog/agents/webhook-summarizer-starter/SETUP.md",
+      "content": "# Set up Webhook Summarizer Starter\n\n## 1. Install and run\n\n```bash\nnpm install\nnpm run dev\n```\n\n## 2. Connect Slack\n\n```bash\nnpm install -g vercel@latest\nvercel link\nvercel connect create slack --triggers\nvercel connect detach <uid> --yes\nvercel connect attach <uid> --triggers --trigger-path /eve/v1/slack --yes\nvercel env pull\n```\n\nUpdate the Connect UID in `agent/channels/slack.ts`, set `SLACK_SUMMARY_CHANNEL_ID`, and invite the bot to that channel.\n\n## 3. Secure the webhook (recommended)\n\nSet `WEBHOOK_SECRET` and send `Authorization: Bearer <secret>` on every POST.\n\n## 4. Try it\n\n```bash\ncurl -X POST https://<your-deployment>/eve/v1/intake/submit \\\n  -H \"content-type: application/json\" \\\n  -H \"authorization: Bearer $WEBHOOK_SECRET\" \\\n  -d '{\"text\":\"Interested in Pro pricing for a 12-person team\",\"source\":\"pricing-form\"}'\n```\n\nA classified summary lands in the Slack channel.\n\n## Verify\n\n```bash\nnpm run eval\n```\n\nEvals exercise the summary format over eve's local HTTP channel — model credentials required, Slack credentials not.\n",
+      "type": "registry:file",
+      "target": "SETUP.md"
+    },
+    {
+      "path": "catalog/agents/webhook-summarizer-starter/agent/agent.ts",
+      "content": "import { defineAgent } from \"eve\";\n\nexport default defineAgent({\n  model: \"openai/gpt-5.4-mini\",\n});\n",
+      "type": "registry:file",
+      "target": "agent/agent.ts"
+    },
+    {
+      "path": "catalog/agents/webhook-summarizer-starter/agent/channels/intake.ts",
+      "content": "import { defineChannel, POST } from \"eve/channels\";\n\nimport slack from \"./slack\";\n\ntype IntakeBody = {\n  text?: string;\n  source?: string;\n};\n\n/**\n * Custom ingress: POST any text payload, hand it to Slack for a classified\n * summary. Mounted at POST /eve/v1/intake/submit.\n */\nexport default defineChannel({\n  routes: [\n    POST(\"/eve/v1/intake/submit\", async (req, args) => {\n      const secret = process.env.WEBHOOK_SECRET;\n      if (secret) {\n        const auth = req.headers.get(\"authorization\") ?? \"\";\n        if (auth !== `Bearer ${secret}`) {\n          return Response.json({ error: \"unauthorized\" }, { status: 401 });\n        }\n      }\n\n      const channelId = process.env.SLACK_SUMMARY_CHANNEL_ID;\n      if (!channelId) {\n        return Response.json(\n          { error: \"SLACK_SUMMARY_CHANNEL_ID is not set\" },\n          { status: 500 }\n        );\n      }\n\n      let body: IntakeBody;\n      try {\n        body = (await req.json()) as IntakeBody;\n      } catch {\n        return Response.json({ error: \"invalid JSON body\" }, { status: 400 });\n      }\n\n      const text = typeof body.text === \"string\" ? body.text.trim() : \"\";\n      if (!text) {\n        return Response.json(\n          { error: \"body.text is required (non-empty string)\" },\n          { status: 400 }\n        );\n      }\n\n      const source =\n        typeof body.source === \"string\" && body.source.trim()\n          ? body.source.trim()\n          : \"webhook\";\n\n      args.waitUntil(\n        args.receive(slack, {\n          message: [\n            \"Summarize and classify this inbound submission.\",\n            `Source: ${source}`,\n            \"\",\n            text,\n          ].join(\"\\n\"),\n          target: { channelId },\n          auth: {\n            authenticator: \"intake-webhook\",\n            principalType: \"service\",\n            principalId: source,\n            attributes: { source },\n          },\n        })\n      );\n\n      return Response.json({ ok: true });\n    }),\n  ],\n});\n",
+      "type": "registry:file",
+      "target": "agent/channels/intake.ts"
+    },
+    {
+      "path": "catalog/agents/webhook-summarizer-starter/agent/channels/slack.ts",
+      "content": "import { connectSlackCredentials } from \"@vercel/connect/eve\";\nimport { slackChannel } from \"eve/channels/slack\";\n\n// Replace the UID with your own Slack Connect client. See SETUP.md.\nexport default slackChannel({\n  credentials: connectSlackCredentials(\"slack/webhook-summarizer-starter\"),\n});\n",
+      "type": "registry:file",
+      "target": "agent/channels/slack.ts"
+    },
+    {
+      "path": "catalog/agents/webhook-summarizer-starter/agent/instructions.md",
+      "content": "# Identity\n\nYou summarize inbound text (form submissions, support tickets, anything POSTed to the intake webhook) and post a short classified summary to Slack.\n\n# Output format (required)\n\n```\n*Intake — <category>*\nSummary: <1–2 sentences>\nPriority: <low|medium|high>\nTags: <comma-separated keywords>\nNext: <one suggested action, or \"none\">\n```\n\nCategories (pick one): `support`, `sales`, `bug`, `feedback`, `spam`, `other`.\n\n<!-- CUSTOMIZE HERE: change categories, priority rules, or output shape. -->\n\n# Rules\n\n- Base the summary only on the submitted text. Never invent facts.\n- Prefer `bug` when something is broken; `sales` for pricing/purchase intent; `spam` for obvious junk.\n- Keep the whole Slack message under ~120 words.\n- When someone @mentions you in Slack with pasted text, use the same format.\n",
+      "type": "registry:file",
+      "target": "agent/instructions.md"
+    },
+    {
+      "path": "catalog/agents/webhook-summarizer-starter/evals/classifies-support.eval.ts",
+      "content": "import { defineEval } from \"eve/evals\";\nimport { includes } from \"eve/evals/expect\";\n\nexport default defineEval({\n  description: \"Classifies a support ticket into the required summary format.\",\n  async test(t) {\n    await t.send(\n      [\n        \"Summarize and classify this inbound submission.\",\n        \"Source: contact-form\",\n        \"\",\n        \"Hi — I cannot log in after resetting my password. Error says\",\n        '\"invalid credentials\" even though I just set a new one. Urgent!',\n      ].join(\"\\n\")\n    );\n    t.succeeded();\n    t.check(t.reply, includes(/Intake/i));\n    t.check(t.reply, includes(/Priority:/i));\n    t.check(t.reply, includes(/support|bug/i)).soft();\n  },\n});\n",
+      "type": "registry:file",
+      "target": "evals/classifies-support.eval.ts"
+    },
+    {
+      "path": "catalog/agents/webhook-summarizer-starter/evals/evals.config.ts",
+      "content": "import { defineEvalConfig } from \"eve/evals\";\n\nexport default defineEvalConfig({\n  maxConcurrency: 1,\n  timeoutMs: 120_000,\n});\n",
+      "type": "registry:file",
+      "target": "evals/evals.config.ts"
+    },
+    {
+      "path": "catalog/agents/webhook-summarizer-starter/examples/sample-input.md",
+      "content": "# Example request\n\nSummarize and classify this inbound submission. Source: contact-form\n\nHi — I cannot log in after resetting my password. Error says \"invalid credentials\" even though I just set a new one. Urgent!\n\n# Expected behavior\n\nA Slack-ready message in the required format: category support or bug, short summary, priority medium or high, tags, and one next action.\n",
+      "type": "registry:file",
+      "target": "examples/sample-input.md"
+    },
+    {
+      "path": "catalog/agents/webhook-summarizer-starter/package.json",
+      "content": "{\n  \"name\": \"webhook-summarizer-starter\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": {\n    \"dev\": \"eve dev\",\n    \"build\": \"eve build\",\n    \"start\": \"eve start\",\n    \"eval\": \"eve eval\",\n    \"typecheck\": \"tsc\"\n  },\n  \"dependencies\": {\n    \"@vercel/connect\": \"^0.2.2\",\n    \"eve\": \"^0.24.6\"\n  },\n  \"devDependencies\": {\n    \"@types/node\": \"24.x\",\n    \"typescript\": \"^5.9.3\"\n  },\n  \"engines\": {\n    \"node\": \"24.x\"\n  }\n}\n",
+      "type": "registry:file",
+      "target": "package.json"
+    },
+    {
+      "path": "catalog/agents/webhook-summarizer-starter/tsconfig.json",
+      "content": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\",\n    \"module\": \"esnext\",\n    \"moduleResolution\": \"bundler\",\n    \"types\": [\"node\"],\n    \"strict\": true,\n    \"esModuleInterop\": true,\n    \"skipLibCheck\": true,\n    \"noEmit\": true\n  },\n  \"include\": [\"agent/**/*.ts\", \"evals/**/*.ts\"]\n}\n",
+      "type": "registry:file",
+      "target": "tsconfig.json"
+    }
+  ],
+  "meta": {
+    "runtime": "eve",
+    "layout": "eve-app",
+    "version": "1.0.0",
+    "license": "MIT",
+    "category": "starters",
+    "integrations": ["slack"]
+  },
+  "categories": ["starters"],
+  "type": "registry:block"
+}

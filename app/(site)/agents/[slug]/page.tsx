@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { AdSlot } from "@/components/ad-slot";
@@ -10,11 +11,37 @@ import { RelatedGuides } from "@/components/related-guides";
 import {
   countAuthoredFiles,
   getAgent,
+  getAgents,
   getIntegrationDetails,
   listAgentFiles,
   readAgentFile,
 } from "@/lib/catalog";
 import { getRelatedGuidesForIntegrations } from "@/lib/docs/related-guides";
+import { pageMetadata } from "@/lib/seo";
+
+export async function generateStaticParams() {
+  const agents = await getAgents();
+  return agents.map((agent) => ({ slug: agent.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const agent = await getAgent(slug);
+
+  if (!agent) {
+    return {};
+  }
+
+  return pageMetadata({
+    description: agent.summary,
+    pathname: `/agents/${agent.slug}`,
+    title: `${agent.name} — Eve agent`,
+  });
+}
 
 export default async function AgentDetailPage({
   params,

@@ -1,0 +1,110 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "approval-gate-starter",
+  "title": "Approval Gate Starter",
+  "description": "Refunds always need Slack approval; service restarts use once(). Tool bodies log only — swap in real actions.",
+  "dependencies": ["@vercel/connect@^0.2.2", "eve@^0.24.6", "zod@^4.4.3"],
+  "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+  "files": [
+    {
+      "path": "catalog/agents/approval-gate-starter/.env.example",
+      "content": "# Slack credentials are managed by Vercel Connect:\n#   vercel link\n#   vercel connect create slack --triggers\n#   vercel env pull\n# Then update the Connect UID in agent/channels/slack.ts.\n\n# Model access follows your eve setup (Vercel AI Gateway or a provider key).\n",
+      "type": "registry:file",
+      "target": ".env.example"
+    },
+    {
+      "path": "catalog/agents/approval-gate-starter/.gitignore",
+      "content": "node_modules/\n.eve/\nvar/\n.env\n.env.local\n*.tsbuildinfo\n",
+      "type": "registry:file",
+      "target": ".gitignore"
+    },
+    {
+      "path": "catalog/agents/approval-gate-starter/README.md",
+      "content": "# Approval Gate Starter\n\nAsk it to \"issue a refund\" or \"restart the api service\" — Slack shows an approval card. Tool bodies just log; swap in your real actions.\n\nTwo gated tools demonstrate `always()` vs `once()`:\n\n| Tool | Helper | Behavior |\n| --- | --- | --- |\n| `issue_refund` | `always()` | Approve every call |\n| `restart_service` | `once()` | Approve the first call in the session; later calls auto-allow |\n\nDemos: human-in-the-loop approvals.\n\n## Layout\n\n```text\napproval-gate-starter/\n├── package.json\n├── agent/\n│   ├── agent.ts\n│   ├── instructions.md\n│   ├── channels/slack.ts\n│   ├── tools/issue_refund.ts      # approval: always()\n│   └── tools/restart_service.ts   # approval: once()\n├── evals/\n```\n\n## Run\n\n```bash\nnpm install\nnpm run dev\n```\n\nEvals prove park-on-approval without Slack. See `SETUP.md` for Connect.\n\n## Make it yours\n\nReplace the `console.log` bodies with real API calls. Keep the `approval` helpers.\n\n## Verify\n\n```bash\nnpm run eval\n```\n\n## License\n\nMIT\n",
+      "type": "registry:file",
+      "target": "README.md"
+    },
+    {
+      "path": "catalog/agents/approval-gate-starter/SETUP.md",
+      "content": "# Set up Approval Gate Starter\n\n## 1. Install and run\n\n```bash\nnpm install\nnpm run dev\n```\n\n## 2. Connect Slack\n\n```bash\nnpm install -g vercel@latest\nvercel link\nvercel connect create slack --triggers\nvercel connect detach <uid> --yes\nvercel connect attach <uid> --triggers --trigger-path /eve/v1/slack --yes\nvercel env pull\n```\n\nUpdate the Connect UID in `agent/channels/slack.ts` to the one the CLI returned. Invite the bot to a channel.\n\n## 3. Try it\n\nIn Slack:\n\n- `@bot issue a refund for charge ch_123 of 2500 cents — never shipped.` → approval every time (`always()`).\n- `@bot restart the api service — memory leak.` → approval the first time in the session; a later restart auto-allows (`once()`).\n\nApprove → the stub logs and the bot confirms. Deny → the tool does not run.\n\n## Verify\n\n```bash\nnpm run eval\n```\n\nEvals assert `t.parked()` for both tools — model credentials required, Slack credentials not.\n",
+      "type": "registry:file",
+      "target": "SETUP.md"
+    },
+    {
+      "path": "catalog/agents/approval-gate-starter/agent/agent.ts",
+      "content": "import { defineAgent } from \"eve\";\n\nexport default defineAgent({\n  model: \"openai/gpt-5.4-mini\",\n});\n",
+      "type": "registry:file",
+      "target": "agent/agent.ts"
+    },
+    {
+      "path": "catalog/agents/approval-gate-starter/agent/channels/slack.ts",
+      "content": "import { connectSlackCredentials } from \"@vercel/connect/eve\";\nimport { slackChannel } from \"eve/channels/slack\";\n\n// Replace the UID with your own Slack Connect client. See SETUP.md.\nexport default slackChannel({\n  credentials: connectSlackCredentials(\"slack/approval-gate-starter\"),\n});\n",
+      "type": "registry:file",
+      "target": "agent/channels/slack.ts"
+    },
+    {
+      "path": "catalog/agents/approval-gate-starter/agent/instructions.md",
+      "content": "# Identity\n\nYou are an ops bot with two gated actions:\n\n- `issue_refund` — **always** requires approval (every call).\n- `restart_service` — **once** requires approval (first call in the session; later restarts of any service auto-allow).\n\n# Workflow\n\nWhen asked to refund something:\n\n1. Collect `chargeId`, `amountCents`, and a short `reason` if missing.\n2. Call `issue_refund` immediately. Do **not** ask for permission in chat — the approval gate is the permission step.\n3. Report the outcome in one short sentence.\n\nWhen asked to restart a service:\n\n1. Collect `service` name and `reason`.\n2. Call `restart_service` immediately (same rule — no chat permission ask).\n3. Report the outcome.\n\n# Rules\n\n- Never claim success without a successful tool result.\n- Never work around the gates.\n- Keep chat replies brief; Slack shows approval cards separately.\n",
+      "type": "registry:file",
+      "target": "agent/instructions.md"
+    },
+    {
+      "path": "catalog/agents/approval-gate-starter/agent/tools/issue_refund.ts",
+      "content": "import { defineTool } from \"eve/tools\";\nimport { always } from \"eve/tools/approval\";\nimport { z } from \"zod\";\n\n/**\n * Fake-dangerous action gated on human approval.\n * CUSTOMIZE HERE: replace the log with your real refund / ops call.\n */\nexport default defineTool({\n  description:\n    \"Issue a refund for a charge. Always requires human approval in Slack before running.\",\n  inputSchema: z.object({\n    chargeId: z.string().min(1),\n    amountCents: z.number().int().positive(),\n    reason: z.string().min(1).max(500),\n  }),\n  approval: always(),\n  async execute({ chargeId, amountCents, reason }) {\n    // Starter body: log only. Swap this for your payment provider call.\n    console.log(\"[issue_refund] approved\", {\n      chargeId,\n      amountCents,\n      reason,\n      at: new Date().toISOString(),\n    });\n    return {\n      status: \"logged\",\n      chargeId,\n      amountCents,\n      reason,\n      note: \"Starter stub — replace execute() with a real refund API call.\",\n    };\n  },\n});\n",
+      "type": "registry:file",
+      "target": "agent/tools/issue_refund.ts"
+    },
+    {
+      "path": "catalog/agents/approval-gate-starter/agent/tools/restart_service.ts",
+      "content": "import { defineTool } from \"eve/tools\";\nimport { once } from \"eve/tools/approval\";\nimport { z } from \"zod\";\n\n/**\n * Contrast with issue_refund (always()): once() asks for approval on the\n * first call in a session, then auto-allows later calls of this tool.\n * CUSTOMIZE HERE: replace the log with a real restart / ops action.\n */\nexport default defineTool({\n  description:\n    \"Restart a named service. Requires approval the first time in a session; later calls auto-allow.\",\n  inputSchema: z.object({\n    service: z.string().min(1),\n    reason: z.string().min(1).max(500),\n  }),\n  approval: once(),\n  async execute({ service, reason }) {\n    console.log(\"[restart_service] approved\", {\n      service,\n      reason,\n      at: new Date().toISOString(),\n    });\n    return {\n      status: \"logged\",\n      service,\n      reason,\n      note: \"Starter stub — replace execute() with a real restart call.\",\n    };\n  },\n});\n",
+      "type": "registry:file",
+      "target": "agent/tools/restart_service.ts"
+    },
+    {
+      "path": "catalog/agents/approval-gate-starter/evals/evals.config.ts",
+      "content": "import { defineEvalConfig } from \"eve/evals\";\n\nexport default defineEvalConfig({\n  maxConcurrency: 1,\n  timeoutMs: 120_000,\n});\n",
+      "type": "registry:file",
+      "target": "evals/evals.config.ts"
+    },
+    {
+      "path": "catalog/agents/approval-gate-starter/evals/refund-requires-approval.eval.ts",
+      "content": "import { defineEval } from \"eve/evals\";\n\nexport default defineEval({\n  description: \"Issuing a refund parks on human approval instead of executing.\",\n  async test(t) {\n    await t.send(\n      \"Issue a refund immediately for charge ch_demo_123 amounting to 2500 cents because the item never shipped.\"\n    );\n    t.parked();\n    t.calledTool(\"issue_refund\", { status: \"pending\", count: 1 });\n  },\n});\n",
+      "type": "registry:file",
+      "target": "evals/refund-requires-approval.eval.ts"
+    },
+    {
+      "path": "catalog/agents/approval-gate-starter/evals/restart-requires-approval.eval.ts",
+      "content": "import { defineEval } from \"eve/evals\";\n\nexport default defineEval({\n  description:\n    \"First restart_service call parks (once() still needs approval).\",\n  async test(t) {\n    await t.send(\n      \"Restart the api service immediately because of a memory leak.\"\n    );\n    t.parked();\n    t.calledTool(\"restart_service\", { status: \"pending\", count: 1 });\n  },\n});\n",
+      "type": "registry:file",
+      "target": "evals/restart-requires-approval.eval.ts"
+    },
+    {
+      "path": "catalog/agents/approval-gate-starter/examples/sample-input.md",
+      "content": "# Example request\n\nIssue a refund for charge ch_demo_123 amounting to 2500 cents because the item never shipped.\n\nAlso try: Restart the api service because of a memory leak.\n\n# Expected behavior\n\nCall `issue_refund` / `restart_service` immediately. The run parks on human approval; after approve, the stub logs and the agent confirms; after deny, it reports the denial without claiming success.\n",
+      "type": "registry:file",
+      "target": "examples/sample-input.md"
+    },
+    {
+      "path": "catalog/agents/approval-gate-starter/package.json",
+      "content": "{\n  \"name\": \"approval-gate-starter\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": {\n    \"dev\": \"eve dev\",\n    \"build\": \"eve build\",\n    \"start\": \"eve start\",\n    \"eval\": \"eve eval\",\n    \"typecheck\": \"tsc\"\n  },\n  \"dependencies\": {\n    \"@vercel/connect\": \"^0.2.2\",\n    \"eve\": \"^0.24.6\",\n    \"zod\": \"^4.4.3\"\n  },\n  \"devDependencies\": {\n    \"@types/node\": \"24.x\",\n    \"typescript\": \"^5.9.3\"\n  },\n  \"engines\": {\n    \"node\": \"24.x\"\n  }\n}\n",
+      "type": "registry:file",
+      "target": "package.json"
+    },
+    {
+      "path": "catalog/agents/approval-gate-starter/tsconfig.json",
+      "content": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\",\n    \"module\": \"esnext\",\n    \"moduleResolution\": \"bundler\",\n    \"types\": [\"node\"],\n    \"strict\": true,\n    \"esModuleInterop\": true,\n    \"skipLibCheck\": true,\n    \"noEmit\": true\n  },\n  \"include\": [\"agent/**/*.ts\", \"evals/**/*.ts\"]\n}\n",
+      "type": "registry:file",
+      "target": "tsconfig.json"
+    }
+  ],
+  "meta": {
+    "runtime": "eve",
+    "layout": "eve-app",
+    "version": "1.0.0",
+    "license": "MIT",
+    "category": "starters",
+    "integrations": ["slack"]
+  },
+  "categories": ["starters"],
+  "type": "registry:block"
+}

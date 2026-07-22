@@ -1,4 +1,4 @@
-import type { AgentListing, OfficialIntegration } from "@/lib/catalog/types";
+import type { DirectoryAgent, OfficialIntegration } from "@/lib/catalog/types";
 import { integrationLabel } from "@/lib/site";
 
 export type IntegrationFilterCategory =
@@ -57,7 +57,7 @@ function asFilterCategory(
 
 /** Build integration filter options from agents + official catalog metadata. */
 export function buildIntegrationFilterOptions(
-  agents: AgentListing[],
+  agents: Pick<DirectoryAgent, "integrations">[],
   official: OfficialIntegration[]
 ): IntegrationFilterOption[] {
   const used = new Set<string>();
@@ -124,21 +124,29 @@ export function groupIntegrationFilterOptions(
   return groups;
 }
 
+export type AgentTierFilter = "all" | "official" | "community";
+
 export function filterAgents({
   agents,
   query,
   categorySlug,
   integrationSlug,
+  tier = "all",
 }: {
-  agents: AgentListing[];
+  agents: DirectoryAgent[];
   query: string;
   categorySlug: string | null;
   integrationSlug: string | null;
-}): AgentListing[] {
+  tier?: AgentTierFilter;
+}): DirectoryAgent[] {
   const normalizedQuery = query.trim().toLowerCase();
   const normalizedIntegration = integrationSlug?.toLowerCase() ?? null;
 
   return agents.filter((agent) => {
+    if (tier !== "all" && agent.tier !== tier) {
+      return false;
+    }
+
     if (categorySlug && agent.category.slug !== categorySlug) {
       return false;
     }
@@ -156,10 +164,12 @@ export function filterAgents({
       return true;
     }
 
+    const handle = agent.tier === "community" ? agent.handle : "";
     const haystack = [
       agent.name,
       agent.summary,
       agent.category.name,
+      handle,
       ...agent.integrations.map((item) => integrationLabel(item)),
       ...agent.integrations,
     ]

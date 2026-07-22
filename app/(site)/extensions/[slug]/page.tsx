@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { AdSlot } from "@/components/ad-slot";
@@ -9,6 +10,26 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { Surface } from "@/components/ui/surface";
 import { getExtension, readExtensionReadme } from "@/lib/catalog";
 import { getRelatedGuidesForIntegrations } from "@/lib/docs/related-guides";
+import { pageMetadata } from "@/lib/seo";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const extension = await getExtension(slug);
+
+  if (!extension) {
+    return {};
+  }
+
+  return pageMetadata({
+    description: extension.summary,
+    pathname: `/extensions/${extension.slug}`,
+    title: `${extension.name} — Eve extension`,
+  });
+}
 
 export default async function ExtensionDetailPage({
   params,

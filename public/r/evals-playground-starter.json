@@ -1,0 +1,122 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "evals-playground-starter",
+  "title": "Evals Playground Starter",
+  "description": "A tiny agent plus numbered evals teaching succeeded, calledTool, parked, check, and judge.",
+  "dependencies": ["eve@^0.24.6", "zod@^4.4.3"],
+  "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+  "files": [
+    {
+      "path": "catalog/agents/evals-playground-starter/.env.example",
+      "content": "# Model access follows your eve setup (Vercel AI Gateway or a provider key).\n# Judge evals use the same credentials via evals.config.ts judge.model.\n",
+      "type": "registry:file",
+      "target": ".env.example"
+    },
+    {
+      "path": "catalog/agents/evals-playground-starter/.gitignore",
+      "content": "node_modules/\n.eve/\nvar/\n.env\n.env.local\n*.tsbuildinfo\n",
+      "type": "registry:file",
+      "target": ".gitignore"
+    },
+    {
+      "path": "catalog/agents/evals-playground-starter/README.md",
+      "content": "# Evals Playground Starter\n\nA tiny agent plus a numbered eval suite that walks the assertion surfaces one file at a time — the reference you want when wiring `eve eval` on real agents.\n\nDemos: `t.succeeded`, `calledTool`, `parked`, `t.check`, soft vs gate, judge.\n\n## Layout\n\n```text\nevals-playground-starter/\n├── agent/\n│   ├── tools/get_weather.ts      # stub\n│   └── tools/issue_refund.ts     # approval: always()\n├── evals/\n│   ├── 01-succeeded.eval.ts\n│   ├── 02-called-tool.eval.ts\n│   ├── 03-parked.eval.ts\n│   ├── 04-check-includes.eval.ts\n│   └── 05-judge.eval.ts          # soft LLM judge\n```\n\n## Run\n\n```bash\nnpm install\nnpm run eval\n```\n\nOr one file:\n\n```bash\nnpx eve eval 02-called-tool\nnpx eve eval --strict   # soft threshold misses fail the build\n```\n\n## Make it yours\n\nCopy an eval file into your own agent and swap the prompt/tool names. Keep gates for wiring (`succeeded`, `calledTool`, `parked`) and soft/judge for fuzzy quality.\n\n## License\n\nMIT\n",
+      "type": "registry:file",
+      "target": "README.md"
+    },
+    {
+      "path": "catalog/agents/evals-playground-starter/SETUP.md",
+      "content": "# Set up Evals Playground Starter\n\n## 1. Install\n\n```bash\nnpm install\n```\n\nProvide model credentials the same way as any eve app (AI Gateway or provider key).\n\n## 2. Run the suite\n\n```bash\nnpm run eval\n```\n\nRead the eval files in order — each one is a self-contained lesson. Optional chat:\n\n```bash\nnpm run dev\n```\n\n## Verify\n\nPassing `npm run eval` is the whole point of this starter.\n",
+      "type": "registry:file",
+      "target": "SETUP.md"
+    },
+    {
+      "path": "catalog/agents/evals-playground-starter/agent/agent.ts",
+      "content": "import { defineAgent } from \"eve\";\n\nexport default defineAgent({\n  model: \"openai/gpt-5.4-mini\",\n});\n",
+      "type": "registry:file",
+      "target": "agent/agent.ts"
+    },
+    {
+      "path": "catalog/agents/evals-playground-starter/agent/instructions.md",
+      "content": "# Identity\n\nYou are a tiny demo agent used to teach eve evals. You have two tools: `get_weather` (always succeeds with a stub) and `issue_refund` (always parks for approval).\n\n# Rules\n\n- For weather questions, call `get_weather` and quote the returned condition.\n- For refund requests, call `issue_refund` immediately — do not ask for chat permission; approval is the gate.\n- Keep other replies short.\n",
+      "type": "registry:file",
+      "target": "agent/instructions.md"
+    },
+    {
+      "path": "catalog/agents/evals-playground-starter/agent/tools/get_weather.ts",
+      "content": "import { defineTool } from \"eve/tools\";\nimport { z } from \"zod\";\n\n/** Deterministic stub so evals never need a weather API. */\nexport default defineTool({\n  description: \"Get the current weather for a city (stubbed for demos).\",\n  inputSchema: z.object({\n    city: z.string().min(1),\n  }),\n  async execute({ city }) {\n    return {\n      city,\n      condition: \"Sunny\",\n      temperatureF: 72,\n      note: \"Stubbed result for eval demos.\",\n    };\n  },\n});\n",
+      "type": "registry:file",
+      "target": "agent/tools/get_weather.ts"
+    },
+    {
+      "path": "catalog/agents/evals-playground-starter/agent/tools/issue_refund.ts",
+      "content": "import { defineTool } from \"eve/tools\";\nimport { always } from \"eve/tools/approval\";\nimport { z } from \"zod\";\n\n/** Exists so evals can assert t.parked() + pending tool status. */\nexport default defineTool({\n  description: \"Issue a refund. Always requires human approval first.\",\n  inputSchema: z.object({\n    chargeId: z.string().min(1),\n    amountCents: z.number().int().positive(),\n  }),\n  approval: always(),\n  async execute({ chargeId, amountCents }) {\n    return { status: \"refunded\", chargeId, amountCents };\n  },\n});\n",
+      "type": "registry:file",
+      "target": "agent/tools/issue_refund.ts"
+    },
+    {
+      "path": "catalog/agents/evals-playground-starter/evals/01-succeeded.eval.ts",
+      "content": "import { defineEval } from \"eve/evals\";\n\nexport default defineEval({\n  description: \"Gate: the run completed successfully (t.succeeded).\",\n  async test(t) {\n    await t.send(\"Say hi in three words.\");\n    t.succeeded();\n  },\n});\n",
+      "type": "registry:file",
+      "target": "evals/01-succeeded.eval.ts"
+    },
+    {
+      "path": "catalog/agents/evals-playground-starter/evals/02-called-tool.eval.ts",
+      "content": "import { defineEval } from \"eve/evals\";\n\nexport default defineEval({\n  description: \"Gate: the right tool ran with matching input (t.calledTool).\",\n  async test(t) {\n    await t.send(\"What is the weather in Brooklyn? Use get_weather.\");\n    t.succeeded();\n    t.calledTool(\"get_weather\", {\n      input: { city: /brooklyn/i },\n    });\n  },\n});\n",
+      "type": "registry:file",
+      "target": "evals/02-called-tool.eval.ts"
+    },
+    {
+      "path": "catalog/agents/evals-playground-starter/evals/03-parked.eval.ts",
+      "content": "import { defineEval } from \"eve/evals\";\n\nexport default defineEval({\n  description: \"Gate: approval parks the session (t.parked + pending tool).\",\n  async test(t) {\n    await t.send(\n      \"Issue a refund for charge ch_eval_1 amounting to 1000 cents now.\"\n    );\n    t.parked();\n    t.calledTool(\"issue_refund\", { status: \"pending\", count: 1 });\n  },\n});\n",
+      "type": "registry:file",
+      "target": "evals/03-parked.eval.ts"
+    },
+    {
+      "path": "catalog/agents/evals-playground-starter/evals/04-check-includes.eval.ts",
+      "content": "import { defineEval } from \"eve/evals\";\nimport { includes, satisfies } from \"eve/evals/expect\";\n\nexport default defineEval({\n  description: \"Gate + soft: t.check with includes and satisfies.\",\n  async test(t) {\n    await t.send(\"What is the weather in Brooklyn? Use get_weather.\");\n    t.succeeded();\n    t.check(t.reply, includes(/sunny/i));\n    t.check(\n      t.reply,\n      satisfies(\n        (reply: string) => reply.length < 2000,\n        \"reply is under 2000 chars\"\n      )\n    ).soft();\n  },\n});\n",
+      "type": "registry:file",
+      "target": "evals/04-check-includes.eval.ts"
+    },
+    {
+      "path": "catalog/agents/evals-playground-starter/evals/05-judge.eval.ts",
+      "content": "import { defineEval } from \"eve/evals\";\n\nexport default defineEval({\n  description:\n    \"Soft: LLM-as-judge grades the reply (tracked, not a hard fail).\",\n  async test(t) {\n    await t.send(\"What is the weather in Brooklyn? Use get_weather.\");\n    t.succeeded();\n    t.calledTool(\"get_weather\");\n    // Soft by default — appears in reports; use --strict to fail on threshold.\n    t.judge.autoevals.closedQA(\"Mentions sunny or clear weather for Brooklyn\");\n  },\n});\n",
+      "type": "registry:file",
+      "target": "evals/05-judge.eval.ts"
+    },
+    {
+      "path": "catalog/agents/evals-playground-starter/evals/evals.config.ts",
+      "content": "import { defineEvalConfig } from \"eve/evals\";\n\nexport default defineEvalConfig({\n  maxConcurrency: 1,\n  timeoutMs: 120_000,\n  // Optional judge defaults for soft LLM grading (see judge.eval.ts).\n  judge: { model: \"openai/gpt-5.4-mini\" },\n});\n",
+      "type": "registry:file",
+      "target": "evals/evals.config.ts"
+    },
+    {
+      "path": "catalog/agents/evals-playground-starter/examples/sample-input.md",
+      "content": "# Example request\n\nWhat is the weather in Brooklyn? Use get_weather.\n\n# Expected behavior\n\nCall `get_weather` with city Brooklyn and reply mentioning sunny / 72°F from the stub. For refund prompts, call `issue_refund` and park for approval.\n",
+      "type": "registry:file",
+      "target": "examples/sample-input.md"
+    },
+    {
+      "path": "catalog/agents/evals-playground-starter/package.json",
+      "content": "{\n  \"name\": \"evals-playground-starter\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": {\n    \"dev\": \"eve dev\",\n    \"build\": \"eve build\",\n    \"start\": \"eve start\",\n    \"eval\": \"eve eval\",\n    \"typecheck\": \"tsc\"\n  },\n  \"dependencies\": {\n    \"eve\": \"^0.24.6\",\n    \"zod\": \"^4.4.3\"\n  },\n  \"devDependencies\": {\n    \"@types/node\": \"24.x\",\n    \"typescript\": \"^5.9.3\"\n  },\n  \"engines\": {\n    \"node\": \"24.x\"\n  }\n}\n",
+      "type": "registry:file",
+      "target": "package.json"
+    },
+    {
+      "path": "catalog/agents/evals-playground-starter/tsconfig.json",
+      "content": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\",\n    \"module\": \"esnext\",\n    \"moduleResolution\": \"bundler\",\n    \"types\": [\"node\"],\n    \"strict\": true,\n    \"esModuleInterop\": true,\n    \"skipLibCheck\": true,\n    \"noEmit\": true\n  },\n  \"include\": [\"agent/**/*.ts\", \"evals/**/*.ts\"]\n}\n",
+      "type": "registry:file",
+      "target": "tsconfig.json"
+    }
+  ],
+  "meta": {
+    "runtime": "eve",
+    "layout": "eve-app",
+    "version": "1.0.0",
+    "license": "MIT",
+    "category": "starters",
+    "integrations": ["eve"]
+  },
+  "categories": ["starters"],
+  "type": "registry:block"
+}

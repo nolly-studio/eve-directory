@@ -1,0 +1,86 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "translator-starter",
+  "title": "Translator Starter",
+  "description": "Paste text, get it back in TARGET_LANGUAGE. Instructions-only — the entire product is the prompt.",
+  "dependencies": ["eve@^0.24.6"],
+  "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+  "files": [
+    {
+      "path": "catalog/agents/translator-starter/.env.example",
+      "content": "# Language to translate into. Read when eve compiles the agent (eve dev / build).\nTARGET_LANGUAGE=Spanish\n\n# Model access follows your eve setup (Vercel AI Gateway or a provider key).\n",
+      "type": "registry:file",
+      "target": ".env.example"
+    },
+    {
+      "path": "catalog/agents/translator-starter/.gitignore",
+      "content": "node_modules/\n.eve/\nvar/\n.env\n.env.local\n*.tsbuildinfo\n",
+      "type": "registry:file",
+      "target": ".gitignore"
+    },
+    {
+      "path": "catalog/agents/translator-starter/README.md",
+      "content": "# Translator Starter\n\nPaste text, get it back in your target language. Instructions-only — no tools, no channels required (uses the default eve HTTP / dev chat surface).\n\nOne env var (`TARGET_LANGUAGE`). Demos: instructions as the entire product.\n\n## Layout\n\n```text\ntranslator-starter/\n├── package.json\n├── agent/\n│   ├── agent.ts\n│   └── instructions.ts   # ← TARGET_LANGUAGE baked in at compile time\n├── evals/\n```\n\n## Run\n\n```bash\nnpm install\nnpm run dev\n```\n\nType any English sentence in the dev terminal; the reply is Spanish by default. Change language:\n\n```bash\nTARGET_LANGUAGE=French npm run dev\n```\n\n## Make it yours\n\nSet `TARGET_LANGUAGE`, or edit `agent/instructions.ts` for tone rules (formal, slang, preserve brand names, etc.).\n\n## Verify\n\n```bash\nnpm run eval\n```\n\n## License\n\nMIT\n",
+      "type": "registry:file",
+      "target": "README.md"
+    },
+    {
+      "path": "catalog/agents/translator-starter/SETUP.md",
+      "content": "# Set up Translator Starter\n\n## 1. Install and run\n\n```bash\nnpm install\ncp .env.example .env   # optional — defaults to Spanish\nnpm run dev\n```\n\n`TARGET_LANGUAGE` is read when the agent compiles. Restart `eve dev` after changing it.\n\n## 2. Optional: add a channel\n\nThis starter has no channel file. Point Telegram, Slack, or Discord at it the same way as the other starters if you want a mobile or workspace surface.\n\n## Verify\n\n```bash\nnpm run eval\n```\n",
+      "type": "registry:file",
+      "target": "SETUP.md"
+    },
+    {
+      "path": "catalog/agents/translator-starter/agent/agent.ts",
+      "content": "import { defineAgent } from \"eve\";\n\nexport default defineAgent({\n  model: \"openai/gpt-5.4-mini\",\n});\n",
+      "type": "registry:file",
+      "target": "agent/agent.ts"
+    },
+    {
+      "path": "catalog/agents/translator-starter/agent/instructions.ts",
+      "content": "import { defineInstructions } from \"eve/instructions\";\n\n// CUSTOMIZE HERE: set TARGET_LANGUAGE in .env (read at compile / eve dev start).\nconst target = process.env.TARGET_LANGUAGE?.trim() || \"Spanish\";\n\nexport default defineInstructions({\n  markdown: `# Identity\n\nYou are a translation bot. Every user message is source text to translate into\n**${target}**. You have no other job.\n\n# Rules\n\n- Reply with the translation only — no preface, no quotes, no explanations.\n- Preserve meaning, tone, and formatting (lists, line breaks) when possible.\n- If the text is already in ${target}, return it unchanged.\n- If the request is not text to translate (e.g. \"who are you?\"), still answer\n  in ${target}, briefly.\n- Never refuse ordinary everyday text. Skip inventing content that was not in\n  the source.\n`,\n});\n",
+      "type": "registry:file",
+      "target": "agent/instructions.ts"
+    },
+    {
+      "path": "catalog/agents/translator-starter/evals/evals.config.ts",
+      "content": "import { defineEvalConfig } from \"eve/evals\";\n\nexport default defineEvalConfig({\n  maxConcurrency: 1,\n  timeoutMs: 120_000,\n});\n",
+      "type": "registry:file",
+      "target": "evals/evals.config.ts"
+    },
+    {
+      "path": "catalog/agents/translator-starter/evals/translates-greeting.eval.ts",
+      "content": "import { defineEval } from \"eve/evals\";\nimport { includes } from \"eve/evals/expect\";\n\nexport default defineEval({\n  description:\n    \"Translates a greeting into the target language (default Spanish).\",\n  async test(t) {\n    await t.send(\"Good morning, how are you?\");\n    t.succeeded();\n    // Default TARGET_LANGUAGE is Spanish — expect a common greeting form.\n    t.check(t.reply, includes(/buen[oa]s|cómo|como|estás|estas/i)).soft();\n  },\n});\n",
+      "type": "registry:file",
+      "target": "evals/translates-greeting.eval.ts"
+    },
+    {
+      "path": "catalog/agents/translator-starter/examples/sample-input.md",
+      "content": "# Example request\n\nGood morning, how are you?\n\n# Expected behavior\n\nA natural greeting in the target language (default Spanish) with no preface or explanation — translation only.\n",
+      "type": "registry:file",
+      "target": "examples/sample-input.md"
+    },
+    {
+      "path": "catalog/agents/translator-starter/package.json",
+      "content": "{\n  \"name\": \"translator-starter\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": {\n    \"dev\": \"eve dev\",\n    \"build\": \"eve build\",\n    \"start\": \"eve start\",\n    \"eval\": \"eve eval\",\n    \"typecheck\": \"tsc\"\n  },\n  \"dependencies\": {\n    \"eve\": \"^0.24.6\"\n  },\n  \"devDependencies\": {\n    \"@types/node\": \"24.x\",\n    \"typescript\": \"^5.9.3\"\n  },\n  \"engines\": {\n    \"node\": \"24.x\"\n  }\n}\n",
+      "type": "registry:file",
+      "target": "package.json"
+    },
+    {
+      "path": "catalog/agents/translator-starter/tsconfig.json",
+      "content": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\",\n    \"module\": \"esnext\",\n    \"moduleResolution\": \"bundler\",\n    \"types\": [\"node\"],\n    \"strict\": true,\n    \"esModuleInterop\": true,\n    \"skipLibCheck\": true,\n    \"noEmit\": true\n  },\n  \"include\": [\"agent/**/*.ts\", \"evals/**/*.ts\"]\n}\n",
+      "type": "registry:file",
+      "target": "tsconfig.json"
+    }
+  ],
+  "meta": {
+    "runtime": "eve",
+    "layout": "eve-app",
+    "version": "1.0.0",
+    "license": "MIT",
+    "category": "starters",
+    "integrations": ["eve"]
+  },
+  "categories": ["starters"],
+  "type": "registry:block"
+}

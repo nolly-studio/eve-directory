@@ -1,9 +1,31 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { AgentCard } from "@/components/listing-card";
 import { PageShell } from "@/components/page-shell";
 import { ButtonLink } from "@/components/ui/button-link";
 import { getAgentsByCategory, getCategories } from "@/lib/catalog";
+import { pageMetadata } from "@/lib/seo";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const categories = await getCategories();
+  const category = categories.find((item) => item.slug === slug);
+
+  if (!category) {
+    return {};
+  }
+
+  return pageMetadata({
+    description: `Eve agents in ${category.name}. Inspect source, compose a starter template, and install into a Vercel Eve project.`,
+    pathname: `/categories/${category.slug}`,
+    title: `${category.name} Eve agents`,
+  });
+}
 
 export default async function CategoryPage({
   params,

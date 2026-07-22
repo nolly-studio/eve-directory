@@ -1,0 +1,92 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "receipt-scanner-starter",
+  "title": "Receipt Scanner Starter",
+  "description": "Photo a receipt in Telegram and get merchant, total, category, and line items back. Demos attachments.",
+  "dependencies": ["eve@^0.24.6"],
+  "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+  "files": [
+    {
+      "path": "catalog/agents/receipt-scanner-starter/.env.example",
+      "content": "TELEGRAM_BOT_TOKEN=123456:replace-me\nTELEGRAM_WEBHOOK_SECRET_TOKEN=replace-me\n\n# Model access follows your eve setup (Vercel AI Gateway or a provider key).\n# Prefer a vision-capable model when scanning receipt photos.\n",
+      "type": "registry:file",
+      "target": ".env.example"
+    },
+    {
+      "path": "catalog/agents/receipt-scanner-starter/.gitignore",
+      "content": "node_modules/\n.eve/\nvar/\n.env\n.env.local\n*.tsbuildinfo\n",
+      "type": "registry:file",
+      "target": ".gitignore"
+    },
+    {
+      "path": "catalog/agents/receipt-scanner-starter/README.md",
+      "content": "# Receipt Scanner Starter\n\nPhoto a receipt in Telegram — get merchant, date, total, category, and line items back as plain text.\n\nOne channel with `uploadPolicy`, no tools. Demos: inbound attachments.\n\n## Layout\n\n```text\nreceipt-scanner-starter/\n├── package.json\n├── agent/\n│   ├── agent.ts\n│   ├── instructions.md          # ← extraction format\n│   └── channels/telegram.ts     # uploadPolicy for image/* + PDF\n├── evals/\n```\n\n## Run\n\n```bash\nnpm install\nnpm run dev\n```\n\nSee `SETUP.md` for Telegram. Evals exercise extraction from a pasted transcript without needing a photo.\n\n## Make it yours\n\nEdit categories and fields in `agent/instructions.md`. Widen `uploadPolicy.allowedMediaTypes` if you want more file types.\n\n## Verify\n\n```bash\nnpm run eval\n```\n\n## License\n\nMIT\n",
+      "type": "registry:file",
+      "target": "README.md"
+    },
+    {
+      "path": "catalog/agents/receipt-scanner-starter/SETUP.md",
+      "content": "# Set up Receipt Scanner Starter\n\n## 1. Install and run\n\n```bash\nnpm install\nnpm run dev\n```\n\n## 2. Telegram bot\n\n1. Create a bot with [@BotFather](https://t.me/BotFather).\n2. Fill `.env` from `.env.example`.\n3. Deploy and register the webhook:\n\n```bash\ncurl -X POST \"https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/setWebhook\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"url\":\"https://<your-deployment>/eve/v1/telegram\",\n       \"secret_token\":\"'\"$TELEGRAM_WEBHOOK_SECRET_TOKEN\"'\",\n       \"allowed_updates\":[\"message\",\"callback_query\"]}'\n```\n\nSend the bot a photo of a receipt.\n\nUse a vision-capable model for photo scans (the default mini model may be enough for clear images; upgrade in `agent/agent.ts` if needed).\n\n## Verify\n\n```bash\nnpm run eval\n```\n",
+      "type": "registry:file",
+      "target": "SETUP.md"
+    },
+    {
+      "path": "catalog/agents/receipt-scanner-starter/agent/agent.ts",
+      "content": "import { defineAgent } from \"eve\";\n\nexport default defineAgent({\n  model: \"openai/gpt-5.4-mini\",\n});\n",
+      "type": "registry:file",
+      "target": "agent/agent.ts"
+    },
+    {
+      "path": "catalog/agents/receipt-scanner-starter/agent/channels/telegram.ts",
+      "content": "import { telegramChannel } from \"eve/channels/telegram\";\n\n// Credentials: TELEGRAM_BOT_TOKEN, TELEGRAM_WEBHOOK_SECRET_TOKEN.\n// uploadPolicy lets inbound photos (and PDFs) reach the model.\nexport default telegramChannel({\n  uploadPolicy: {\n    allowedMediaTypes: [\"image/*\", \"application/pdf\"],\n    maxBytes: 10 * 1024 * 1024,\n  },\n});\n",
+      "type": "registry:file",
+      "target": "agent/channels/telegram.ts"
+    },
+    {
+      "path": "catalog/agents/receipt-scanner-starter/agent/instructions.md",
+      "content": "# Identity\n\nYou are a receipt scanner on Telegram. People send a photo (or PDF) of a receipt; you extract the useful fields and reply in plain text.\n\n# Output format (required)\n\n```\nMerchant: <name or \"unknown\">\nDate: <YYYY-MM-DD or \"unknown\">\nTotal: <amount with currency symbol, or \"unknown\">\nCategory: <groceries|dining|transport|retail|services|other>\nItems:\n- <item> — <price if visible>\nNotes: <one short caveat, or \"none\">\n```\n\n<!-- CUSTOMIZE HERE: change categories or add fields (tax, tip, card last4). -->\n\n# Rules\n\n- Read only what is visible on the receipt image or PDF. Never invent line items or totals.\n- If the image is unreadable, say so and ask for a clearer photo — do not guess.\n- Plain text only (no Markdown). Keep the reply under ~20 lines.\n- Text-only messages get a one-line tip: send a photo of the receipt.\n",
+      "type": "registry:file",
+      "target": "agent/instructions.md"
+    },
+    {
+      "path": "catalog/agents/receipt-scanner-starter/evals/evals.config.ts",
+      "content": "import { defineEvalConfig } from \"eve/evals\";\n\nexport default defineEvalConfig({\n  maxConcurrency: 1,\n  timeoutMs: 120_000,\n});\n",
+      "type": "registry:file",
+      "target": "evals/evals.config.ts"
+    },
+    {
+      "path": "catalog/agents/receipt-scanner-starter/evals/text-receipt.eval.ts",
+      "content": "import { defineEval } from \"eve/evals\";\nimport { includes } from \"eve/evals/expect\";\n\nexport default defineEval({\n  description: \"Extracts fields from a pasted receipt transcript.\",\n  async test(t) {\n    await t.send(\n      [\n        \"Here is a receipt (transcribed from a photo):\",\n        \"WHOLE FOODS MARKET\",\n        \"2026-07-10\",\n        \"Organic Bananas  2.49\",\n        \"Oat Milk         4.99\",\n        \"TOTAL            7.48 USD\",\n        \"\",\n        \"Extract it in the required format.\",\n      ].join(\"\\n\")\n    );\n    t.succeeded();\n    t.check(t.reply, includes(/Merchant:/i));\n    t.check(t.reply, includes(/Total:/i));\n    t.check(t.reply, includes(/7\\.48|7,48/)).soft();\n  },\n});\n",
+      "type": "registry:file",
+      "target": "evals/text-receipt.eval.ts"
+    },
+    {
+      "path": "catalog/agents/receipt-scanner-starter/examples/sample-input.md",
+      "content": "# Example request\n\n(Photo of a grocery receipt attached)\n\n# Expected behavior\n\nPlain-text extraction with Merchant, Date, Total, Category, Items, and Notes — only fields visible on the image, unknowns marked \"unknown\".\n",
+      "type": "registry:file",
+      "target": "examples/sample-input.md"
+    },
+    {
+      "path": "catalog/agents/receipt-scanner-starter/package.json",
+      "content": "{\n  \"name\": \"receipt-scanner-starter\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": {\n    \"dev\": \"eve dev\",\n    \"build\": \"eve build\",\n    \"start\": \"eve start\",\n    \"eval\": \"eve eval\",\n    \"typecheck\": \"tsc\"\n  },\n  \"dependencies\": {\n    \"eve\": \"^0.24.6\"\n  },\n  \"devDependencies\": {\n    \"@types/node\": \"24.x\",\n    \"typescript\": \"^5.9.3\"\n  },\n  \"engines\": {\n    \"node\": \"24.x\"\n  }\n}\n",
+      "type": "registry:file",
+      "target": "package.json"
+    },
+    {
+      "path": "catalog/agents/receipt-scanner-starter/tsconfig.json",
+      "content": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\",\n    \"module\": \"esnext\",\n    \"moduleResolution\": \"bundler\",\n    \"types\": [\"node\"],\n    \"strict\": true,\n    \"esModuleInterop\": true,\n    \"skipLibCheck\": true,\n    \"noEmit\": true\n  },\n  \"include\": [\"agent/**/*.ts\", \"evals/**/*.ts\"]\n}\n",
+      "type": "registry:file",
+      "target": "tsconfig.json"
+    }
+  ],
+  "meta": {
+    "runtime": "eve",
+    "layout": "eve-app",
+    "version": "1.0.0",
+    "license": "MIT",
+    "category": "starters",
+    "integrations": ["telegram"]
+  },
+  "categories": ["starters"],
+  "type": "registry:block"
+}

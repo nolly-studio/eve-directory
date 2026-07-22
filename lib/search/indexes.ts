@@ -6,6 +6,7 @@ import {
   getIntegrationDirectorySlugs,
   getOfficialIntegrations,
 } from "@/lib/catalog";
+import { getPublishedCommunityAgents } from "@/lib/community/queries";
 import { integrationLabel } from "@/lib/site";
 import { source } from "@/lib/source";
 
@@ -37,13 +38,19 @@ function buildGuideIndexes(): AdvancedIndex[] {
 }
 
 async function buildCatalogIndexes(): Promise<AdvancedIndex[]> {
-  const [agents, extensions, integrationSlugs, officialIntegrations] =
-    await Promise.all([
-      getAgents(),
-      getExtensions(),
-      getIntegrationDirectorySlugs(),
-      getOfficialIntegrations(),
-    ]);
+  const [
+    agents,
+    communityAgents,
+    extensions,
+    integrationSlugs,
+    officialIntegrations,
+  ] = await Promise.all([
+    getAgents(),
+    getPublishedCommunityAgents(),
+    getExtensions(),
+    getIntegrationDirectorySlugs(),
+    getOfficialIntegrations(),
+  ]);
 
   const officialBySlug = new Map(
     officialIntegrations.map((item) => [item.slug.toLowerCase(), item])
@@ -60,6 +67,26 @@ async function buildCatalogIndexes(): Promise<AdvancedIndex[]> {
     title: agent.name,
     url: `/agents/${agent.slug}`,
   }));
+
+  const communityIndexes: AdvancedIndex[] = communityAgents.map((agent) => {
+    const url = `/agents/@${agent.handle}/${agent.slug}`;
+    return {
+      breadcrumbs: ["Agents", "Community", agent.category.name],
+      description: agent.summary,
+      id: url,
+      structuredData: listingStructuredData(
+        [
+          agent.summary,
+          agent.category.name,
+          agent.handle,
+          ...agent.integrations,
+        ].join(" ")
+      ),
+      tag: "agent",
+      title: `${agent.name} (@${agent.handle})`,
+      url,
+    } satisfies AdvancedIndex;
+  });
 
   const extensionIndexes: AdvancedIndex[] = extensions.map((extension) => ({
     breadcrumbs: ["Extensions"],
@@ -94,7 +121,12 @@ async function buildCatalogIndexes(): Promise<AdvancedIndex[]> {
     } satisfies AdvancedIndex;
   });
 
-  return [...agentIndexes, ...extensionIndexes, ...integrationIndexes];
+  return [
+    ...agentIndexes,
+    ...communityIndexes,
+    ...extensionIndexes,
+    ...integrationIndexes,
+  ];
 }
 
 /** Combined Orama indexes for guides + catalog directory pages. */

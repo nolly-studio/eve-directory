@@ -2,13 +2,16 @@ export const SITE = {
   aisdkUrl:
     "https://aisdkagents.com?utm_source=evedirectory&utm_medium=web&utm_campaign=cta",
   description:
-    "Open registry of Eve agents and extensions. Inspect every file, compose your stack, export a starter project.",
+    "Open registry of Eve agents and templates for Vercel Eve. Inspect every file with no login, compose a starter stack, install via shadcn.",
+  /** Apex hostname for display, email, and brand copy. */
   domain: "evedirectory.com",
   github: {
     owner: "nolly-studio",
     repo: "eve-directory",
   },
   name: "Eve Directory",
+  /** Default document title (home); inner pages use the `%s · name` template. */
+  title: "Eve agents & templates for Vercel Eve",
 } as const;
 
 export interface NavLink {
@@ -23,9 +26,11 @@ export const NAV_LINKS: readonly NavLink[] = [
   { href: "/docs", label: "Guides" },
 ] as const;
 
-/** Footer links — primary nav plus legal. */
+/** Footer links — primary nav, catalog hubs, plus legal. */
 export const FOOTER_LINKS: readonly NavLink[] = [
   ...NAV_LINKS,
+  { href: "/extensions", label: "Extensions" },
+  { href: "/integrations", label: "Integrations" },
   { href: "/terms", label: "Terms" },
   { href: "/privacy", label: "Privacy" },
 ] as const;
@@ -43,8 +48,9 @@ export const AGENT = {
     'To export a starter project, POST /api/composer/export with JSON body { "agents": string[], "extensions": string[] }. At least one agent slug is required; the first agent becomes the primary package root.',
     "Read individual agent files via GET /api/agents/<slug>/file?path=<relative-path>.",
     "Search guides, agents, extensions, and integrations via GET /api/search?query=<q> (optional tag=guide|agent|extension|integration).",
-    "Install agents via shadcn: npx shadcn@latest registry add @evedirectory=https://evedirectory.com/r/{name}.json then npx shadcn@latest add @evedirectory/<slug>. Item JSON is also at /r/<slug>.json.",
-    "Do not assume auth or submissions unless listed here — the install surface is the shadcn registry under /r/.",
+    "Install agents via shadcn: npx shadcn@latest registry add @evedirectory=https://www.evedirectory.com/r/{name}.json then npx shadcn@latest add @evedirectory/<slug>. Item JSON is also at /r/<slug>.json.",
+    "Community prompt agents can be submitted at /submit (GitHub sign-in). They install from /r/@handle/slug.json.",
+    "Official agents remain under /agents/<slug> and /r/<slug>.json; community agents use /agents/@handle/slug.",
   ],
   product: {
     audience: [
@@ -63,8 +69,9 @@ export const AGENT = {
   },
 } as const;
 
+/** Canonical public origin (www). Apex should 301 here. */
 export function siteOrigin(): string {
-  return `https://${SITE.domain}`;
+  return `https://www.${SITE.domain}`;
 }
 
 export function siteUrl(pathname = "/"): string {

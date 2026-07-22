@@ -1,0 +1,110 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "uptime-watch-starter",
+  "title": "Uptime Watch Starter",
+  "description": "Checks one URL every 5 minutes and Telegram-alerts you only when it goes down or recovers.",
+  "dependencies": ["eve@^0.24.6", "zod@^4.4.3"],
+  "devDependencies": ["@types/node@24.x", "typescript@^5.9.3"],
+  "files": [
+    {
+      "path": "catalog/agents/uptime-watch-starter/.env.example",
+      "content": "# The URL to monitor. Defaults to https://example.com.\nUPTIME_WATCH_URL=https://example.com\n\n# Telegram chat id that should receive alerts (DM the bot, then look up\n# your chat id, or use a group chat id).\nTELEGRAM_ALERT_CHAT_ID=replace-me\n\n# Telegram bot credentials (create a bot with @BotFather).\nTELEGRAM_BOT_TOKEN=123456:replace-me\nTELEGRAM_WEBHOOK_SECRET_TOKEN=replace-me\n\n# Model access follows your eve setup (Vercel AI Gateway or a provider key).\n",
+      "type": "registry:file",
+      "target": ".env.example"
+    },
+    {
+      "path": "catalog/agents/uptime-watch-starter/.gitignore",
+      "content": "node_modules/\n.eve/\nvar/\n.env\n.env.local\n*.tsbuildinfo\n",
+      "type": "registry:file",
+      "target": ".gitignore"
+    },
+    {
+      "path": "catalog/agents/uptime-watch-starter/README.md",
+      "content": "# Uptime Watch Starter\n\nChecks one URL every 5 minutes and messages you on Telegram only when it goes down or recovers.\n\nOne schedule, one tool, one channel. Demos: remembering last status across ticks (persisted under `var/uptime-status.json`).\n\n## Layout\n\n```text\nuptime-watch-starter/\n├── package.json\n├── agent/\n│   ├── agent.ts                  # model choice\n│   ├── instructions.md           # alert rules\n│   ├── lib/status-store.ts       # last-known status on disk\n│   ├── tools/check_url.ts        # ← swap the URL here (or via env)\n│   ├── schedules/watch.ts        # ← cron cadence here\n│   └── channels/telegram.ts      # Telegram alerts\n├── evals/\n```\n\n## Run\n\n```bash\nnpm install\nnpm run dev\n```\n\nTrigger a check without waiting for the cron tick:\n\n```bash\ncurl -X POST http://localhost:3000/eve/v1/dev/schedules/watch\n```\n\nSee `SETUP.md` for Telegram setup.\n\n## Make it yours\n\n- Point `UPTIME_WATCH_URL` at the URL you care about.\n- Set `TELEGRAM_ALERT_CHAT_ID` to your chat or group.\n- Change the cadence in `agent/schedules/watch.ts` — cron runs in UTC.\n\n## Verify\n\n```bash\nnpm run eval\n```\n\n## License\n\nMIT\n",
+      "type": "registry:file",
+      "target": "README.md"
+    },
+    {
+      "path": "catalog/agents/uptime-watch-starter/SETUP.md",
+      "content": "# Set up Uptime Watch Starter\n\n## 1. Install and run\n\n```bash\nnpm install\nnpm run dev\n```\n\n`eve dev` never fires schedules on their cron cadence; trigger one manually:\n\n```bash\ncurl -X POST http://localhost:3000/eve/v1/dev/schedules/watch\n```\n\n## 2. Create the Telegram bot\n\n1. Message [@BotFather](https://t.me/BotFather) and run `/newbot`.\n2. Copy the bot token into `.env` as `TELEGRAM_BOT_TOKEN`.\n3. Pick any random string for `TELEGRAM_WEBHOOK_SECRET_TOKEN`.\n4. DM the bot once, then look up your chat id (or use a group chat id) and set `TELEGRAM_ALERT_CHAT_ID`.\n\n## 3. Register the webhook\n\nDeploy (or expose your dev server), then:\n\n```bash\ncurl -X POST \"https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/setWebhook\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"url\":\"https://<your-deployment>/eve/v1/telegram\",\n       \"secret_token\":\"'\"$TELEGRAM_WEBHOOK_SECRET_TOKEN\"'\",\n       \"allowed_updates\":[\"message\",\"callback_query\"]}'\n```\n\n## 4. Pick the URL\n\nSet `UPTIME_WATCH_URL` in `.env`. The first check only records a baseline — alerts fire on subsequent changes.\n\n## Verify\n\n```bash\nnpm run eval\n```\n\nThe eval drives an on-demand check over eve's local HTTP channel — model credentials and network access required, Telegram credentials not.\n",
+      "type": "registry:file",
+      "target": "SETUP.md"
+    },
+    {
+      "path": "catalog/agents/uptime-watch-starter/agent/agent.ts",
+      "content": "import { defineAgent } from \"eve\";\n\nexport default defineAgent({\n  model: \"openai/gpt-5.4-mini\",\n});\n",
+      "type": "registry:file",
+      "target": "agent/agent.ts"
+    },
+    {
+      "path": "catalog/agents/uptime-watch-starter/agent/channels/telegram.ts",
+      "content": "import { telegramChannel } from \"eve/channels/telegram\";\n\n// Credentials come from env: TELEGRAM_BOT_TOKEN and\n// TELEGRAM_WEBHOOK_SECRET_TOKEN. See SETUP.md.\nexport default telegramChannel();\n",
+      "type": "registry:file",
+      "target": "agent/channels/telegram.ts"
+    },
+    {
+      "path": "catalog/agents/uptime-watch-starter/agent/instructions.md",
+      "content": "# Identity\n\nYou are an uptime watcher. Every few minutes you check one URL and message the operator on Telegram only when its status changes (down → up or up → down).\n\n# Workflow\n\n1. Call `check_url`.\n2. Read `changed` in the result:\n   - If `changed` is false, reply with exactly: `No change.` Do not send anything else.\n   - If `changed` is true, send a short alert:\n\n```\nALERT: <url> is now <status>\nWas: <previousStatus>\nChecked: <checkedAt>\n```\n\nInclude `statusCode` or `error` when present.\n\n<!-- CUSTOMIZE HERE: change alert wording or add a quiet-hours rule. -->\n\n# Rules\n\n- Never invent a status. Only report what `check_url` returned.\n- Never alert on the first check of a session when `previousStatus` is `unknown` — that is the baseline, not a change.\n- Keep alerts under 5 lines. Plain text only (no Markdown).\n- When someone messages you outside a schedule tick, you may run `check_url` on demand and report the current status.\n",
+      "type": "registry:file",
+      "target": "agent/instructions.md"
+    },
+    {
+      "path": "catalog/agents/uptime-watch-starter/agent/lib/status-store.ts",
+      "content": "import { mkdir, readFile, writeFile } from \"node:fs/promises\";\nimport path from \"node:path\";\n\nexport type UrlStatus = \"up\" | \"down\" | \"unknown\";\n\nexport type StatusSnapshot = {\n  status: UrlStatus;\n  checkedAt: string | null;\n};\n\nconst STORE_PATH = path.join(process.cwd(), \"var\", \"uptime-status.json\");\n\nexport async function readLastStatus(): Promise<StatusSnapshot> {\n  try {\n    return JSON.parse(await readFile(STORE_PATH, \"utf-8\")) as StatusSnapshot;\n  } catch {\n    return { status: \"unknown\", checkedAt: null };\n  }\n}\n\nexport async function writeLastStatus(snapshot: StatusSnapshot): Promise<void> {\n  await mkdir(path.dirname(STORE_PATH), { recursive: true });\n  await writeFile(\n    STORE_PATH,\n    `${JSON.stringify(snapshot, null, 2)}\\n`,\n    \"utf-8\"\n  );\n}\n",
+      "type": "registry:file",
+      "target": "agent/lib/status-store.ts"
+    },
+    {
+      "path": "catalog/agents/uptime-watch-starter/agent/schedules/watch.ts",
+      "content": "import { defineSchedule } from \"eve/schedules\";\n\nimport telegram from \"../channels/telegram\";\n\n// Every 5 minutes. CUSTOMIZE HERE if you want a different cadence.\nexport default defineSchedule({\n  cron: \"*/5 * * * *\",\n  async run({ receive, waitUntil, appAuth }) {\n    const chatId = process.env.TELEGRAM_ALERT_CHAT_ID;\n    if (!chatId) {\n      console.warn(\"uptime-watch: TELEGRAM_ALERT_CHAT_ID is not set, skipping\");\n      return;\n    }\n    waitUntil(\n      receive(telegram, {\n        message:\n          \"Run an uptime check with check_url. Alert only if status changed.\",\n        target: { chatId },\n        auth: appAuth,\n      })\n    );\n  },\n});\n",
+      "type": "registry:file",
+      "target": "agent/schedules/watch.ts"
+    },
+    {
+      "path": "catalog/agents/uptime-watch-starter/agent/tools/check_url.ts",
+      "content": "import { defineTool } from \"eve/tools\";\nimport { z } from \"zod\";\n\nimport {\n  readLastStatus,\n  writeLastStatus,\n  type UrlStatus,\n} from \"../lib/status-store\";\n\n// CUSTOMIZE HERE: set UPTIME_WATCH_URL to the URL you want monitored.\nconst DEFAULT_URL = \"https://example.com\";\nconst TIMEOUT_MS = 10_000;\n\nfunction classify(statusCode: number | null, ok: boolean): UrlStatus {\n  if (!ok || statusCode === null) return \"down\";\n  if (statusCode >= 200 && statusCode < 400) return \"up\";\n  return \"down\";\n}\n\nexport default defineTool({\n  description:\n    \"Check the configured URL and return its current status plus whether it changed since the last check. Call this on every watch tick.\",\n  inputSchema: z.object({}),\n  async execute(_input, ctx) {\n    const url = process.env.UPTIME_WATCH_URL ?? DEFAULT_URL;\n    const previous = await readLastStatus();\n    const started = Date.now();\n\n    let statusCode: number | null = null;\n    let ok = false;\n    let error: string | null = null;\n\n    const controller = new AbortController();\n    const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);\n    const onAbort = () => controller.abort();\n    ctx.abortSignal.addEventListener(\"abort\", onAbort);\n\n    try {\n      const response = await fetch(url, {\n        method: \"GET\",\n        redirect: \"follow\",\n        signal: controller.signal,\n      });\n      statusCode = response.status;\n      ok = response.ok;\n    } catch (err) {\n      error = err instanceof Error ? err.message : String(err);\n      ok = false;\n    } finally {\n      clearTimeout(timer);\n      ctx.abortSignal.removeEventListener(\"abort\", onAbort);\n    }\n\n    const status = classify(statusCode, ok);\n    const changed = previous.status !== \"unknown\" && previous.status !== status;\n    const checkedAt = new Date().toISOString();\n\n    await writeLastStatus({ status, checkedAt });\n\n    return {\n      url,\n      status,\n      previousStatus: previous.status,\n      changed,\n      statusCode,\n      latencyMs: Date.now() - started,\n      error,\n      checkedAt,\n    };\n  },\n});\n",
+      "type": "registry:file",
+      "target": "agent/tools/check_url.ts"
+    },
+    {
+      "path": "catalog/agents/uptime-watch-starter/evals/check-roundtrip.eval.ts",
+      "content": "import { defineEval } from \"eve/evals\";\nimport { includes } from \"eve/evals/expect\";\n\nexport default defineEval({\n  description: \"An on-demand check calls check_url and reports status.\",\n  async test(t) {\n    await t.send(\n      \"Run an uptime check with check_url and tell me the current status.\"\n    );\n    t.succeeded();\n    t.calledTool(\"check_url\");\n    t.check(t.reply, includes(/up|down|status/i)).soft();\n  },\n});\n",
+      "type": "registry:file",
+      "target": "evals/check-roundtrip.eval.ts"
+    },
+    {
+      "path": "catalog/agents/uptime-watch-starter/evals/evals.config.ts",
+      "content": "import { defineEvalConfig } from \"eve/evals\";\n\nexport default defineEvalConfig({\n  maxConcurrency: 1,\n  timeoutMs: 120_000,\n});\n",
+      "type": "registry:file",
+      "target": "evals/evals.config.ts"
+    },
+    {
+      "path": "catalog/agents/uptime-watch-starter/examples/sample-input.md",
+      "content": "# Example request\n\nRun an uptime check with check_url. Alert only if status changed.\n\n# Expected behavior\n\nCall `check_url`. If `changed` is false (including the first baseline check where `previousStatus` is `unknown`), reply with exactly `No change.` If `changed` is true, send a short ALERT with the URL, new status, previous status, and check timestamp.\n",
+      "type": "registry:file",
+      "target": "examples/sample-input.md"
+    },
+    {
+      "path": "catalog/agents/uptime-watch-starter/package.json",
+      "content": "{\n  \"name\": \"uptime-watch-starter\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": {\n    \"dev\": \"eve dev\",\n    \"build\": \"eve build\",\n    \"start\": \"eve start\",\n    \"eval\": \"eve eval\",\n    \"typecheck\": \"tsc\"\n  },\n  \"dependencies\": {\n    \"eve\": \"^0.24.6\",\n    \"zod\": \"^4.4.3\"\n  },\n  \"devDependencies\": {\n    \"@types/node\": \"24.x\",\n    \"typescript\": \"^5.9.3\"\n  },\n  \"engines\": {\n    \"node\": \"24.x\"\n  }\n}\n",
+      "type": "registry:file",
+      "target": "package.json"
+    },
+    {
+      "path": "catalog/agents/uptime-watch-starter/tsconfig.json",
+      "content": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\",\n    \"module\": \"esnext\",\n    \"moduleResolution\": \"bundler\",\n    \"types\": [\"node\"],\n    \"strict\": true,\n    \"esModuleInterop\": true,\n    \"skipLibCheck\": true,\n    \"noEmit\": true\n  },\n  \"include\": [\"agent/**/*.ts\", \"evals/**/*.ts\"]\n}\n",
+      "type": "registry:file",
+      "target": "tsconfig.json"
+    }
+  ],
+  "meta": {
+    "runtime": "eve",
+    "layout": "eve-app",
+    "version": "1.0.0",
+    "license": "MIT",
+    "category": "starters",
+    "integrations": ["telegram"]
+  },
+  "categories": ["starters"],
+  "type": "registry:block"
+}
