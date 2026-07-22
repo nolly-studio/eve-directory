@@ -8,9 +8,18 @@ import { PageShell } from "@/components/page-shell";
 import { RelatedGuides } from "@/components/related-guides";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Surface } from "@/components/ui/surface";
-import { getExtension, readExtensionReadme } from "@/lib/catalog";
+import {
+  getExtension,
+  getExtensions,
+  readExtensionReadme,
+} from "@/lib/catalog";
 import { getRelatedGuidesForIntegrations } from "@/lib/docs/related-guides";
 import { pageMetadata } from "@/lib/seo";
+
+export async function generateStaticParams() {
+  const extensions = await getExtensions();
+  return extensions.map((extension) => ({ slug: extension.slug }));
+}
 
 export async function generateMetadata({
   params,

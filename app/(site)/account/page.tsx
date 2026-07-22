@@ -1,5 +1,6 @@
 import { eq } from "drizzle-orm";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 import { AccountAgents } from "@/components/account-agents";
 import { PageHeader, PageShell } from "@/components/page-shell";
@@ -16,7 +17,19 @@ export const metadata: Metadata = {
   title: "My agents",
 };
 
-export default async function AccountPage() {
+function AccountFallback() {
+  return (
+    <PageShell>
+      <PageHeader
+        title="My agents"
+        description="Manage the community agents you've published."
+      />
+      <div aria-hidden className="h-40 animate-pulse rounded-xl bg-muted/40" />
+    </PageShell>
+  );
+}
+
+async function AccountContent() {
   const session = await getSession();
 
   if (!session?.user) {
@@ -69,5 +82,13 @@ export default async function AccountPage() {
         }))}
       />
     </PageShell>
+  );
+}
+
+export default function AccountPage() {
+  return (
+    <Suspense fallback={<AccountFallback />}>
+      <AccountContent />
+    </Suspense>
   );
 }

@@ -1,6 +1,8 @@
 import { readFile, readdir, stat } from "node:fs/promises";
 import path from "node:path";
 
+import { cacheLife } from "next/cache";
+
 import {
   getOfficialIntegration,
   getOfficialIntegrations,
@@ -44,6 +46,8 @@ const EXCLUDED_CATALOG_FILES = new Set([
 ]);
 
 async function readRegistry(): Promise<Registry> {
+  "use cache";
+  cacheLife("max");
   const raw = await readFile(path.join(CATALOG_ROOT, "registry.json"), "utf-8");
   return JSON.parse(raw) as Registry;
 }
@@ -230,6 +234,8 @@ async function buildFileTree(
 }
 
 export async function listAgentFiles(slug: string): Promise<FileTreeNode[]> {
+  "use cache";
+  cacheLife("max");
   const agent = await getAgent(slug);
 
   if (!agent) {
@@ -246,6 +252,8 @@ export async function readAgentFile(
   slug: string,
   filePath: string
 ): Promise<AgentFileContent | null> {
+  "use cache";
+  cacheLife("max");
   const agent = await getAgent(slug);
 
   if (!agent) {
@@ -296,6 +304,8 @@ export async function readAllAgentFiles(
 export async function readExtensionReadme(
   slug: string
 ): Promise<string | null> {
+  "use cache";
+  cacheLife("max");
   const extension = await getExtension(slug);
 
   if (!extension) {

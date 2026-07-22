@@ -22,8 +22,8 @@ export interface NavLink {
 /** Primary chrome nav (header + Fumadocs docs layout). */
 export const NAV_LINKS: readonly NavLink[] = [
   { href: "/agents", label: "Agents" },
+  { href: "/integrations", label: "Integrations" },
   { href: "/composer", label: "Composer" },
-  { href: "/docs", label: "Guides" },
 ] as const;
 
 /** Footer links — primary nav, catalog hubs, plus legal. */

@@ -1,6 +1,6 @@
 import "server-only";
 import { and, desc, eq, sql } from "drizzle-orm";
-import { unstable_cache } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 
 import type { CommunityAgentListing } from "@/lib/catalog/types";
 import { COMMUNITY_AGENTS_TAG, communityAgentTag } from "@/lib/community/tags";
@@ -14,6 +14,10 @@ interface JoinedRow {
     name: string;
     image: string | null;
   };
+}
+
+function normalizeHandle(handle: string): string {
+  return handle.replace(/^@/, "").toLowerCase();
 }
 
 function toListing(row: JoinedRow): CommunityAgentListing {
@@ -41,9 +45,13 @@ function toListing(row: JoinedRow): CommunityAgentListing {
   };
 }
 
-async function fetchPublishedCommunityAgents(): Promise<
+export async function getPublishedCommunityAgents(): Promise<
   CommunityAgentListing[]
 > {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(COMMUNITY_AGENTS_TAG);
+
   const rows = await db
     .select({
       agent: communityAgent,
@@ -61,20 +69,13 @@ async function fetchPublishedCommunityAgents(): Promise<
   return rows.map(toListing);
 }
 
-export function getPublishedCommunityAgents(): Promise<
-  CommunityAgentListing[]
-> {
-  return unstable_cache(fetchPublishedCommunityAgents, ["community-agents"], {
-    tags: [COMMUNITY_AGENTS_TAG],
-    revalidate: 3600,
-  })();
-}
-
 async function fetchCommunityAgent(
   handle: string,
   slug: string
 ): Promise<CommunityAgentListing | null> {
-  const normalizedHandle = handle.replace(/^@/, "").toLowerCase();
+  "use cache";
+  cacheLife("hours");
+  cacheTag(COMMUNITY_AGENTS_TAG, communityAgentTag(handle, slug));
 
   const [row] = await db
     .select({
@@ -89,7 +90,7 @@ async function fetchCommunityAgent(
     .innerJoin(user, eq(communityAgent.userId, user.id))
     .where(
       and(
-        eq(user.handle, normalizedHandle),
+        eq(user.handle, handle),
         eq(communityAgent.slug, slug),
         eq(communityAgent.status, "published")
       )
@@ -103,24 +104,37 @@ export function getCommunityAgent(
   handle: string,
   slug: string
 ): Promise<CommunityAgentListing | null> {
-  const normalizedHandle = handle.replace(/^@/, "").toLowerCase();
-
-  return unstable_cache(
-    () => fetchCommunityAgent(normalizedHandle, slug),
-    ["community-agent", normalizedHandle, slug],
-    {
-      tags: [COMMUNITY_AGENTS_TAG, communityAgentTag(normalizedHandle, slug)],
-      revalidate: 3600,
-    }
-  )();
+  return fetchCommunityAgent(normalizeHandle(handle), slug);
 }
 
 export async function getCommunityAgentsByHandle(
   handle: string
 ): Promise<CommunityAgentListing[]> {
-  const normalizedHandle = handle.replace(/^@/, "").toLowerCase();
+  const normalizedHandle = normalizeHandle(handle);
   const agents = await getPublishedCommunityAgents();
   return agents.filter((agent) => agent.handle === normalizedHandle);
+}
+
+async function fetchCommunityAuthor(handle: string): Promise<{
+  handle: string;
+  name: string;
+  image: string | null;
+} | null> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(COMMUNITY_AGENTS_TAG);
+
+  const [row] = await db
+    .select({
+      handle: user.handle,
+      name: user.name,
+      image: user.image,
+    })
+    .from(user)
+    .where(eq(user.handle, handle))
+    .limit(1);
+
+  return row ?? null;
 }
 
 export function getCommunityAuthor(handle: string): Promise<{
@@ -128,28 +142,7 @@ export function getCommunityAuthor(handle: string): Promise<{
   name: string;
   image: string | null;
 } | null> {
-  const normalizedHandle = handle.replace(/^@/, "").toLowerCase();
-
-  return unstable_cache(
-    async () => {
-      const [row] = await db
-        .select({
-          handle: user.handle,
-          name: user.name,
-          image: user.image,
-        })
-        .from(user)
-        .where(eq(user.handle, normalizedHandle))
-        .limit(1);
-
-      return row ?? null;
-    },
-    ["community-author", normalizedHandle],
-    {
-      tags: [COMMUNITY_AGENTS_TAG],
-      revalidate: 3600,
-    }
-  )();
+  return fetchCommunityAuthor(normalizeHandle(handle));
 }
 
 /** Uncached — for account dashboard only. */

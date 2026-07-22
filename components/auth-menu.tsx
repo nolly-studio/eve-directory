@@ -11,9 +11,28 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { authClient } from "@/lib/auth-client";
+import { useHasSessionCookie } from "@/lib/auth/session-cookie";
 import { cn } from "@/lib/utils";
 
-export function AuthMenu() {
+function SignInControl() {
+  return (
+    <Button
+      type="button"
+      size="sm"
+      variant="outline"
+      onClick={() => {
+        void authClient.signIn.social({
+          provider: "github",
+          callbackURL: "/account",
+        });
+      }}
+    >
+      Submit
+    </Button>
+  );
+}
+
+function AuthenticatedMenu() {
   const { data: session, isPending } = authClient.useSession();
 
   if (isPending) {
@@ -23,21 +42,7 @@ export function AuthMenu() {
   }
 
   if (!session?.user) {
-    return (
-      <Button
-        type="button"
-        size="sm"
-        variant="outline"
-        onClick={() => {
-          void authClient.signIn.social({
-            provider: "github",
-            callbackURL: "/account",
-          });
-        }}
-      >
-        Submit
-      </Button>
-    );
+    return <SignInControl />;
   }
 
   const handle =
@@ -107,4 +112,14 @@ export function AuthMenu() {
       </DropdownMenuContent>
     </DropdownMenu>
   );
+}
+
+export function AuthMenu() {
+  const likelySignedIn = useHasSessionCookie();
+
+  if (!likelySignedIn) {
+    return <SignInControl />;
+  }
+
+  return <AuthenticatedMenu />;
 }

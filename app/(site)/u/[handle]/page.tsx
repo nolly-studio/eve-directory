@@ -1,19 +1,38 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
+import { DynamicMarker } from "@/components/dynamic-marker";
 import { AgentCard } from "@/components/listing-card";
 import { PageHeader, PageShell } from "@/components/page-shell";
 import { Surface } from "@/components/ui/surface";
 import {
   getCommunityAgentsByHandle,
   getCommunityAuthor,
+  getPublishedCommunityAgents,
 } from "@/lib/community/queries";
 import { pageMetadata } from "@/lib/seo";
 import { SITE } from "@/lib/site";
 
 function normalizeHandle(raw: string): string {
   return decodeURIComponent(raw).replace(/^@/, "").toLowerCase();
+}
+
+export async function generateStaticParams() {
+  try {
+    const agents = await getPublishedCommunityAgents();
+    const handles = [...new Set(agents.map((agent) => agent.handle))];
+
+    if (handles.length === 0) {
+      return [{ handle: "_" }];
+    }
+
+    return handles.map((handle) => ({ handle }));
+  } catch {
+    // Neon may be unreachable during build; keep at least one param for PPR.
+    return [{ handle: "_" }];
+  }
 }
 
 export async function generateMetadata({
@@ -36,7 +55,15 @@ export async function generateMetadata({
   });
 }
 
-export default async function AuthorProfilePage({
+function AuthorFallback() {
+  return (
+    <PageShell>
+      <div aria-hidden className="h-48 animate-pulse rounded-xl bg-muted/40" />
+    </PageShell>
+  );
+}
+
+async function AuthorProfileContent({
   params,
 }: {
   params: Promise<{ handle: string }>;
@@ -122,5 +149,20 @@ export default async function AuthorProfilePage({
         </p>
       )}
     </PageShell>
+  );
+}
+
+export default function AuthorProfilePage({
+  params,
+}: {
+  params: Promise<{ handle: string }>;
+}) {
+  return (
+    <>
+      <Suspense fallback={<AuthorFallback />}>
+        <AuthorProfileContent params={params} />
+      </Suspense>
+      <DynamicMarker />
+    </>
   );
 }

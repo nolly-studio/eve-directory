@@ -1,6 +1,8 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
+import { cacheLife } from "next/cache";
+
 import type {
   IntegrationDetail,
   IntegrationDetailBlock,
@@ -18,6 +20,8 @@ interface IntegrationDetailsFile {
 }
 
 async function readOfficialIntegrationsFile(): Promise<OfficialIntegrationsFile> {
+  "use cache";
+  cacheLife("max");
   const raw = await readFile(
     path.join(CATALOG_ROOT, "integrations.json"),
     "utf-8"
@@ -26,6 +30,8 @@ async function readOfficialIntegrationsFile(): Promise<OfficialIntegrationsFile>
 }
 
 async function readIntegrationDetailsFile(): Promise<IntegrationDetailsFile> {
+  "use cache";
+  cacheLife("max");
   const raw = await readFile(
     path.join(CATALOG_ROOT, "integrations-details.json"),
     "utf-8"

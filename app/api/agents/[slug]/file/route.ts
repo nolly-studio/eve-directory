@@ -20,5 +20,10 @@ export async function GET(
     return NextResponse.json({ error: "File not found" }, { status: 404 });
   }
 
-  return NextResponse.json(file);
+  return NextResponse.json(file, {
+    headers: {
+      "Cache-Control":
+        "public, s-maxage=31536000, stale-while-revalidate=86400",
+    },
+  });
 }

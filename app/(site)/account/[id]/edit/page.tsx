@@ -3,9 +3,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { CSSProperties } from "react";
+import { Suspense } from "react";
 
 import { updateCommunityAgent } from "@/app/(site)/submit/actions";
 import { CommunityAgentForm } from "@/components/community-agent-form";
+import { DynamicMarker } from "@/components/dynamic-marker";
 import { PageShell } from "@/components/page-shell";
 import { getSession } from "@/lib/auth/session";
 import { getCategories, getOfficialIntegrations } from "@/lib/catalog";
@@ -18,7 +20,15 @@ export const metadata: Metadata = {
   title: "Edit agent",
 };
 
-export default async function EditCommunityAgentPage({
+function EditFallback() {
+  return (
+    <PageShell>
+      <div aria-hidden className="h-48 animate-pulse rounded-xl bg-muted/40" />
+    </PageShell>
+  );
+}
+
+async function EditCommunityAgentContent({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -111,5 +121,20 @@ export default async function EditCommunityAgentPage({
         />
       </div>
     </PageShell>
+  );
+}
+
+export default function EditCommunityAgentPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  return (
+    <>
+      <Suspense fallback={<EditFallback />}>
+        <EditCommunityAgentContent params={params} />
+      </Suspense>
+      <DynamicMarker />
+    </>
   );
 }

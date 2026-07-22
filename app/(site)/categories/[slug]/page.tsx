@@ -7,6 +7,11 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { getAgentsByCategory, getCategories } from "@/lib/catalog";
 import { pageMetadata } from "@/lib/seo";
 
+export async function generateStaticParams() {
+  const categories = await getCategories();
+  return categories.map((category) => ({ slug: category.slug }));
+}
+
 export async function generateMetadata({
   params,
 }: {

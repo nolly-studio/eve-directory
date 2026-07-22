@@ -1,11 +1,13 @@
 import {
   getAgentsByIntegration,
   getIntegrationDetail,
-  getIntegrationDocsMarkdownForDisplay,
-  getIntegrationInstallSummary,
   resolveIntegrationPage,
 } from "@/lib/catalog";
-import type { AgentListing, IntegrationDetail } from "@/lib/catalog/types";
+import type {
+  AgentListing,
+  IntegrationDetail,
+  IntegrationDetailSection,
+} from "@/lib/catalog/types";
 import { getIntegrationGuideUrl } from "@/lib/docs/related-guides";
 import { integrationLabel } from "@/lib/site";
 
@@ -14,11 +16,9 @@ export interface IntegrationPageModel {
   title: string;
   description: string | null;
   badge: string | null;
-  installSummary: string | null;
-  docsMarkdown: string | null;
+  sections: IntegrationDetailSection[];
   localGuideUrl: string | null;
   officialDocsUrl: string | null;
-  scrapedAt: string | null;
   agents: AgentListing[];
 }
 
@@ -63,6 +63,11 @@ function resolveDescription(
   return resolved.official?.description ?? null;
 }
 
+export function docsLinkLabel(title: string, badge: string | null): string {
+  const kind = badge ? ` ${badge.toLowerCase()}` : "";
+  return `Read the full ${title}${kind} docs`;
+}
+
 export async function getIntegrationPageModel(
   slug: string
 ): Promise<IntegrationPageModel | null> {
@@ -82,11 +87,9 @@ export async function getIntegrationPageModel(
     agents,
     badge: resolveBadge(detail, resolved),
     description: resolveDescription(detail, resolved),
-    docsMarkdown: detail ? getIntegrationDocsMarkdownForDisplay(detail) : null,
-    installSummary: detail ? getIntegrationInstallSummary(detail) : null,
     localGuideUrl: getIntegrationGuideUrl(normalized),
     officialDocsUrl: detail?.docsUrl ?? null,
-    scrapedAt: detail?.scrapedAt ?? null,
+    sections: detail?.sections ?? [],
     slug: normalized,
     title: resolveTitle(detail, resolved, normalized),
   };

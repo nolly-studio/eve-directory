@@ -4,6 +4,7 @@ import type { NextConfig } from "next";
 const withMDX = createMDX();
 
 const nextConfig: NextConfig = {
+  cacheComponents: true,
   reactStrictMode: true,
   redirects() {
     return [

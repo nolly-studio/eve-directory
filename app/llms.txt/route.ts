@@ -1,7 +1,13 @@
+import { cacheLife } from "next/cache";
+
 import { buildLlmsTxt, markdownResponse } from "@/lib/llms";
 
-export const revalidate = false;
+async function getLlmsTxt(): Promise<string> {
+  "use cache";
+  cacheLife("max");
+  return await buildLlmsTxt();
+}
 
 export async function GET(): Promise<Response> {
-  return markdownResponse(await buildLlmsTxt());
+  return markdownResponse(await getLlmsTxt());
 }

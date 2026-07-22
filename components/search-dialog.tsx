@@ -1,7 +1,7 @@
 "use client";
 
 import { useDocsSearch } from "fumadocs-core/search/client";
-import { fetchClient } from "fumadocs-core/search/client/fetch";
+import { oramaStaticClient } from "fumadocs-core/search/client/orama-static";
 import {
   SearchDialog,
   SearchDialogClose,
@@ -33,6 +33,8 @@ type SiteSearchDialogProps = SharedProps & {
 /**
  * Fumadocs' default dialog renders TagsList outside DialogContent, so tags
  * leak into the page as a permanent top strip. Keep tags inside the dialog.
+ *
+ * Uses Orama static client: fetch the index once, search in-browser.
  */
 export function SiteSearchDialog({
   tags = EMPTY_TAGS,
@@ -44,7 +46,7 @@ export function SiteSearchDialog({
   ...props
 }: SiteSearchDialogProps) {
   const [tag, setTag] = useState(defaultTag);
-  const client = fetchClient({ api, tag });
+  const client = oramaStaticClient({ from: api, tag });
   const { search, setSearch, query } = useDocsSearch({ client, delayMs });
 
   const defaultItems = useMemo(() => {

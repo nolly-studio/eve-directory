@@ -6,8 +6,6 @@ import { buildCommunityRegistryItem } from "@/lib/community/template";
 import { db } from "@/lib/db";
 import { communityAgent } from "@/lib/db/schema";
 
-export const runtime = "nodejs";
-
 function parseItem(item: string): string | null {
   if (!item.endsWith(".json")) {
     return null;

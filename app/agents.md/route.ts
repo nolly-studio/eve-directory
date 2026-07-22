@@ -1,7 +1,13 @@
+import { cacheLife } from "next/cache";
+
 import { buildAgentsMd, markdownResponse } from "@/lib/llms";
 
-export const revalidate = false;
+async function getAgentsMd(): Promise<string> {
+  "use cache";
+  cacheLife("max");
+  return await buildAgentsMd();
+}
 
 export async function GET(): Promise<Response> {
-  return markdownResponse(await buildAgentsMd());
+  return markdownResponse(await getAgentsMd());
 }

@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { CSSProperties } from "react";
+import { Suspense } from "react";
 
 import { CommunityAgentForm } from "@/components/community-agent-form";
 import { PageShell } from "@/components/page-shell";
@@ -19,7 +20,13 @@ export const metadata: Metadata = {
   title: "Submit an agent",
 };
 
-export default async function SubmitPage() {
+function SubmitFormFallback() {
+  return (
+    <div aria-hidden className="h-64 animate-pulse rounded-xl bg-muted/40" />
+  );
+}
+
+async function SubmitForm() {
   const session = await getSession();
   const [categories, integrations] = await Promise.all([
     getCategories(),
@@ -40,6 +47,36 @@ export default async function SubmitPage() {
         : undefined);
   }
 
+  if (session?.user) {
+    return (
+      <CommunityAgentForm
+        categories={categories}
+        integrations={integrations}
+        action={createCommunityAgent}
+        submitLabel="Publish agent"
+        authorHandle={authorHandle}
+        authorImage={session.user.image}
+      />
+    );
+  }
+
+  return (
+    <Surface className="mx-auto max-w-lg p-8 sm:p-10">
+      <h2 className="text-heading-24 font-semibold text-balance text-gray-1000">
+        Sign in to publish
+      </h2>
+      <p className="mt-2 text-copy-14 text-pretty text-muted-foreground">
+        Community agents publish under your GitHub handle so others can install
+        and credit your work.
+      </p>
+      <div className="mt-6">
+        <SignInButton callbackURL="/submit" />
+      </div>
+    </Surface>
+  );
+}
+
+export default function SubmitPage() {
   return (
     <PageShell>
       <header className="mb-8">
@@ -106,29 +143,9 @@ export default async function SubmitPage() {
         className="animate-enter"
         style={{ "--stagger": 3 } as CSSProperties}
       >
-        {session?.user ? (
-          <CommunityAgentForm
-            categories={categories}
-            integrations={integrations}
-            action={createCommunityAgent}
-            submitLabel="Publish agent"
-            authorHandle={authorHandle}
-            authorImage={session.user.image}
-          />
-        ) : (
-          <Surface className="mx-auto max-w-lg p-8 sm:p-10">
-            <h2 className="text-heading-24 font-semibold text-balance text-gray-1000">
-              Sign in to publish
-            </h2>
-            <p className="mt-2 text-copy-14 text-pretty text-muted-foreground">
-              Community agents publish under your GitHub handle so others can
-              install and credit your work.
-            </p>
-            <div className="mt-6">
-              <SignInButton callbackURL="/submit" />
-            </div>
-          </Surface>
-        )}
+        <Suspense fallback={<SubmitFormFallback />}>
+          <SubmitForm />
+        </Suspense>
       </div>
     </PageShell>
   );

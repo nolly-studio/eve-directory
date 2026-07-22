@@ -1,22 +1,34 @@
+import { cacheLife } from "next/cache";
 import { notFound } from "next/navigation";
 
 import { getLLMText, markdownResponse } from "@/lib/llms";
 import { source } from "@/lib/source";
 
-export const revalidate = false;
+async function getCachedLlmText(slugKey: string): Promise<string | null> {
+  "use cache";
+  cacheLife("max");
+  const slug = slugKey === "" ? undefined : slugKey.split("/");
+  const page = source.getPage(slug);
+
+  if (!page) {
+    return null;
+  }
+
+  return await getLLMText(page);
+}
 
 export async function GET(
   _request: Request,
   context: { params: Promise<{ slug?: string[] }> }
 ): Promise<Response> {
   const { slug } = await context.params;
-  const page = source.getPage(slug);
+  const body = await getCachedLlmText(slug?.join("/") ?? "");
 
-  if (!page) {
+  if (!body) {
     notFound();
   }
 
-  return markdownResponse(await getLLMText(page));
+  return markdownResponse(body);
 }
 
 export function generateStaticParams() {

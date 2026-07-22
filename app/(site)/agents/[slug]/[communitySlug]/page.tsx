@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { CSSProperties } from "react";
+import { Suspense } from "react";
 
 import { AdSlot } from "@/components/ad-slot";
 import { AuthorMark } from "@/components/author-mark";
 import { CommunityAgentActions } from "@/components/community-agent-actions";
+import { DynamicMarker } from "@/components/dynamic-marker";
 import { FileExplorer } from "@/components/file-explorer";
 import { InstallCommand } from "@/components/install-command";
 import { IntegrationLogo } from "@/components/integration-badge";
@@ -13,9 +15,11 @@ import { IntegrationSetup } from "@/components/integration-setup";
 import { PageShell } from "@/components/page-shell";
 import { RelatedGuides } from "@/components/related-guides";
 import { Badge } from "@/components/ui/badge";
-import { getSession } from "@/lib/auth/session";
 import { getIntegrationDetails } from "@/lib/catalog";
-import { getCommunityAgent } from "@/lib/community/queries";
+import {
+  getCommunityAgent,
+  getPublishedCommunityAgents,
+} from "@/lib/community/queries";
 import { communityAgentExplorer } from "@/lib/community/template";
 import { getRelatedGuidesForIntegrations } from "@/lib/docs/related-guides";
 import { getIntegrationLogo } from "@/lib/integrations/resolve";
@@ -29,6 +33,24 @@ function parseHandle(raw: string): string | null {
   }
   const handle = decoded.slice(1).toLowerCase();
   return handle || null;
+}
+
+export async function generateStaticParams() {
+  try {
+    const agents = await getPublishedCommunityAgents();
+
+    if (agents.length === 0) {
+      return [{ slug: "@_", communitySlug: "_" }];
+    }
+
+    return agents.map((agent) => ({
+      slug: `@${agent.handle}`,
+      communitySlug: agent.slug,
+    }));
+  } catch {
+    // Neon may be unreachable during build; keep at least one param for PPR.
+    return [{ slug: "@_", communitySlug: "_" }];
+  }
 }
 
 export async function generateMetadata({
@@ -54,7 +76,15 @@ export async function generateMetadata({
   });
 }
 
-export default async function CommunityAgentDetailPage({
+function CommunityAgentFallback() {
+  return (
+    <PageShell>
+      <div aria-hidden className="h-48 animate-pulse rounded-xl bg-muted/40" />
+    </PageShell>
+  );
+}
+
+async function CommunityAgentDetailContent({
   params,
 }: {
   params: Promise<{ slug: string; communitySlug: string }>;
@@ -66,10 +96,7 @@ export default async function CommunityAgentDetailPage({
     notFound();
   }
 
-  const [agent, session] = await Promise.all([
-    getCommunityAgent(handle, communitySlug),
-    getSession(),
-  ]);
+  const agent = await getCommunityAgent(handle, communitySlug);
 
   if (!agent) {
     notFound();
@@ -78,7 +105,6 @@ export default async function CommunityAgentDetailPage({
   const relatedGuides = getRelatedGuidesForIntegrations(agent.integrations);
   const integrationDetails = await getIntegrationDetails(agent.integrations);
   const explorer = communityAgentExplorer(agent);
-  const isAdmin = session?.user?.role === "admin";
   const reportHref = `mailto:hello@${SITE.domain}?subject=${encodeURIComponent(
     `Report community agent @${agent.handle}/${agent.slug}`
   )}`;
@@ -171,7 +197,6 @@ export default async function CommunityAgentDetailPage({
             <div className="mt-4">
               <CommunityAgentActions
                 agentId={agent.id}
-                isAdmin={Boolean(isAdmin)}
                 reportHref={reportHref}
               />
             </div>
@@ -221,5 +246,20 @@ export default async function CommunityAgentDetailPage({
         </section>
       ) : null}
     </PageShell>
+  );
+}
+
+export default function CommunityAgentDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string; communitySlug: string }>;
+}) {
+  return (
+    <>
+      <Suspense fallback={<CommunityAgentFallback />}>
+        <CommunityAgentDetailContent params={params} />
+      </Suspense>
+      <DynamicMarker />
+    </>
   );
 }

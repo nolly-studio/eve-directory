@@ -328,6 +328,19 @@ function codeFromMatchBody(body) {
 }
 
 /**
+ * Paragraph text with inline <code> preserved as markdown backticks.
+ *
+ * @param {string} html
+ */
+function paragraphTextFromHtml(html) {
+  const withCode = html.replace(
+    /<code\b[^>]*>([\s\S]*?)<\/code>/gi,
+    (_, inner) => `\`${stripTags(inner)}\``
+  );
+  return stripTags(withCode);
+}
+
+/**
  * Walk a section body and emit paragraphs + code blocks in document order.
  *
  * @param {string} sectionBodyHtml
@@ -371,7 +384,7 @@ function extractBlocks(sectionBodyHtml) {
     if (insideCode) {
       continue;
     }
-    const text = stripTags(match[1]);
+    const text = paragraphTextFromHtml(match[1]);
     if (!text) {
       continue;
     }
@@ -635,9 +648,33 @@ async function main() {
     }
   );
 
-  // Stable order matching catalog
+  // Stable order matching catalog. When scraping a single slug, merge into the
+  // existing details file so we do not wipe the rest of the catalog.
   const bySlug = new Map(results.map((item) => [item.slug, item]));
-  const ordered = slugs
+  /** @type {string[]} */
+  let orderedSlugs = catalog.integrations.map((item) => item.slug);
+
+  if (opts.slug) {
+    try {
+      const existingRaw = await readFile(opts.out, "utf-8");
+      /** @type {{ integrations?: ScrapedIntegration[] }} */
+      const existing = JSON.parse(existingRaw);
+      for (const item of existing.integrations ?? []) {
+        if (!bySlug.has(item.slug)) {
+          bySlug.set(item.slug, item);
+        }
+      }
+      for (const slug of bySlug.keys()) {
+        if (!orderedSlugs.includes(slug)) {
+          orderedSlugs.push(slug);
+        }
+      }
+    } catch {
+      orderedSlugs = [...new Set([...orderedSlugs, ...bySlug.keys()])];
+    }
+  }
+
+  const ordered = orderedSlugs
     .map((slug) => bySlug.get(slug))
     .filter(
       /** @returns {item is ScrapedIntegration} */ (item) => Boolean(item)
