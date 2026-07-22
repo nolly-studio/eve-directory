@@ -76,7 +76,8 @@ Geist **material shadows** (border ring + lift + optional background ring):
 | --- | --- | --- |
 | `.shadow-surface` | `--ds-shadow-border-medium` | Cards, listing panels |
 | `.shadow-surface-hover` / `.shadow-surface-active` | `--ds-shadow-border-large` | Hover / selected |
-| `.shadow-chip` / `shadow-sm` | `--ds-shadow-border-small` | Chips, inputs, buttons |
+| `.shadow-chip` / `shadow-sm` | `--ds-shadow-border-small` | Chips, inputs, light elevated controls |
+| `.shadow-button` | `--ds-shadow-button` | Solid primary fills (dark CTA / badge) |
 | `shadow-md` | `--ds-shadow-border-medium` | Stock shadcn medium |
 | `shadow-lg` / `shadow-xl` | `--ds-shadow-menu` / `--ds-shadow-modal` | Menus, dialogs |
 | `.material-*` | same family | Explicit Geistdocs-style surfaces |
@@ -153,7 +154,7 @@ Copy voice: short, imperative, sentence case, no exclamation marks — "Explore 
 
 Core kit in [components/ui/](components/ui/): `button`, `button-link`, `card`, `badge`, `input`, `textarea`, `label`, `separator`, `tabs`, `dialog`, `dropdown-menu`, `popover`, `tooltip`, `scroll-area`, `select`, `checkbox`, `switch`, `surface`.
 
-- **Buttons** — `buttonVariants` / `Button` / `ButtonLink`. Variants: `default` (+ `shadow-chip`), `outline` (`shadow-surface`), `secondary`, `ghost`, `destructive`, `link`. **CTAs are pills (`rounded-full`)**; primary = gray-1000 on background-100. Press = `active:scale-[0.96]`; focus = `focus-visible:ring-3 ring-ring/30`
+- **Buttons** — `buttonVariants` / `Button` / `ButtonLink`. Variants: `default` (+ `shadow-button`), `outline` (`shadow-surface`), `secondary` (+ `shadow-chip`), `ghost`, `destructive`, `link`. **CTAs are pills (`rounded-full`)**; primary = gray-1000 on background-100. Press = `active:scale-[0.96]`; focus = `focus-visible:ring-3 ring-ring/30`
 - **Command bar** — [components/command-bar.tsx](components/command-bar.tsx): pill `rounded-full bg-card shadow-chip` with a `text-gray-700` mono `$` prefix, mono command text, and a copy button whose icon swaps (see Motion)
 - **Home hero preview** — [components/home-hero-preview.tsx](components/home-hero-preview.tsx): text tabs with active `bg-card shadow-chip`, dual `rounded-xl` code/preview windows
 - **Card / Surface** — `Card` for structured content; `Surface` for freeform panels. Both: `rounded-xl bg-card shadow-surface`
@@ -190,7 +191,7 @@ Core kit in [components/ui/](components/ui/): `button`, `button-link`, `card`, `
 - [ ] One type family: headings are `font-sans` with `[--font-weight-semibold:450]` + tighter tracking at display sizes — no Bricolage, no second display font
 - [ ] `font-pixel` appears at most once per page, and only decoratively
 - [ ] Colors come from shadcn tokens or the Geist gray ladder (`text-gray-1000/900/700`); no one-off hex/oklch in components
-- [ ] Card edges use `shadow-surface` / `shadow-chip` or a gradient hairline overlay — not flat `border` or inline `shadow-[...]`
+- [ ] Card edges use `shadow-surface` / `shadow-chip` or a gradient hairline overlay — not flat `border` or inline `shadow-[...]`. Solid primary fills use `shadow-button`
 - [ ] Radii: `rounded-xl` cards, `rounded-full` CTAs, `rounded-md` chips/inline code
 - [ ] Wayfinding uses mono `[ 01 ]` step markers (gray-500 brackets / gray-700 digits), not uppercase kickers; counts use `tabular-nums`
 - [ ] Clipped or dense regions end in an edge fade matching the canvas, never a hard crop

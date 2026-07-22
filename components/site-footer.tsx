@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { EveDirectoryLogo } from "@/components/logo";
+import { ThemeSwitcher } from "@/components/theme-switcher";
 import { FOOTER_LINKS, SITE } from "@/lib/site";
 
 export function SiteFooter() {
@@ -42,8 +43,13 @@ export function SiteFooter() {
           ))}
         </div>
       </div>
-      <div className="border-t border-border px-6 py-4 text-center text-label-12 text-gray-700">
-        © {new Date().getFullYear()} {SITE.name}. Open source catalog.
+      <div className="border-t border-border px-6 py-4">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
+          <p className="text-label-12 text-gray-700">
+            © {new Date().getFullYear()} {SITE.name}. Open source catalog.
+          </p>
+          <ThemeSwitcher />
+        </div>
       </div>
     </footer>
   );

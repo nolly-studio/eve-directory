@@ -1,0 +1,7 @@
+{
+  "slug": "http-monitor",
+  "name": "HTTP Monitor",
+  "npm": "@eve-directory/http-monitor",
+  "package": "package",
+  "testConsumer": "test-consumer"
+}

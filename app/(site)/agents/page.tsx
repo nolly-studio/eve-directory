@@ -1,10 +1,24 @@
 import { AdSlot } from "@/components/ad-slot";
-import { AgentCard } from "@/components/listing-card";
+import { AgentsCatalog } from "@/components/agents-catalog";
 import { PageHeader, PageShell } from "@/components/page-shell";
-import { getAgents } from "@/lib/catalog";
+import {
+  getAgents,
+  getCategories,
+  getOfficialIntegrations,
+} from "@/lib/catalog";
+import { buildIntegrationFilterOptions } from "@/lib/catalog/agent-filters";
 
 export default async function AgentsPage() {
-  const agents = await getAgents();
+  const [agents, categories, officialIntegrations] = await Promise.all([
+    getAgents(),
+    getCategories(),
+    getOfficialIntegrations(),
+  ]);
+
+  const integrations = buildIntegrationFilterOptions(
+    agents,
+    officialIntegrations
+  );
 
   return (
     <PageShell>
@@ -15,11 +29,11 @@ export default async function AgentsPage() {
           <AdSlot placement="agents-sidebar" className="w-full max-w-xs" />
         }
       />
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {agents.map((agent) => (
-          <AgentCard key={agent.slug} agent={agent} />
-        ))}
-      </div>
+      <AgentsCatalog
+        agents={agents}
+        categories={categories}
+        integrations={integrations}
+      />
     </PageShell>
   );
 }

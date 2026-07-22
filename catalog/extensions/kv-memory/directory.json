@@ -1,0 +1,7 @@
+{
+  "slug": "kv-memory",
+  "name": "KV Memory",
+  "npm": "@eve-directory/kv-memory",
+  "package": "package",
+  "testConsumer": "test-consumer"
+}

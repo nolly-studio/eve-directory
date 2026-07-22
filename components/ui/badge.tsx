@@ -15,7 +15,8 @@ const badgeVariants = cva(
       variant: {
         // Elevated chips: material shadow owns the edge — keep border transparent
         // at rest (focus slot only). Never add border-border on these variants.
-        default: "shadow-chip bg-primary text-primary-foreground",
+        default:
+          "shadow-button bg-clip-border bg-primary text-primary-foreground",
         destructive:
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         ghost:

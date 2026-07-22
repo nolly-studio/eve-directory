@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
-import { ButtonLink } from "@/components/ui/button-link";
 import {
   addAgentToComposer,
   addExtensionToComposer,
@@ -12,9 +11,11 @@ import {
 export function AddToComposerButton({
   slug,
   kind,
+  variant = "default",
 }: {
   slug: string;
   kind: "agent" | "extension";
+  variant?: "default" | "secondary" | "ghost";
 }) {
   const router = useRouter();
 
@@ -29,13 +30,8 @@ export function AddToComposerButton({
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      <Button type="button" onClick={handleClick}>
-        Add to composer
-      </Button>
-      <ButtonLink href="/composer" variant="outline" size="sm">
-        Open composer
-      </ButtonLink>
-    </div>
+    <Button type="button" onClick={handleClick} variant={variant}>
+      Add to composer
+    </Button>
   );
 }

@@ -46,6 +46,12 @@ pnpm dev
 # Quality checks (REQUIRED after making any changes)
 pnpm lint && pnpm typecheck
 
+# Catalog checks (REQUIRED after changing catalog/ or registry.json)
+pnpm catalog:validate   # static: registry <-> disk consistency, required files, env hygiene
+pnpm agents:check       # compile: stage + npm install + eve info per agent, must be 0 errors/warnings (accepts slugs to scope)
+pnpm agents:eval        # behavior: stage + eve eval --strict --junit per agent (accepts slugs; needs AI_GATEWAY_API_KEY, see below)
+pnpm agents:clean       # drop in-place build debris from catalog/agents/ (git clean -Xdf)
+
 # Formatting
 pnpm format
 
@@ -57,7 +63,12 @@ pnpm scrape:integrations
 
 # Regenerate the shadcn install registry (public/r/) from catalog/
 pnpm registry:build
+
+# Install-path smoke: registry:build + shadcn add into a scratch consumer + eve info (accepts slugs)
+pnpm registry:smoke
 ```
+
+**Staging model:** `agents:check` / `agents:eval` / `registry:smoke` never install inside `catalog/agents/` — `scripts/lib/stage-agent.mjs` rsyncs each agent to `$EVE_STAGE_DIR` (default `../eve-directory-test`, a plain sibling folder that must never become a git repo or pnpm workspace). Everything there is generated; never hand-edit it. Secrets for staged eval runs (`AI_GATEWAY_API_KEY`) live in `<stage root>/.env.local`, outside the repo.
 
 **CI/script execution rules:**
 

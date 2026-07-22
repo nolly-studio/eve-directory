@@ -15,6 +15,7 @@ Use this skill when the user asks for work related to: expense review, SaaS rene
 5. Find category overlap, duplicate seats, and inactive subscriptions.
 6. Quantify each finding in currency terms and rank.
 7. Propose action, owner, and deadline per finding, ahead of renewal dates.
+8. Record every anomaly, renewal, or duplicate-subscription finding with `flag_anomaly` immediately — flagging is bookkeeping, not a proposal, and needs no approval; "flag X" always means `flag_anomaly`. Only when explicitly asked to cancel or consolidate a subscription, call `propose_cancel` directly with a rationale built from what the requester provided — it is approval-gated in code, never executes the cancel itself, and parks the run for human sign-off. Do not ask for permission or missing context in chat first; note unknowns inside the rationale and let the approver decide.
 
 ## Deliverable checklist
 

@@ -2,6 +2,7 @@
   "name": "eve-directory",
   "version": "0.0.1",
   "private": true,
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/nolly-studio/eve-directory.git"
@@ -16,7 +17,12 @@
     "format": "ultracite fix",
     "typecheck": "fumadocs-mdx && tsc --noEmit",
     "scrape:integrations": "node scripts/scrape-integrations.mjs",
+    "catalog:validate": "node scripts/validate-catalog.mjs",
+    "agents:check": "node scripts/check-agents.mjs",
+    "agents:eval": "node scripts/run-agent-evals.mjs",
+    "agents:clean": "git clean -Xdf catalog/agents",
     "registry:build": "node scripts/build-registry.mjs && shadcn build .registry/registry.json --output public/r",
+    "registry:smoke": "node scripts/registry-smoke.mjs",
     "check": "ultracite check",
     "fix": "ultracite fix",
     "prepare": "husky"

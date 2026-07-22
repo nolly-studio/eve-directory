@@ -12,8 +12,8 @@ Use this skill when the user asks for work related to: qualifying leads, handlin
 2. Learn problem, company size, tooling, timeline, and decision process naturally.
 3. Answer only from approved knowledge; escalate the rest.
 4. Score against the ideal customer profile with per-criterion reasoning.
-5. Record the lead with summary, score, and reasons.
-6. Alert the owner for qualified leads with a suggested next step.
+5. Record the lead by calling `score_lead` with summary, score, and reasons — call it directly when the details are already known; do not ask for confirmation first.
+6. Alert the owner for qualified leads by calling `handoff_to_sales` directly with the brief — it is approval-gated in code and parks the run for human sign-off; do not ask for permission in chat first.
 7. Keep unqualified leads helped and pointed to self-serve resources.
 
 ## Deliverable checklist

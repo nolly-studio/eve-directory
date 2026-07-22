@@ -1,0 +1,43 @@
+{
+  "name": "@eve-directory/http-monitor",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "files": [
+    "extension",
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.mjs"
+    },
+    "./tools": {
+      "types": "./dist/tools/index.d.ts",
+      "default": "./dist/tools/index.mjs"
+    }
+  },
+  "scripts": {
+    "build": "eve extension build",
+    "prepare": "eve extension build",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "24.x",
+    "eve": "^0.24.6",
+    "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "eve": "^0.24.6"
+  },
+  "engines": {
+    "node": "24.x"
+  },
+  "eve": {
+    "extension": "./extension"
+  }
+}

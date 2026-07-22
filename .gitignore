@@ -45,6 +45,15 @@ catalog/agents/*/.cache/
 catalog/agents/*/var/
 catalog/agents/*/package-lock.json
 
+# eve build artifacts inside catalog extension packages and test consumers
+catalog/extensions/*/*/node_modules/
+catalog/extensions/*/*/dist/
+catalog/extensions/*/*/.eve/
+catalog/extensions/*/*/.output/
+catalog/extensions/*/*/.cache/
+catalog/extensions/*/*/var/
+catalog/extensions/*/*/package-lock.json
+
 # debug
 npm-debug.log*
 yarn-debug.log*

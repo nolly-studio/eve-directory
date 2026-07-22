@@ -13,7 +13,7 @@ Use this skill when the user asks for work related to: churn risk, account healt
 3. Compare each account against its own baseline, not a global average.
 4. Build a reason chain per flagged account: signals, dates, evidence strength.
 5. Recall prior account history and interventions.
-6. Propose one save play per account with owner and deadline.
+6. Propose one save play per account with owner and deadline by calling `propose_save_play` directly — it is approval-gated in code and parks the run for human sign-off; do not ask for permission in chat first. Persist scores with `score_account` as you assess.
 7. Track play outcomes so repeat flags escalate.
 
 ## Deliverable checklist

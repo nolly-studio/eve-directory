@@ -3,8 +3,10 @@ import type { CSSProperties } from "react";
 
 import { AddToComposerButton } from "@/components/add-to-composer-button";
 import { IntegrationLogo } from "@/components/integration-badge";
+import { SetupWithPromptButton } from "@/components/setup-with-prompt-button";
+import { ViewGithubButton } from "@/components/view-github-button";
 import type { AgentListing } from "@/lib/catalog/types";
-import { integrationLabel } from "@/lib/site";
+import { githubCatalogUrl, integrationLabel } from "@/lib/site";
 
 export function AgentDetailHeader({
   agent,
@@ -13,6 +15,8 @@ export function AgentDetailHeader({
   agent: AgentListing;
   authoredFiles: number;
 }) {
+  const githubSourceUrl = githubCatalogUrl(agent.path);
+
   return (
     <header className="mb-8">
       <nav
@@ -66,8 +70,19 @@ export function AgentDetailHeader({
           <p className="text-copy-14 text-pretty text-muted-foreground md:text-copy-16">
             {agent.summary}
           </p>
-          <div className="mt-4">
-            <AddToComposerButton slug={agent.slug} kind="agent" />
+          <div className="mt-4 flex flex-col items-start gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <SetupWithPromptButton
+                name={agent.name}
+                sourceHref={githubSourceUrl}
+              />
+              <ViewGithubButton href={githubSourceUrl} />
+            </div>
+            <AddToComposerButton
+              slug={agent.slug}
+              kind="agent"
+              variant="ghost"
+            />
           </div>
         </div>
       </div>

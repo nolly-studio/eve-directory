@@ -196,29 +196,29 @@
   --ds-black: oklch(0 0 0);
   --ds-white: oklch(1 0 0);
   --ds-background-100: oklch(0.997 0.001 90);
-  --ds-background-200: oklch(0.982 0.004 90);
-  --ds-gray-100: oklch(0.961 0.005 90);
-  --ds-gray-200: oklch(0.94 0.006 90);
-  --ds-gray-300: oklch(0.925 0.006 90);
-  --ds-gray-400: oklch(0.937 0.006 90);
-  --ds-gray-500: oklch(0.836 0.008 90);
-  --ds-gray-600: oklch(0.732 0.01 90);
-  --ds-gray-700: oklch(0.65 0.01 90);
-  --ds-gray-800: oklch(0.59 0.01 90);
-  --ds-gray-900: oklch(0.42 0.008 90);
-  --ds-gray-950: oklch(0.3 0.006 90);
-  --ds-gray-1000: oklch(0.205 0.005 90);
+  --ds-background-200: oklch(0.982 0.003 90);
+  --ds-gray-100: oklch(0.961 0.004 90);
+  --ds-gray-200: oklch(0.94 0.005 90);
+  --ds-gray-300: oklch(0.925 0.005 90);
+  --ds-gray-400: oklch(0.937 0.005 90);
+  --ds-gray-500: oklch(0.836 0.006 90);
+  --ds-gray-600: oklch(0.732 0.008 90);
+  --ds-gray-700: oklch(0.65 0.008 90);
+  --ds-gray-800: oklch(0.59 0.008 90);
+  --ds-gray-900: oklch(0.42 0.006 90);
+  --ds-gray-950: oklch(0.3 0.005 90);
+  --ds-gray-1000: oklch(0.205 0.004 90);
   /* Alpha ladder rebased on the warm black so hairlines match temperature */
-  --ds-gray-alpha-100: oklch(0.2 0.02 90 / 0.05);
-  --ds-gray-alpha-200: oklch(0.2 0.02 90 / 0.081);
-  --ds-gray-alpha-300: oklch(0.2 0.02 90 / 0.1);
-  --ds-gray-alpha-400: oklch(0.2 0.02 90 / 0.08);
-  --ds-gray-alpha-500: oklch(0.2 0.02 90 / 0.21);
-  --ds-gray-alpha-600: oklch(0.2 0.02 90 / 0.24);
-  --ds-gray-alpha-700: oklch(0.2 0.02 90 / 0.44);
-  --ds-gray-alpha-800: oklch(0.2 0.02 90 / 0.51);
-  --ds-gray-alpha-900: oklch(0.2 0.02 90 / 0.7);
-  --ds-gray-alpha-1000: oklch(0.2 0.02 90 / 0.91);
+  --ds-gray-alpha-100: oklch(0.2 0.016 90 / 0.05);
+  --ds-gray-alpha-200: oklch(0.2 0.016 90 / 0.081);
+  --ds-gray-alpha-300: oklch(0.2 0.016 90 / 0.1);
+  --ds-gray-alpha-400: oklch(0.2 0.016 90 / 0.08);
+  --ds-gray-alpha-500: oklch(0.2 0.016 90 / 0.21);
+  --ds-gray-alpha-600: oklch(0.2 0.016 90 / 0.24);
+  --ds-gray-alpha-700: oklch(0.2 0.016 90 / 0.44);
+  --ds-gray-alpha-800: oklch(0.2 0.016 90 / 0.51);
+  --ds-gray-alpha-900: oklch(0.2 0.016 90 / 0.7);
+  --ds-gray-alpha-1000: oklch(0.2 0.016 90 / 0.91);
   --ds-blue-700: oklch(57.61% 0.2508 258.23);
   --ds-red-700: oklch(62.56% 0.2524 23.03);
   --ds-red-800: oklch(58.19% 0.2482 25.15);
@@ -226,40 +226,44 @@
 
   /* Shadow blacks carry the same warm cast as the gray ladder */
   --ds-shadow-background-border: 0 0 0 1px var(--ds-background-200);
-  --ds-shadow-border-base: 0 0 0 1px oklch(0.2 0.03 90 / 0.08);
-  --ds-shadow-border-inset: inset 0 0 0 1px oklch(0.2 0.03 90 / 0.08);
+  --ds-shadow-border-base: 0 0 0 1px oklch(0.2 0.024 90 / 0.08);
+  --ds-shadow-border-inset: inset 0 0 0 1px oklch(0.2 0.024 90 / 0.08);
   --ds-shadow-border:
     var(--ds-shadow-border-base), var(--ds-shadow-background-border);
-  --ds-shadow-2xs: 0px 1px 1px oklch(0.2 0.03 90 / 0.02);
-  --ds-shadow-xs: 0px 1px 2px oklch(0.2 0.03 90 / 0.04);
-  --ds-shadow-small: 0px 2px 2px oklch(0.2 0.03 90 / 0.04);
+  --ds-shadow-2xs: 0px 1px 1px oklch(0.2 0.024 90 / 0.02);
+  --ds-shadow-xs: 0px 1px 2px oklch(0.2 0.024 90 / 0.04);
+  --ds-shadow-small: 0px 2px 2px oklch(0.2 0.024 90 / 0.04);
   --ds-shadow-border-small:
     var(--ds-shadow-border-base), var(--ds-shadow-small),
     var(--ds-shadow-background-border);
+  /* Solid primary fills — no light background-ring (that muddies dark CTAs) */
+  --ds-shadow-button:
+    inset 0 1px 0 oklch(1 0 0 / 0.14), 0px 1px 1px oklch(0.2 0.024 90 / 0.1),
+    0px 2px 4px oklch(0.2 0.024 90 / 0.06);
   --ds-shadow-medium:
-    0px 2px 2px oklch(0.2 0.03 90 / 0.04),
-    0px 8px 8px -8px oklch(0.2 0.03 90 / 0.04);
+    0px 2px 2px oklch(0.2 0.024 90 / 0.04),
+    0px 8px 8px -8px oklch(0.2 0.024 90 / 0.04);
   --ds-shadow-border-medium:
     var(--ds-shadow-border-base), var(--ds-shadow-medium),
     var(--ds-shadow-background-border);
   --ds-shadow-large:
-    0px 2px 2px oklch(0.2 0.03 90 / 0.04),
-    0px 8px 16px -4px oklch(0.2 0.03 90 / 0.04);
+    0px 2px 2px oklch(0.2 0.024 90 / 0.04),
+    0px 8px 16px -4px oklch(0.2 0.024 90 / 0.04);
   --ds-shadow-border-large:
     var(--ds-shadow-border-base), var(--ds-shadow-large),
     var(--ds-shadow-background-border);
   --ds-shadow-tooltip:
-    var(--ds-shadow-border-base), 0px 1px 1px oklch(0.2 0.03 90 / 0.02),
-    0px 4px 8px oklch(0.2 0.03 90 / 0.04), var(--ds-shadow-background-border);
+    var(--ds-shadow-border-base), 0px 1px 1px oklch(0.2 0.024 90 / 0.02),
+    0px 4px 8px oklch(0.2 0.024 90 / 0.04), var(--ds-shadow-background-border);
   --ds-shadow-menu:
-    var(--ds-shadow-border-base), 0px 1px 1px oklch(0.2 0.03 90 / 0.02),
-    0px 4px 8px -4px oklch(0.2 0.03 90 / 0.04),
-    0px 16px 24px -8px oklch(0.2 0.03 90 / 0.06),
+    var(--ds-shadow-border-base), 0px 1px 1px oklch(0.2 0.024 90 / 0.02),
+    0px 4px 8px -4px oklch(0.2 0.024 90 / 0.04),
+    0px 16px 24px -8px oklch(0.2 0.024 90 / 0.06),
     var(--ds-shadow-background-border);
   --ds-shadow-modal:
-    var(--ds-shadow-border-base), 0px 1px 1px oklch(0.2 0.03 90 / 0.02),
-    0px 8px 16px -4px oklch(0.2 0.03 90 / 0.04),
-    0px 24px 32px -8px oklch(0.2 0.03 90 / 0.06),
+    var(--ds-shadow-border-base), 0px 1px 1px oklch(0.2 0.024 90 / 0.02),
+    0px 8px 16px -4px oklch(0.2 0.024 90 / 0.04),
+    0px 24px 32px -8px oklch(0.2 0.024 90 / 0.06),
     var(--ds-shadow-background-border);
   --ds-focus-ring:
     0 0 0 2px var(--ds-background-100), 0 0 0 4px var(--ds-blue-700);
@@ -321,42 +325,44 @@
    * warm charcoal. Cards stay darker than the canvas, matching the light-mode
    * background-100/200 relationship.
    */
-  --ds-background-100: oklch(0.145 0.004 85);
-  --ds-background-200: oklch(0.168 0.005 85);
-  --ds-gray-100: oklch(0.218 0.006 85);
-  --ds-gray-200: oklch(0.239 0.006 85);
-  --ds-gray-300: oklch(0.281 0.007 85);
-  --ds-gray-400: oklch(0.301 0.007 85);
-  --ds-gray-500: oklch(0.39 0.008 85);
-  --ds-gray-600: oklch(0.623 0.01 85);
-  --ds-gray-700: oklch(0.65 0.01 85);
-  --ds-gray-800: oklch(0.59 0.01 85);
-  --ds-gray-900: oklch(0.706 0.01 85);
-  --ds-gray-950: oklch(0.85 0.008 85);
-  --ds-gray-1000: oklch(0.946 0.006 85);
+  --ds-background-100: oklch(0.145 0.003 85);
+  --ds-background-200: oklch(0.168 0.004 85);
+  --ds-gray-100: oklch(0.218 0.005 85);
+  --ds-gray-200: oklch(0.239 0.005 85);
+  --ds-gray-300: oklch(0.281 0.006 85);
+  --ds-gray-400: oklch(0.301 0.006 85);
+  --ds-gray-500: oklch(0.39 0.006 85);
+  --ds-gray-600: oklch(0.623 0.008 85);
+  --ds-gray-700: oklch(0.65 0.008 85);
+  --ds-gray-800: oklch(0.59 0.008 85);
+  --ds-gray-900: oklch(0.706 0.008 85);
+  --ds-gray-950: oklch(0.85 0.006 85);
+  --ds-gray-1000: oklch(0.946 0.005 85);
   /* Warm-white alpha ladder; hairlines read stronger on charcoal than on
      black, so the border-weight alphas step down slightly */
-  --ds-gray-alpha-100: oklch(0.95 0.02 85 / 0.07);
-  --ds-gray-alpha-200: oklch(0.95 0.02 85 / 0.09);
-  --ds-gray-alpha-300: oklch(0.95 0.02 85 / 0.12);
-  --ds-gray-alpha-400: oklch(0.95 0.02 85 / 0.13);
-  --ds-gray-alpha-500: oklch(0.95 0.02 85 / 0.24);
-  --ds-gray-alpha-600: oklch(0.95 0.02 85 / 0.51);
-  --ds-gray-alpha-700: oklch(0.95 0.02 85 / 0.54);
-  --ds-gray-alpha-800: oklch(0.95 0.02 85 / 0.47);
-  --ds-gray-alpha-900: oklch(0.95 0.02 85 / 0.61);
-  --ds-gray-alpha-1000: oklch(0.95 0.02 85 / 0.92);
+  --ds-gray-alpha-100: oklch(0.95 0.016 85 / 0.07);
+  --ds-gray-alpha-200: oklch(0.95 0.016 85 / 0.09);
+  --ds-gray-alpha-300: oklch(0.95 0.016 85 / 0.12);
+  --ds-gray-alpha-400: oklch(0.95 0.016 85 / 0.13);
+  --ds-gray-alpha-500: oklch(0.95 0.016 85 / 0.24);
+  --ds-gray-alpha-600: oklch(0.95 0.016 85 / 0.51);
+  --ds-gray-alpha-700: oklch(0.95 0.016 85 / 0.54);
+  --ds-gray-alpha-800: oklch(0.95 0.016 85 / 0.47);
+  --ds-gray-alpha-900: oklch(0.95 0.016 85 / 0.61);
+  --ds-gray-alpha-1000: oklch(0.95 0.016 85 / 0.92);
   --ds-blue-700: oklch(57.61% 0.2321 258.23);
   --ds-red-700: oklch(62.56% 0.2234 23.03);
   --ds-red-800: oklch(58.01% 0.227 25.12);
   --ds-red-900: oklch(69.96% 0.2136 22.03);
 
   --ds-shadow-background-border: 0 0 0 1px var(--ds-background-200);
-  --ds-shadow-border-base: 0 0 0 1px oklch(0.95 0.02 85 / 0.13);
-  --ds-shadow-border-inset: inset 0 0 0 1px oklch(0.95 0.02 85 / 0.13);
+  --ds-shadow-border-base: 0 0 0 1px oklch(0.95 0.016 85 / 0.13);
+  --ds-shadow-border-inset: inset 0 0 0 1px oklch(0.95 0.016 85 / 0.13);
   --ds-shadow-2xs: 0px 1px 1px rgba(0, 0, 0, 0.08);
   --ds-shadow-xs: 0px 1px 2px rgba(0, 0, 0, 0.16);
   --ds-shadow-small: 0px 1px 2px rgba(0, 0, 0, 0.16);
+  /* Primary is a light fill in dark mode — reuse the chip material stack */
+  --ds-shadow-button: var(--ds-shadow-border-small);
   --ds-shadow-medium:
     0px 2px 2px rgba(0, 0, 0, 0.16), 0px 8px 8px -8px rgba(0, 0, 0, 0.16);
   --ds-shadow-large:
@@ -472,6 +478,10 @@
 
   .shadow-chip {
     box-shadow: var(--ds-shadow-border-small);
+  }
+
+  .shadow-button {
+    box-shadow: var(--ds-shadow-button);
   }
 
   .material-base {

@@ -15,6 +15,7 @@ Use this skill when the user asks for work related to: API contract drift, break
 5. Trace breaking changes to their origin version.
 6. Draft changelog entries, migration notes with before/after examples, and doc corrections.
 7. Propose tracker issues for code-side fixes with reproduction evidence.
+8. Record each confirmed finding with `record_drift` as you verify it. When asked to publish, call `publish_drift_report` directly with the full report — it is approval-gated in code and parks the run for human sign-off. Do not ask for permission in chat first.
 
 ## Deliverable checklist
 
@@ -26,4 +27,4 @@ Use this skill when the user asks for work related to: API contract drift, break
 
 ## Quality check
 
-Before responding, confirm every breaking label states who breaks and how, all evidence quotes real spec, response, and doc fragments, no secret appears in any draft, and no side-effecting call or publish action ran without approval.
+Before responding, confirm every breaking label states who breaks and how, all evidence quotes real spec, response, and doc fragments, no secret appears in any draft, and publishing went through `publish_drift_report` (never any other path — its in-code gate is the approval).

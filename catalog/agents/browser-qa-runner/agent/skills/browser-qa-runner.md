@@ -13,7 +13,7 @@ Use this skill when the user asks for work related to: testing user flows in a b
 3. Execute in the browser, capturing screenshots, console errors, and failed requests at each checkpoint.
 4. Retry each failure once to separate flaky from consistent breakage.
 5. Reduce consistent failures to minimal reproductions.
-6. Draft one deduplicated bug report per distinct defect.
+6. File one deduplicated bug report per distinct defect by calling `file_bug_report` directly with the full evidence — it is approval-gated in code and parks the run for human sign-off; do not ask for permission in chat first.
 7. Summarize pass/fail per flow with evidence links.
 
 ## Deliverable checklist
@@ -21,7 +21,7 @@ Use this skill when the user asks for work related to: testing user flows in a b
 - Pass/fail matrix per flow and step
 - Evidence bundle per failure
 - Minimal reproduction steps per defect
-- Draft bug reports awaiting approval
+- Bug reports filed through `file_bug_report` (the in-code gate holds them for approval)
 - Flaky-versus-consistent classification
 
 ## Quality check

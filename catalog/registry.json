@@ -150,7 +150,168 @@
         "slug": "community"
       },
       "integrations": ["discord", "chat-sdk-x", "github", "notion", "slack"]
+    },
+    {
+      "name": "Telegram Assistant Starter",
+      "slug": "telegram-assistant-starter",
+      "path": "agents/telegram-assistant-starter",
+      "summary": "Message a Telegram bot and it replies per your instructions. The blank canvas — edit instructions.md and nothing else.",
+      "version": "1.0.0",
+      "license": "MIT",
+      "category": {
+        "name": "Starters",
+        "slug": "starters"
+      },
+      "integrations": ["telegram"],
+      "tags": ["starter"]
+    },
+    {
+      "name": "Discord Docs Starter",
+      "slug": "discord-docs-starter",
+      "path": "agents/discord-docs-starter",
+      "summary": "Answers Discord questions from a single knowledge.md FAQ you paste in. Demos giving an agent knowledge.",
+      "version": "1.0.0",
+      "license": "MIT",
+      "category": {
+        "name": "Starters",
+        "slug": "starters"
+      },
+      "integrations": ["discord"],
+      "tags": ["starter"]
+    },
+    {
+      "name": "GitHub Issue Labeler Starter",
+      "slug": "github-issue-labeler-starter",
+      "path": "agents/github-issue-labeler-starter",
+      "summary": "New issue opened → applies one label from your taxonomy and asks for repro steps when a bug report is thin.",
+      "version": "1.0.0",
+      "license": "MIT",
+      "category": {
+        "name": "Starters",
+        "slug": "starters"
+      },
+      "integrations": ["github"],
+      "tags": ["starter"]
+    },
+    {
+      "name": "Linear Triage Starter",
+      "slug": "linear-triage-starter",
+      "path": "agents/linear-triage-starter",
+      "summary": "Delegated Linear tickets get a priority and team recommendation from rules in your instructions.",
+      "version": "1.0.0",
+      "license": "MIT",
+      "category": {
+        "name": "Starters",
+        "slug": "starters"
+      },
+      "integrations": ["linear-agent"],
+      "tags": ["starter"]
+    },
+    {
+      "name": "Daily Digest Starter",
+      "slug": "daily-digest-starter",
+      "path": "agents/daily-digest-starter",
+      "summary": "Weekday 9am UTC: fetch one RSS feed and post a five-item summary to Slack. Demos cron schedules.",
+      "version": "1.0.0",
+      "license": "MIT",
+      "category": {
+        "name": "Starters",
+        "slug": "starters"
+      },
+      "integrations": ["slack"],
+      "tags": ["starter"]
+    },
+    {
+      "name": "Uptime Watch Starter",
+      "slug": "uptime-watch-starter",
+      "path": "agents/uptime-watch-starter",
+      "summary": "Checks one URL every 5 minutes and Telegram-alerts you only when it goes down or recovers.",
+      "version": "1.0.0",
+      "license": "MIT",
+      "category": {
+        "name": "Starters",
+        "slug": "starters"
+      },
+      "integrations": ["telegram"],
+      "tags": ["starter"]
+    },
+    {
+      "name": "SMS Reminder Starter",
+      "slug": "sms-reminder-starter",
+      "path": "agents/sms-reminder-starter",
+      "summary": "Text \"remind me Thursday at 9\" via Twilio and get texted back at that time. Demos dynamic scheduling.",
+      "version": "1.0.0",
+      "license": "MIT",
+      "category": {
+        "name": "Starters",
+        "slug": "starters"
+      },
+      "integrations": ["twilio"],
+      "tags": ["starter"]
+    },
+    {
+      "name": "Approval Gate Starter",
+      "slug": "approval-gate-starter",
+      "path": "agents/approval-gate-starter",
+      "summary": "Ask to issue a refund — Slack shows an approval card; the tool runs only after approve. Demos human-in-the-loop.",
+      "version": "1.0.0",
+      "license": "MIT",
+      "category": {
+        "name": "Starters",
+        "slug": "starters"
+      },
+      "integrations": ["slack"],
+      "tags": ["starter"]
+    },
+    {
+      "name": "OpenAPI Chat Starter",
+      "slug": "openapi-chat-starter",
+      "path": "agents/openapi-chat-starter",
+      "summary": "Chat with any HTTP API in plain English. Ships on Swagger Petstore; swap OPENAPI_SPEC_URL for yours.",
+      "version": "1.0.0",
+      "license": "MIT",
+      "category": {
+        "name": "Starters",
+        "slug": "starters"
+      },
+      "integrations": ["eve"],
+      "tags": ["starter"]
+    },
+    {
+      "name": "Webhook Summarizer Starter",
+      "slug": "webhook-summarizer-starter",
+      "path": "agents/webhook-summarizer-starter",
+      "summary": "POST any text to a custom webhook and get a classified summary in Slack. Demos custom channels.",
+      "version": "1.0.0",
+      "license": "MIT",
+      "category": {
+        "name": "Starters",
+        "slug": "starters"
+      },
+      "integrations": ["slack"],
+      "tags": ["starter"]
     }
   ],
-  "extensions": []
+  "extensions": [
+    {
+      "name": "HTTP Monitor",
+      "slug": "http-monitor",
+      "path": "extensions/http-monitor",
+      "summary": "Check any URL from a tool call: status, latency, and change detection against the last check in the session. Timeout is mount config.",
+      "version": "0.1.0",
+      "license": "MIT",
+      "npm": "@eve-directory/http-monitor",
+      "integrations": ["eve"]
+    },
+    {
+      "name": "KV Memory",
+      "slug": "kv-memory",
+      "path": "extensions/kv-memory",
+      "summary": "Session-scoped key/value memory: remember, recall, and forget tools backed by eve state. No external store, fully deterministic.",
+      "version": "0.1.0",
+      "license": "MIT",
+      "npm": "@eve-directory/kv-memory",
+      "integrations": ["eve"]
+    }
+  ]
 }

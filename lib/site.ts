@@ -78,6 +78,17 @@ export function githubUrl(): string {
   return `https://github.com/${SITE.github.owner}/${SITE.github.repo}`;
 }
 
+/** Browse a catalog path on GitHub (`agents/<slug>` → `catalog/agents/<slug>`). */
+export function githubCatalogUrl(catalogPath: string): string {
+  const normalized = catalogPath.replace(/^\//, "");
+  return `${githubUrl()}/tree/main/catalog/${normalized}`;
+}
+
+/** One-prompt setup copy for Cursor / coding agents (mirrors eve.dev templates). */
+export function agentSetupPrompt(name: string, sourceHref: string): string {
+  return `Set up the eve ${name} agent in my current workspace using ${sourceHref} as the source. Copy the project files, install its dependencies, and follow the repository README to configure it. Preserve the existing project if the workspace is not empty, and tell me about any required environment variables or manual setup steps.`;
+}
+
 export function integrationLabel(slug: string): string {
   const labels: Record<string, string> = {
     "chat-sdk-gchat": "Google Chat",

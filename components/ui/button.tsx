@@ -26,7 +26,9 @@ const buttonVariants = cva(
       },
       variant: {
         default:
-          "shadow-chip bg-primary text-primary-foreground hover:bg-primary/90",
+          // bg-clip-border: transparent focus-slot border must not show canvas
+          // between the solid fill and the drop shadow (reads as a light halo).
+          "shadow-button bg-clip-border bg-primary text-primary-foreground hover:bg-primary/90",
         destructive:
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         ghost:
