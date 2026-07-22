@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <title>Eve Directory</title>
+  <!--
+    Favicon mark: the Eve "E" (three unequal bars from the wordmark).
+    Warm Geist neutrals  filled tile so the tab glyph stays legible on
+    both light and dark browser chrome.
+  -->
+  <style>
+    .tile {
+      fill: #2a2825;
+    }
+    .bar {
+      fill: #faf9f7;
+    }
+  </style>
+  <rect class="tile" width="32" height="32" rx="8" />
+  <!-- Bars match logo.tsx E proportions: 75.52 / 38.66 / 45.87 -->
+  <rect class="bar" x="7" y="8" width="18" height="3.2" rx="0.4" />
+  <rect class="bar" x="7" y="14.4" width="9.2" height="3.2" rx="0.4" />
+  <rect class="bar" x="7" y="20.8" width="10.9" height="3.2" rx="0.4" />
+</svg>
