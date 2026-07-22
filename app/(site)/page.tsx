@@ -98,11 +98,7 @@ export default async function HomePage() {
               Featured agents
             </h2>
           </div>
-          <div className="col-span-full flex items-end justify-between gap-4 lg:col-span-5 lg:col-start-8">
-            <p className="text-copy-16 text-pretty text-gray-900">
-              <span className="tabular-nums">{agents.length}</span> agents in
-              the open catalog
-            </p>
+          <div className="col-span-full flex justify-end lg:col-span-5 lg:col-start-8">
             <ButtonLink href="/agents" variant="ghost" size="sm">
               View all
             </ButtonLink>
@@ -117,10 +113,7 @@ export default async function HomePage() {
 
       <HomeComposeTeaser agents={agents} extensions={extensions} />
 
-      <HomeIntegrationsSection
-        integrations={featuredIntegrations}
-        totalCount={officialIntegrations.length}
-      />
+      <HomeIntegrationsSection integrations={featuredIntegrations} />
 
       <HomeCategoryStrip categories={categoriesWithCounts} />
     </div>

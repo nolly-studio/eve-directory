@@ -31,11 +31,11 @@ function loadGeist(weight: "Medium" | "SemiBold") {
 export default async function Image({
   params,
 }: {
-  params: Promise<{ handle: string; slug: string }>;
+  params: Promise<{ slug: string; communitySlug: string }>;
 }) {
-  const { handle: rawHandle, slug } = await params;
+  const { slug: rawHandle, communitySlug } = await params;
   const handle = decodeURIComponent(rawHandle).replace(/^@/, "");
-  const agent = await getCommunityAgent(handle, slug);
+  const agent = await getCommunityAgent(handle, communitySlug);
 
   const title = agent?.name ?? "Community agent";
   const summary = agent?.summary ?? SITE.description;

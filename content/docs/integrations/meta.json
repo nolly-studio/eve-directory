@@ -1,4 +1,4 @@
 {
   "title": "Integrations",
-  "pages": ["index"]
+  "pages": ["index", "slack", "github", "notion", "telegram", "linear"]
 }

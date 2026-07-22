@@ -1,0 +1,52 @@
+---
+title: Registry & machine access
+description: shadcn registry JSON, llms.txt, and APIs for installing agents or building tools on Eve Directory.
+---
+
+Eve Directory is meant to be browsed by humans and consumed by CLIs and agents.
+
+## shadcn registry
+
+One-time namespace setup:
+
+```bash
+npx shadcn@latest registry add @evedirectory=https://www.evedirectory.com/r/{name}.json
+```
+
+Install by slug:
+
+```bash
+npx shadcn@latest add @evedirectory/<slug>
+```
+
+Raw item JSON (useful for tooling or `shadcn add <url>`):
+
+```text
+https://www.evedirectory.com/r/<slug>.json
+```
+
+Community prompt agents use `/r/@<handle>/<slug>.json` and install the same way with the full URL. See [Install with shadcn CLI](/docs/install-with-shadcn).
+
+## Agent-facing indexes
+
+| URL                      | Purpose                          |
+| ------------------------ | -------------------------------- |
+| [/llms.txt](/llms.txt)   | Compact site index for LLMs      |
+| [/agents.md](/agents.md) | Agent-oriented discovery surface |
+| [/docs](/docs)           | Human guides (this section)      |
+
+## HTTP APIs
+
+| Endpoint | Purpose |
+| --- | --- |
+| `GET /api/agents/[slug]/file?path=…` | Read a single catalog file as JSON (for the file explorer) |
+| `POST /api/composer/export` | Build a Composer zip from a selection payload |
+| `GET /api/search` | Docs search (Fumadocs) |
+
+Listing pages remain the canonical browse UI: [/agents](/agents), [/extensions](/extensions), [/integrations](/integrations).
+
+## Related
+
+- [Install with shadcn CLI](/docs/install-with-shadcn)
+- [Contribute an agent](/docs/contributing)
+- [Composer](/docs/composer)

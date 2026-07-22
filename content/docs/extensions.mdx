@@ -1,0 +1,47 @@
+---
+title: What is an extension?
+description: How Eve Directory extensions differ from agents, and how to mount one in an existing Eve project.
+---
+
+An **agent** is a full Eve app: instructions, tools, channels, connections, and often evals. An **extension** is a reusable package that adds tools (or other mountable pieces) under `agent/extensions/` inside an existing agent.
+
+Browse them at [/extensions](/extensions). Today the catalog includes packages such as [HTTP Monitor](/extensions/http-monitor) and [KV Memory](/extensions/kv-memory).
+
+## Install
+
+Same registry as agents:
+
+```bash
+npx shadcn@latest add @evedirectory/<extension-slug>
+```
+
+Or install the published npm package named on the listing (for example `@eve-directory/http-monitor`) and mount it yourself.
+
+## Mount
+
+Extensions are files under `agent/extensions/`. The filename becomes the mount namespace — tools compose as `<namespace>__<toolName>`:
+
+```ts title="agent/extensions/monitor.ts"
+import monitor from "@eve-directory/http-monitor";
+
+export default monitor({ timeoutMs: 5000 });
+```
+
+That exposes `monitor__check_url` to the agent. See the listing’s README for config keys and tool shapes.
+
+## Agent vs extension
+
+|  | Agent | Extension |
+| --- | --- | --- |
+| What you get | Runnable Eve app | Package + mount file |
+| Install target | New or existing project root | Existing Eve agent |
+| Typical use | Start from a vertical use case | Add one capability (memory, HTTP check, …) |
+
+Need several agents and extensions together? Use [Composer](/docs/composer).
+
+## Related
+
+- [Browse extensions](/extensions)
+- [Install with shadcn CLI](/docs/install-with-shadcn)
+- [Composer](/docs/composer)
+- [Eve extensions](https://eve.dev/docs/extensions) (framework contract)

@@ -36,6 +36,23 @@ function formIntegrations(formData: FormData): string[] {
     .filter(Boolean);
 }
 
+/**
+ * Authored files travel as one JSON payload (repeatable client-side editor).
+ * Shape is enforced by `communityAgentFieldsSchema`; this only unwraps JSON.
+ */
+function formFiles(formData: FormData): unknown {
+  const raw = formData.get("files");
+  if (typeof raw !== "string" || !raw) {
+    return [];
+  }
+
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return [{ invalid: true }];
+  }
+}
+
 async function resolveCategory(categorySlug: string) {
   const categories = await getCategories();
   return categories.find((category) => category.slug === categorySlug) ?? null;
@@ -80,6 +97,7 @@ export async function createCommunityAgent(
     instructions: formString(formData, "instructions"),
     categorySlug: formString(formData, "categorySlug"),
     integrations: formIntegrations(formData),
+    files: formFiles(formData),
   });
 
   if (!parsed.success) {
@@ -172,6 +190,7 @@ export async function createCommunityAgent(
     name: parsed.data.name,
     summary: parsed.data.summary,
     instructions: parsed.data.instructions,
+    files: parsed.data.files,
     categorySlug: category.slug,
     categoryName: category.name,
     integrations: integrationsResult.integrations,
@@ -209,6 +228,7 @@ export async function updateCommunityAgent(
     instructions: formString(formData, "instructions"),
     categorySlug: formString(formData, "categorySlug"),
     integrations: formIntegrations(formData),
+    files: formFiles(formData),
   });
 
   if (!parsed.success) {
@@ -293,6 +313,7 @@ export async function updateCommunityAgent(
       name: parsed.data.name,
       summary: parsed.data.summary,
       instructions: parsed.data.instructions,
+      files: parsed.data.files,
       categorySlug: category.slug,
       categoryName: category.name,
       integrations: integrationsResult.integrations,

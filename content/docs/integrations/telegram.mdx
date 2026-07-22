@@ -1,0 +1,49 @@
+---
+title: Telegram (after install)
+description: Add BotFather tokens and register the webhook after installing a catalog Telegram agent.
+---
+
+Listings with the **Telegram** chip ship a channel file that reads bot credentials from the environment. You create the bot and register Eve’s webhook on your deployment.
+
+Official setup: [Telegram channel](https://eve.dev/docs/channels/telegram) · [eve.dev/integrations](https://eve.dev/integrations)
+
+## What the listing ships
+
+```ts title="agent/channels/telegram.ts"
+import { telegramChannel } from "eve/channels/telegram";
+
+export default telegramChannel();
+```
+
+Credentials come from env (see the listing `SETUP.md` / `.env.example`):
+
+- `TELEGRAM_BOT_TOKEN`
+- `TELEGRAM_WEBHOOK_SECRET_TOKEN`
+
+## Adapt after install
+
+1. Message [@BotFather](https://t.me/BotFather), create a bot, put the token in `.env`.
+2. Set `TELEGRAM_WEBHOOK_SECRET_TOKEN` to a random secret.
+3. Deploy (or expose a public URL), then register the webhook at Eve’s Telegram route:
+
+```bash
+curl -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/setWebhook" \
+  -H "Content-Type: application/json" \
+  -d '{"url":"https://<your-deployment>/eve/v1/telegram",
+       "secret_token":"'"$TELEGRAM_WEBHOOK_SECRET_TOKEN"'",
+       "allowed_updates":["message","callback_query"]}'
+```
+
+4. DM the bot to verify. For group `@mentions`, pass `botUsername` in the channel file as described in Eve’s docs.
+
+Handler customization and delivery details: [Telegram on Eve](https://eve.dev/docs/channels/telegram).
+
+## Agents using Telegram
+
+<AgentsByIntegration slug="telegram" />
+
+## Related
+
+- [After you install](/docs/after-you-install)
+- [Integrations](/docs/integrations)
+- [Telegram on Eve](https://eve.dev/docs/channels/telegram)

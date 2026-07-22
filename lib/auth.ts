@@ -47,23 +47,31 @@ export const auth = betterAuth({
       clientId: process.env.GITHUB_CLIENT_ID as string,
       clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
       mapProfileToUser(profile) {
+        const handle =
+          normalizeHandle(profile.login) ||
+          normalizeHandle(profile.name || "") ||
+          "user";
+
         return {
           name: profile.name || profile.login,
           email: profile.email,
           image: profile.avatar_url,
-          handle: normalizeHandle(profile.login),
+          handle,
         };
       },
     },
   },
   user: {
     additionalFields: {
+      // input:true so GitHub mapProfileToUser can supply it on OAuth signup.
+      // databaseHooks still re-allocate for uniqueness / reserved names.
       handle: {
         type: "string",
         required: true,
         unique: true,
-        input: false,
+        input: true,
       },
+      // Server-owned — never accept from client or mapProfileToUser.
       role: {
         type: "string",
         required: true,
@@ -82,19 +90,23 @@ export const auth = betterAuth({
     user: {
       create: {
         async before(userData) {
+          const data = userData as {
+            handle?: string;
+            name?: string;
+            email?: string;
+            role?: string;
+          };
+
           const preferred =
-            typeof userData.handle === "string" && userData.handle.length > 0
-              ? userData.handle
-              : userData.name || userData.email.split("@")[0] || "user";
+            typeof data.handle === "string" && data.handle.length > 0
+              ? data.handle
+              : data.name || data.email?.split("@")[0] || "user";
 
           return {
             data: {
               ...userData,
               handle: await allocateHandle(preferred),
-              role:
-                typeof userData.role === "string" && userData.role.length > 0
-                  ? userData.role
-                  : "user",
+              role: "user",
             },
           };
         },

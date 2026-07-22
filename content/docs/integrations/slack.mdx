@@ -1,0 +1,58 @@
+---
+title: Slack (after install)
+description: Swap the catalog Connect UID so an installed Eve Directory agent can talk to your Slack workspace.
+---
+
+Catalog agents that show the **Slack** chip usually ship a channel file with a **placeholder Connect UID** for that listing. Eve’s Slack docs cover the full channel contract; this page is only the directory handoff after `shadcn add` or Composer export.
+
+Official setup: [Slack channel](https://eve.dev/docs/channels/slack) · [eve.dev/integrations](https://eve.dev/integrations)
+
+## What the listing ships
+
+```ts title="agent/channels/slack.ts"
+import { connectSlackCredentials } from "@vercel/connect/eve";
+import { slackChannel } from "eve/channels/slack";
+
+export default slackChannel({
+  credentials: connectSlackCredentials("slack/<listing-slug>"),
+});
+```
+
+That UID (`slack/<listing-slug>`) belongs to the catalog example. It will not authenticate your workspace until you create a Connect client and point the string at **your** UID.
+
+## Adapt after install
+
+1. Link the project and create a Slack Connect client with triggers:
+
+```bash
+npm install -g vercel@latest
+vercel link
+vercel connect create slack --triggers
+```
+
+2. Re-point the trigger at Eve’s Slack route (Eve does not use Connect’s default path):
+
+```bash
+vercel connect detach <uid> --yes
+vercel connect attach <uid> --triggers --trigger-path /eve/v1/slack --yes
+```
+
+3. Replace `"slack/<listing-slug>"` in `agent/channels/slack.ts` with your Connect UID (for example `slack/my-agent`).
+
+4. Deploy with Eve recognized as a framework:
+
+```bash
+VERCEL_USE_EXPERIMENTAL_FRAMEWORKS=1 vercel deploy --prod
+```
+
+Details, scopes, thread context, and HITL live in the [official Slack docs](https://eve.dev/docs/channels/slack) — use those when you need to customize handlers.
+
+## Agents using Slack
+
+<AgentsByIntegration slug="slack" />
+
+## Related
+
+- [After you install](/docs/after-you-install)
+- [Integrations](/docs/integrations)
+- [Slack on Eve](https://eve.dev/docs/channels/slack)

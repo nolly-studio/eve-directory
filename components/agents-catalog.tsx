@@ -2,9 +2,12 @@
 
 import {
   ArrowDown01Icon,
+  CheckmarkBadge01Icon,
+  Layers01Icon,
   Link01Icon,
   Search01Icon,
   Tick02Icon,
+  UserGroupIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useDeferredValue, useMemo, useState } from "react";
@@ -82,11 +85,15 @@ function IntegrationOption({
   );
 }
 
-const TIER_OPTIONS: { value: AgentTierFilter; label: string }[] = [
-  { value: "all", label: "All tiers" },
-  { value: "official", label: "Official" },
-  { value: "community", label: "Community" },
-];
+const TIER_OPTIONS = [
+  { value: "all" as const, label: "All", icon: Layers01Icon },
+  { value: "official" as const, label: "Official", icon: CheckmarkBadge01Icon },
+  { value: "community" as const, label: "Community", icon: UserGroupIcon },
+] satisfies {
+  value: AgentTierFilter;
+  label: string;
+  icon: typeof Layers01Icon;
+}[];
 
 export function AgentsCatalog({
   agents,
@@ -139,6 +146,38 @@ export function AgentsCatalog({
 
   return (
     <div className="flex flex-col gap-4">
+      <fieldset
+        aria-label="Agent tier"
+        className="m-0 inline-flex w-fit items-center rounded-full border border-border bg-muted/40 p-0.5"
+      >
+        {TIER_OPTIONS.map((option) => {
+          const selected = tier === option.value;
+
+          return (
+            <button
+              key={option.value}
+              type="button"
+              aria-pressed={selected}
+              onClick={() => setTier(option.value)}
+              className={cn(
+                "inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-label-13 transition-[color,background-color,transform] duration-150 outline-none",
+                "focus-visible:ring-3 focus-visible:ring-ring/30 motion-reduce:transition-none active:scale-[0.96]",
+                selected
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <HugeiconsIcon
+                icon={option.icon}
+                strokeWidth={1.5}
+                className="size-3.5 shrink-0"
+              />
+              {option.label}
+            </button>
+          );
+        })}
+      </fieldset>
+
       <div className="flex flex-col gap-2 sm:flex-row">
         <div className="relative min-w-0 flex-1">
           <HugeiconsIcon
@@ -276,20 +315,6 @@ export function AgentsCatalog({
             </div>
           </PopoverContent>
         </Popover>
-      </div>
-
-      <div className="flex flex-wrap gap-2">
-        {TIER_OPTIONS.map((option) => (
-          <Button
-            key={option.value}
-            type="button"
-            size="sm"
-            variant={tier === option.value ? "default" : "outline"}
-            onClick={() => setTier(option.value)}
-          >
-            {option.label}
-          </Button>
-        ))}
       </div>
 
       <div className="flex flex-wrap gap-2">

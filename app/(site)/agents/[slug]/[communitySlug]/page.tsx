@@ -4,18 +4,21 @@ import { notFound } from "next/navigation";
 import type { CSSProperties } from "react";
 
 import { AdSlot } from "@/components/ad-slot";
+import { AuthorMark } from "@/components/author-mark";
 import { CommunityAgentActions } from "@/components/community-agent-actions";
+import { FileExplorer } from "@/components/file-explorer";
 import { InstallCommand } from "@/components/install-command";
 import { IntegrationLogo } from "@/components/integration-badge";
 import { IntegrationSetup } from "@/components/integration-setup";
 import { PageShell } from "@/components/page-shell";
 import { RelatedGuides } from "@/components/related-guides";
-import { SafeMarkdown } from "@/components/safe-markdown";
 import { Badge } from "@/components/ui/badge";
 import { getSession } from "@/lib/auth/session";
 import { getIntegrationDetails } from "@/lib/catalog";
 import { getCommunityAgent } from "@/lib/community/queries";
+import { communityAgentExplorer } from "@/lib/community/template";
 import { getRelatedGuidesForIntegrations } from "@/lib/docs/related-guides";
+import { getIntegrationLogo } from "@/lib/integrations/resolve";
 import { pageMetadata } from "@/lib/seo";
 import { integrationLabel, SITE } from "@/lib/site";
 
@@ -31,15 +34,15 @@ function parseHandle(raw: string): string | null {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ handle: string; slug: string }>;
+  params: Promise<{ slug: string; communitySlug: string }>;
 }): Promise<Metadata> {
-  const { handle: rawHandle, slug } = await params;
+  const { slug: rawHandle, communitySlug } = await params;
   const handle = parseHandle(rawHandle);
   if (!handle) {
     return {};
   }
 
-  const agent = await getCommunityAgent(handle, slug);
+  const agent = await getCommunityAgent(handle, communitySlug);
   if (!agent) {
     return {};
   }
@@ -54,9 +57,9 @@ export async function generateMetadata({
 export default async function CommunityAgentDetailPage({
   params,
 }: {
-  params: Promise<{ handle: string; slug: string }>;
+  params: Promise<{ slug: string; communitySlug: string }>;
 }) {
-  const { handle: rawHandle, slug } = await params;
+  const { slug: rawHandle, communitySlug } = await params;
   const handle = parseHandle(rawHandle);
 
   if (!handle) {
@@ -64,7 +67,7 @@ export default async function CommunityAgentDetailPage({
   }
 
   const [agent, session] = await Promise.all([
-    getCommunityAgent(handle, slug),
+    getCommunityAgent(handle, communitySlug),
     getSession(),
   ]);
 
@@ -74,6 +77,7 @@ export default async function CommunityAgentDetailPage({
 
   const relatedGuides = getRelatedGuidesForIntegrations(agent.integrations);
   const integrationDetails = await getIntegrationDetails(agent.integrations);
+  const explorer = communityAgentExplorer(agent);
   const isAdmin = session?.user?.role === "admin";
   const reportHref = `mailto:hello@${SITE.domain}?subject=${encodeURIComponent(
     `Report community agent @${agent.handle}/${agent.slug}`
@@ -108,32 +112,43 @@ export default async function CommunityAgentDetailPage({
           className="animate-enter grid gap-6 md:grid-cols-2 md:gap-10"
           style={{ "--stagger": 1 } as CSSProperties}
         >
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="secondary">Community</Badge>
-              <Badge variant="secondary">{agent.category.name}</Badge>
+          <div className="flex min-w-0 items-start gap-4">
+            <AuthorMark
+              src={agent.authorImage}
+              alt=""
+              size="lg"
+              fallbackSlug={
+                agent.integrations.find((slug) => getIntegrationLogo(slug)) ??
+                agent.integrations[0]
+              }
+            />
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="secondary">Community</Badge>
+                <Badge variant="secondary">{agent.category.name}</Badge>
+              </div>
+              <h1 className="mt-3 text-heading-32 font-semibold tracking-tighter text-balance text-gray-1000 [--font-weight-semibold:450] md:text-heading-40">
+                {agent.name}
+              </h1>
+              {agent.integrations.length > 0 ? (
+                <ul className="mt-3 flex flex-wrap items-center gap-x-3.5 gap-y-2">
+                  {agent.integrations.map((integrationSlug) => (
+                    <li key={integrationSlug}>
+                      <Link
+                        href={`/integrations/${integrationSlug}`}
+                        className="inline-flex items-center gap-1.5 text-label-13 text-muted-foreground transition-colors duration-150 hover:text-foreground motion-reduce:transition-none"
+                      >
+                        <IntegrationLogo
+                          slug={integrationSlug}
+                          className="size-3.5"
+                        />
+                        {integrationLabel(integrationSlug)}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
             </div>
-            <h1 className="mt-3 text-heading-32 font-semibold tracking-tighter text-balance text-gray-1000 [--font-weight-semibold:450] md:text-heading-40">
-              {agent.name}
-            </h1>
-            {agent.integrations.length > 0 ? (
-              <ul className="mt-3 flex flex-wrap items-center gap-x-3.5 gap-y-2">
-                {agent.integrations.map((integrationSlug) => (
-                  <li key={integrationSlug}>
-                    <Link
-                      href={`/integrations/${integrationSlug}`}
-                      className="inline-flex items-center gap-1.5 text-label-13 text-muted-foreground transition-colors duration-150 hover:text-foreground motion-reduce:transition-none"
-                    >
-                      <IntegrationLogo
-                        slug={integrationSlug}
-                        className="size-3.5"
-                      />
-                      {integrationLabel(integrationSlug)}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            ) : null}
           </div>
 
           <div className="min-w-0 md:pt-1">
@@ -164,35 +179,30 @@ export default async function CommunityAgentDetailPage({
         </div>
       </header>
 
-      <div className="grid gap-8 lg:grid-cols-[1fr_280px]">
-        <div>
-          <InstallCommand
-            slug={agent.slug}
-            handle={agent.handle}
-            kind="agent"
-          />
-        </div>
-        <aside className="space-y-5">
-          <RelatedGuides guides={relatedGuides} />
-          <AdSlot placement="agent-detail" />
-        </aside>
+      <div className="space-y-4">
+        <InstallCommand slug={agent.slug} handle={agent.handle} kind="agent" />
+        <RelatedGuides guides={relatedGuides} />
+        <AdSlot placement="agent-detail" />
       </div>
 
       <section className="mt-10">
         <div>
           <h2 className="text-heading-24 font-semibold text-gray-1000">
-            Instructions
+            Filesystem
           </h2>
           <p className="mt-2 text-copy-14 text-pretty text-muted-foreground">
-            Authored prompt content installed as{" "}
-            <code className="font-mono text-caption">
-              agent/instructions.md
-            </code>
-            .
+            Authored content installed into the generated starter — instructions
+            {explorer.tree.length > 1 ? ", skills, and examples" : ""} exactly
+            as they ship.
           </p>
         </div>
-        <div className="mt-4 rounded-xl bg-card p-5 shadow-surface">
-          <SafeMarkdown content={agent.instructions} />
+        <div className="mt-4">
+          <FileExplorer
+            tree={explorer.tree}
+            inlineFiles={explorer.inlineFiles}
+            initialPath="agent/instructions.md"
+            initialContent={explorer.inlineFiles["agent/instructions.md"] ?? ""}
+          />
         </div>
       </section>
 

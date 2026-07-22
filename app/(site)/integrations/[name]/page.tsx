@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { IntegrationMark } from "@/components/integration-badge";
 import { AgentCard } from "@/components/listing-card";
 import { PageShell } from "@/components/page-shell";
+import { SafeMarkdown } from "@/components/safe-markdown";
 import { Badge } from "@/components/ui/badge";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Surface } from "@/components/ui/surface";
@@ -37,6 +38,89 @@ export async function generateMetadata({
   });
 }
 
+function formatSyncedAt(iso: string): string {
+  try {
+    return new Intl.DateTimeFormat("en", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    }).format(new Date(iso));
+  } catch {
+    return iso;
+  }
+}
+
+function IntegrationDocsPanel({
+  docsMarkdown,
+  installSummary,
+  officialDocsUrl,
+  scrapedAt,
+  title,
+}: {
+  docsMarkdown: string | null;
+  installSummary: string | null;
+  officialDocsUrl: string | null;
+  scrapedAt: string | null;
+  title: string;
+}) {
+  if (docsMarkdown) {
+    return (
+      <Surface className="mt-8 p-5 md:p-6">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <p className="text-label">From Eve docs</p>
+          {scrapedAt ? (
+            <p className="text-label-12 text-muted-foreground">
+              Synced {formatSyncedAt(scrapedAt)}
+            </p>
+          ) : null}
+        </div>
+        <SafeMarkdown content={docsMarkdown} className="mt-2" />
+        {officialDocsUrl ? (
+          <p className="mt-6 text-label-12 text-muted-foreground">
+            Source:{" "}
+            <a
+              href={officialDocsUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="font-medium text-foreground underline-offset-4 hover:underline"
+            >
+              Eve&apos;s {title} docs
+            </a>
+            . Prefer the official page when something looks out of date.
+          </p>
+        ) : null}
+      </Surface>
+    );
+  }
+
+  if (installSummary) {
+    return (
+      <Surface className="mt-8 p-5">
+        <p className="text-label">Setup</p>
+        <p className="mt-2 max-w-3xl text-copy-14 text-pretty text-muted-foreground">
+          {installSummary}
+        </p>
+        {officialDocsUrl ? (
+          <p className="mt-3 text-label-12 text-muted-foreground">
+            Full install steps live in{" "}
+            <a
+              href={officialDocsUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="font-medium text-foreground underline-offset-4 hover:underline"
+            >
+              Eve&apos;s {title} docs
+            </a>
+            . We do not fork framework setup here.
+          </p>
+        ) : null}
+      </Surface>
+    );
+  }
+
+  return null;
+}
+
 export default async function IntegrationPage({
   params,
 }: {
@@ -53,9 +137,11 @@ export default async function IntegrationPage({
     agents,
     badge,
     description,
+    docsMarkdown,
     installSummary,
     localGuideUrl,
     officialDocsUrl,
+    scrapedAt,
     slug,
     title,
   } = model;
@@ -104,28 +190,13 @@ export default async function IntegrationPage({
         </ButtonLink>
       </div>
 
-      {installSummary ? (
-        <Surface className="mt-8 p-5">
-          <p className="text-label">Setup</p>
-          <p className="mt-2 max-w-3xl text-copy-14 text-pretty text-muted-foreground">
-            {installSummary}
-          </p>
-          {officialDocsUrl ? (
-            <p className="mt-3 text-label-12 text-muted-foreground">
-              Full install steps live in{" "}
-              <a
-                href={officialDocsUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="font-medium text-foreground underline-offset-4 hover:underline"
-              >
-                Eve&apos;s {title} docs
-              </a>
-              . We do not fork framework setup here.
-            </p>
-          ) : null}
-        </Surface>
-      ) : null}
+      <IntegrationDocsPanel
+        docsMarkdown={docsMarkdown}
+        installSummary={installSummary}
+        officialDocsUrl={officialDocsUrl}
+        scrapedAt={scrapedAt}
+        title={title}
+      />
 
       <section className="mt-10">
         <h2 className="text-heading-24 font-semibold text-gray-1000">

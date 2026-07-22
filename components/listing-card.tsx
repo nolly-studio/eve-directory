@@ -1,5 +1,7 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 
+import { AuthorMark } from "@/components/author-mark";
 import {
   IntegrationLogo,
   IntegrationMark,
@@ -40,7 +42,7 @@ function ListingCard({
   href,
   title,
   summary,
-  markSlug,
+  mark,
   badges,
   integrations,
   meta,
@@ -48,7 +50,7 @@ function ListingCard({
   href: string;
   title: string;
   summary: string;
-  markSlug?: string;
+  mark: ReactNode;
   badges?: string[];
   integrations: string[];
   meta?: string;
@@ -67,7 +69,7 @@ function ListingCard({
       )}
     >
       <div className="flex items-start justify-between gap-3">
-        <IntegrationMark slug={markSlug} />
+        {mark}
         {badges && badges.length > 0 ? (
           <div className="flex flex-wrap justify-end gap-1.5">
             {badges.map((badge) => (
@@ -122,7 +124,7 @@ export function AgentCard({ agent }: { agent: AgentListing | DirectoryAgent }) {
           href={directoryAgentHref(listing)}
           title={listing.name}
           summary={listing.summary}
-          markSlug={pickMarkSlug(listing.integrations)}
+          mark={<IntegrationMark slug={pickMarkSlug(listing.integrations)} />}
           badges={[listing.category.name]}
           integrations={listing.integrations}
         />
@@ -134,8 +136,14 @@ export function AgentCard({ agent }: { agent: AgentListing | DirectoryAgent }) {
           href={directoryAgentHref(listing)}
           title={listing.name}
           summary={listing.summary}
-          markSlug={pickMarkSlug(listing.integrations)}
-          badges={["Community", listing.category.name]}
+          mark={
+            <AuthorMark
+              src={listing.authorImage}
+              alt=""
+              fallbackSlug={pickMarkSlug(listing.integrations)}
+            />
+          }
+          badges={[...new Set(["Community", listing.category.name])]}
           integrations={listing.integrations}
           meta={`@${listing.handle} · ${listing.installCount} installs`}
         />
@@ -158,7 +166,7 @@ export function ExtensionCard({ extension }: { extension: ExtensionListing }) {
       href={`/extensions/${extension.slug}`}
       title={extension.name}
       summary={extension.summary}
-      markSlug={pickMarkSlug(extension.integrations)}
+      mark={<IntegrationMark slug={pickMarkSlug(extension.integrations)} />}
       badges={["Extension"]}
       integrations={extension.integrations}
     />

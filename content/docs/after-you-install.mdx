@@ -1,0 +1,65 @@
+---
+title: After you install
+description: What to change after installing a catalog agent — SETUP.md, Connect UIDs, env vars, local chat, and evals.
+---
+
+Installing from Eve Directory drops a complete Eve app into your project. The files work as a starting point, not a finished deployment — most listings ship with project-specific identifiers you need to replace.
+
+## 1. Read `SETUP.md`
+
+Every catalog agent includes a root `SETUP.md`. Follow it first. It lists install commands, optional Connect clients, channel credentials, schedules, and how to verify with evals.
+
+## 2. Replace project-specific values
+
+Browse `agent/` in the listing’s file explorer (or locally after install) and look for:
+
+| What | Where | What to do |
+| --- | --- | --- |
+| Connect UIDs | `agent/channels/*.ts` (e.g. `connectSlackCredentials("slack/…")`) | Create your own Connect client and swap the UID |
+| Connect connectors | `agent/connections/*.ts` (`connect({ connector: "…" })`) | Run `vercel connect create <name>` for each, then `vercel env pull` |
+| Env credentials | `.env.example`, channel files reading `process.env.*` | Copy into `.env` / `.env.local` with your secrets |
+| Schedules | `agent/schedules/` | Confirm cron timing before production |
+
+Directory-specific adaptation notes (not a fork of Eve’s framework docs):
+
+- [Slack](/docs/integrations/slack)
+- [GitHub](/docs/integrations/github)
+- [Notion](/docs/integrations/notion)
+- [Telegram](/docs/integrations/telegram)
+- [Linear](/docs/integrations/linear)
+
+For channel and connection APIs themselves, use [Eve’s docs](https://eve.dev/docs/introduction).
+
+## 3. Install and run locally
+
+```bash
+npm install
+npm run dev
+```
+
+Most starters expose Eve’s local HTTP/chat channel so you can talk to the agent before Slack, Telegram, or GitHub is wired up.
+
+## 4. Verify with evals
+
+```bash
+npm run eval
+```
+
+Evals live under `evals/` and usually hit the local channel. They need model credentials; they often do **not** need every production integration.
+
+## What the listing tree means
+
+| Path | Role |
+| --- | --- |
+| `agent/` | Instructions, tools, channels, connections, schedules, extensions |
+| `evals/` | Scenario checks you can run with `npm run eval` |
+| `examples/` | Optional sample inputs or transcripts |
+| `SETUP.md` | Human setup checklist for this listing |
+| `package.json` | Scripts (`dev`, `eval`, …) and Eve dependencies |
+
+## Related
+
+- [Install with shadcn CLI](/docs/install-with-shadcn)
+- [Integrations](/docs/integrations)
+- [Compose vs clone](/docs/compose-vs-clone)
+- [Eve getting started](https://eve.dev/docs/getting-started)

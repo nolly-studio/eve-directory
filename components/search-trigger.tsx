@@ -14,35 +14,22 @@ export function SearchTrigger({ className }: { className?: string }) {
     return null;
   }
 
+  const shortcut = hotKey.map((key) => key.display).join(" ");
+
   return (
     <button
       type="button"
-      aria-label="Search"
+      aria-label={shortcut ? `Search (${shortcut})` : "Search"}
       onClick={() => {
         setOpenSearch(true);
       }}
       className={cn(
-        buttonVariants({ size: "sm", variant: "secondary" }),
-        "gap-2 text-muted-foreground",
+        buttonVariants({ size: "icon-sm", variant: "ghost" }),
+        "text-gray-900 hover:text-gray-1000",
         className
       )}
     >
-      <HugeiconsIcon
-        icon={Search01Icon}
-        strokeWidth={2}
-        data-icon="inline-start"
-      />
-      <span className="hidden sm:inline">Search</span>
-      <span className="ms-0.5 hidden items-center gap-0.5 md:inline-flex">
-        {hotKey.map((key) => (
-          <kbd
-            key={typeof key.key === "string" ? key.key : String(key.display)}
-            className="rounded-md bg-background/80 px-1.5 font-mono text-[10px] text-muted-foreground"
-          >
-            {key.display}
-          </kbd>
-        ))}
-      </span>
+      <HugeiconsIcon icon={Search01Icon} strokeWidth={2} className="size-4" />
     </button>
   );
 }

@@ -1,0 +1,45 @@
+---
+title: Notion (after install)
+description: Create a Notion Connect client so an installed catalog agent’s MCP connection can reach your workspace.
+---
+
+Listings with the **Notion** chip usually ship an MCP connection file that authenticates through **Vercel Connect**. After install you create the connector for your project — the catalog file already points at Notion’s MCP URL.
+
+Official setup: [Connections](https://eve.dev/docs/connections) · [eve.dev/integrations](https://eve.dev/integrations)
+
+## What the listing ships
+
+```ts title="agent/connections/notion.ts"
+import { connect } from "@vercel/connect/eve";
+import { defineMcpClientConnection } from "eve/connections";
+
+export default defineMcpClientConnection({
+  url: "https://mcp.notion.com/mcp",
+  description: "Notion workspace: search and edit pages and databases.",
+  auth: connect({ connector: "notion", principalType: "app" }),
+});
+```
+
+`principalType: "app"` lets schedules use Notion without a user session. Change that only if you understand Eve’s connection auth model.
+
+## Adapt after install
+
+```bash
+vercel link
+vercel connect create notion
+vercel env pull
+```
+
+Then run the agent locally or deploy. Grant the Connect Notion client access to the workspace pages/databases the agent should touch.
+
+MCP tool surface, auth principals, and connection APIs: [Eve connections](https://eve.dev/docs/connections) — this page only covers the post-install Connect step for Directory listings.
+
+## Agents using Notion
+
+<AgentsByIntegration slug="notion" />
+
+## Related
+
+- [After you install](/docs/after-you-install)
+- [Integrations](/docs/integrations)
+- [Eve connections](https://eve.dev/docs/connections)

@@ -18,10 +18,7 @@ export function AuthMenu() {
 
   if (isPending) {
     return (
-      <div
-        aria-hidden
-        className="ml-1 size-8 animate-pulse rounded-full bg-muted"
-      />
+      <div aria-hidden className="size-8 animate-pulse rounded-full bg-muted" />
     );
   }
 
@@ -31,7 +28,6 @@ export function AuthMenu() {
         type="button"
         size="sm"
         variant="outline"
-        className="ml-1"
         onClick={() => {
           void authClient.signIn.social({
             provider: "github",
@@ -39,7 +35,7 @@ export function AuthMenu() {
           });
         }}
       >
-        Sign in
+        Submit
       </Button>
     );
   }
@@ -57,7 +53,7 @@ export function AuthMenu() {
       <DropdownMenuTrigger
         className={cn(
           buttonVariants({ size: "sm", variant: "ghost" }),
-          "ml-1 size-8 rounded-full p-0"
+          "size-8 rounded-full p-0"
         )}
         aria-label="Account menu"
       >

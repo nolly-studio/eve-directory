@@ -17,6 +17,7 @@ import type {
 export {
   getIntegrationDetail,
   getIntegrationDetails,
+  getIntegrationDocsMarkdownForDisplay,
   getIntegrationInstallSummary,
   getOfficialIntegration,
   getOfficialIntegrations,

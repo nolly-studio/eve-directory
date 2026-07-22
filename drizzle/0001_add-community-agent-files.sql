@@ -1,0 +1,1 @@
+ALTER TABLE "community_agent" ADD COLUMN "files" jsonb DEFAULT '[]'::jsonb NOT NULL;

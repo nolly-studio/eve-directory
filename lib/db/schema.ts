@@ -10,6 +10,8 @@ import {
   uniqueIndex,
 } from "drizzle-orm/pg-core";
 
+import type { CommunityAgentFile } from "@/lib/catalog/types";
+
 function now() {
   return new Date();
 }
@@ -92,6 +94,7 @@ export const communityAgent = pgTable(
     categorySlug: text("category_slug").notNull(),
     categoryName: text("category_name").notNull(),
     integrations: jsonb("integrations").$type<string[]>().notNull().default([]),
+    files: jsonb("files").$type<CommunityAgentFile[]>().notNull().default([]),
     status: text("status").notNull().default("published"),
     installCount: integer("install_count").notNull().default(0),
     featured: boolean("featured").notNull().default(false),

@@ -11,6 +11,8 @@ The dev server includes a local chat, so you can talk to the agent before Telegr
 
 ## 2. Create the Telegram bot
 
+Directory handoff (env + webhook): [Telegram after install](https://www.evedirectory.com/docs/integrations/telegram). Framework details: [Telegram channel](https://eve.dev/docs/channels/telegram).
+
 1. Message [@BotFather](https://t.me/BotFather) on Telegram and run `/newbot`.
 2. Copy the bot token into `.env` as `TELEGRAM_BOT_TOKEN`.
 3. Pick any random string for `TELEGRAM_WEBHOOK_SECRET_TOKEN` (see `.env.example`).

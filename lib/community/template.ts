@@ -1,4 +1,8 @@
-import type { CommunityAgentListing } from "@/lib/catalog/types";
+import type {
+  CommunityAgentFile,
+  CommunityAgentListing,
+  FileTreeNode,
+} from "@/lib/catalog/types";
 
 export interface RegistryFile {
   path: string;
@@ -90,14 +94,47 @@ function packageJson(slug: string): string {
   )}\n`;
 }
 
+/** Starter path for an authored file — names are validated kebab-case. */
+export function communityFilePath(authored: CommunityAgentFile): string {
+  const folder = authored.kind === "skill" ? "skills" : "examples";
+  return `agent/${folder}/${authored.name}.md`;
+}
+
+/**
+ * Frontmatter is assembled here, never typed by users — descriptions are
+ * plain text collected in the form, so YAML injection is not possible
+ * beyond what the quoted string escapes.
+ */
+export function communityFileContent(authored: CommunityAgentFile): string {
+  const body = `${authored.content}\n`;
+
+  if (authored.kind !== "skill") {
+    return body;
+  }
+
+  const description = authored.description.replaceAll('"', '\\"');
+  return `---\ndescription: "${description}"\n---\n\n${body}`;
+}
+
+function authoredPaths(agent: CommunityAgentListing): string[] {
+  return [
+    "agent/instructions.md",
+    ...agent.files.map((authored) => communityFilePath(authored)),
+  ];
+}
+
 function readme(agent: CommunityAgentListing): string {
+  const authored = authoredPaths(agent)
+    .map((path) => `\`${path}\``)
+    .join(", ");
+
   return `# ${agent.name}
 
 ${agent.summary}
 
 Community agent by [@${agent.handle}](https://www.evedirectory.com/u/${agent.handle}) on [Eve Directory](https://www.evedirectory.com).
 
-Generated from the standard Eve starter template. The authored content is \`agent/instructions.md\`.
+Generated from the standard Eve starter template. Authored content: ${authored}.
 
 ## Run
 
@@ -120,6 +157,31 @@ function setup(agent: CommunityAgentListing): string {
       ? agent.integrations.map((slug) => `- \`${slug}\``).join("\n")
       : "- None selected — add channels/connections as needed.";
 
+  const skills = agent.files.filter((authored) => authored.kind === "skill");
+  const examples = agent.files.filter(
+    (authored) => authored.kind === "example"
+  );
+  const knowledgeSection =
+    skills.length > 0 || examples.length > 0
+      ? `\n## Authored knowledge\n\n${[
+          skills.length > 0
+            ? `Skills under \`agent/skills/\` load on demand:\n\n${skills
+                .map(
+                  (authored) =>
+                    `- \`${authored.name}.md\` — ${authored.description}`
+                )
+                .join("\n")}`
+            : "",
+          examples.length > 0
+            ? `Examples under \`agent/examples/\` show expected behavior:\n\n${examples
+                .map((authored) => `- \`${authored.name}.md\``)
+                .join("\n")}`
+            : "",
+        ]
+          .filter(Boolean)
+          .join("\n\n")}\n`
+      : "";
+
   return `# Set up ${agent.name}
 
 ## 1. Install and run
@@ -132,7 +194,7 @@ npm run dev
 ## 2. Review instructions
 
 Edit \`agent/instructions.md\` to tailor the agent. The rest of the project is the standard Eve starter scaffold.
-
+${knowledgeSection}
 ## 3. Integrations
 
 Suggested integrations from the listing:
@@ -175,6 +237,52 @@ function file(
   };
 }
 
+/**
+ * Explorer inputs for the detail page — the same authored files the starter
+ * installs, browsable with the official-agent FileExplorer.
+ */
+export function communityAgentExplorer(agent: CommunityAgentListing): {
+  tree: FileTreeNode[];
+  inlineFiles: Record<string, string>;
+} {
+  const inlineFiles: Record<string, string> = {
+    "agent/instructions.md": `${agent.instructions}\n`,
+  };
+
+  const tree: FileTreeNode[] = [
+    {
+      name: "instructions.md",
+      path: "agent/instructions.md",
+      type: "file",
+    },
+  ];
+
+  for (const kind of ["skill", "example"] as const) {
+    const ofKind = agent.files.filter((authored) => authored.kind === kind);
+    if (ofKind.length === 0) {
+      continue;
+    }
+
+    const folder = kind === "skill" ? "skills" : "examples";
+    const children: FileTreeNode[] = [];
+
+    for (const authored of ofKind) {
+      const path = communityFilePath(authored);
+      inlineFiles[path] = communityFileContent(authored);
+      children.push({ name: `${authored.name}.md`, path, type: "file" });
+    }
+
+    tree.push({
+      name: folder,
+      path: `agent/${folder}`,
+      type: "directory",
+      children,
+    });
+  }
+
+  return { inlineFiles, tree };
+}
+
 /** Build a shadcn registry item from a community prompt agent + golden template. */
 export function buildCommunityRegistryItem(
   agent: CommunityAgentListing
@@ -197,6 +305,13 @@ export function buildCommunityRegistryItem(
       file(registryName, ".env.example", envExample(agent)),
       file(registryName, "agent/agent.ts", AGENT_TS),
       file(registryName, "agent/instructions.md", `${agent.instructions}\n`),
+      ...agent.files.map((authored) =>
+        file(
+          registryName,
+          communityFilePath(authored),
+          communityFileContent(authored)
+        )
+      ),
     ],
     meta: {
       runtime: "eve",

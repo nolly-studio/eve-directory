@@ -14,6 +14,20 @@ export interface AgentListing {
   integrations: string[];
 }
 
+export type CommunityAgentFileKind = "skill" | "example";
+
+/**
+ * Authored markdown file bundled with a community agent.
+ * `name` is the kebab-case filename without extension; frontmatter is
+ * assembled server-side from `description` — users never type raw YAML.
+ */
+export interface CommunityAgentFile {
+  kind: CommunityAgentFileKind;
+  name: string;
+  description: string;
+  content: string;
+}
+
 /** Community prompt-agent listing (Postgres-backed). */
 export interface CommunityAgentListing {
   id: string;
@@ -29,6 +43,7 @@ export interface CommunityAgentListing {
   authorImage: string | null;
   installCount: number;
   instructions: string;
+  files: CommunityAgentFile[];
   featured: boolean;
   createdAt: string;
   updatedAt: string;
@@ -97,11 +112,14 @@ export interface IntegrationDetailSection {
 export interface IntegrationDetail {
   slug: string;
   sourceUrl: string;
+  scrapedAt?: string;
   name: string;
   description: string;
   badge: string | null;
   docsHref: string | null;
   docsUrl: string | null;
+  /** Cleaned markdown from `{docsUrl}.md` (eve docs), when available. */
+  docsMarkdown?: string | null;
   sections: IntegrationDetailSection[];
   markdown: string;
 }

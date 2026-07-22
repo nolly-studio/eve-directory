@@ -9,7 +9,8 @@ export interface RelatedGuide {
 /**
  * Guides related to a set of integration slugs.
  * Prefers `/docs/integrations/<slug>` recipe pages when present, plus the
- * integrations index when the listing uses any integrations.
+ * integrations index when the listing uses any integrations. Used as a
+ * compact link strip on agent/extension detail pages.
  */
 export function getRelatedGuidesForIntegrations(
   integrations: string[]

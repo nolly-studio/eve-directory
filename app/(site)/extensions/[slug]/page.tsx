@@ -62,7 +62,10 @@ export default async function ExtensionDetailPage({
             </p>
           </div>
           <AddToComposerButton slug={extension.slug} kind="extension" />
-          <InstallCommand slug={extension.slug} kind="extension" />
+          <div className="space-y-4">
+            <InstallCommand slug={extension.slug} kind="extension" />
+            <RelatedGuides guides={relatedGuides} />
+          </div>
           <Surface className="overflow-hidden p-0">
             <pre className="max-h-[560px] overflow-auto bg-muted/20 p-4 text-copy-14-mono leading-relaxed whitespace-pre-wrap text-gray-1000">
               {readme}
@@ -91,7 +94,6 @@ export default async function ExtensionDetailPage({
               </div>
             </dl>
           </Surface>
-          <RelatedGuides guides={relatedGuides} />
           <AdSlot placement="extension-detail" />
         </aside>
       </div>

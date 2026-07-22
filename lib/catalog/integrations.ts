@@ -104,3 +104,21 @@ export function getIntegrationInstallSummary(
 
   return paragraph?.text ?? null;
 }
+
+/**
+ * Docs markdown ready for the integration detail page: drop frontmatter and
+ * the leading H1 (the page already has a title), then normalize whitespace.
+ */
+export function getIntegrationDocsMarkdownForDisplay(
+  detail: IntegrationDetail
+): string | null {
+  let raw = detail.docsMarkdown?.trim();
+  if (!raw) {
+    return null;
+  }
+
+  raw = raw.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n+/, "").trim();
+  raw = raw.replace(/^#\s+[^\n]+\n+/, "").trim();
+
+  return `${raw}\n`;
+}

@@ -71,7 +71,7 @@ pnpm lint && pnpm typecheck && pnpm build
 - `/agents`, `/agents/[slug]` — browse + file explorer + install command
 - `/extensions`, `/categories/[slug]`, `/integrations/[name]` — discovery
 - `/composer` — select listings and export a starter zip
-- `/docs` — guides (Fumadocs MDX under `content/docs/`)
+- `/docs` — guides (Fumadocs MDX under `content/docs/`: install, after-install, Composer, extensions, contributing, registry, thin integration recipes)
 - `/r/<slug>.json` — shadcn registry items
 
 ## License

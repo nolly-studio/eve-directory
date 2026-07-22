@@ -49,6 +49,12 @@ export default async function AgentDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+
+  // Community agents live at /agents/@handle/slug (nested route).
+  if (slug.startsWith("@")) {
+    notFound();
+  }
+
   const agent = await getAgent(slug);
 
   if (!agent) {
@@ -74,15 +80,10 @@ export default async function AgentDetailPage({
     <PageShell>
       <AgentDetailHeader agent={agent} authoredFiles={authoredFiles} />
 
-      <div className="grid gap-8 lg:grid-cols-[1fr_280px]">
-        <div>
-          <InstallCommand slug={agent.slug} kind="agent" />
-        </div>
-
-        <aside className="space-y-5">
-          <RelatedGuides guides={relatedGuides} />
-          <AdSlot placement="agent-detail" />
-        </aside>
+      <div className="space-y-4">
+        <InstallCommand slug={agent.slug} kind="agent" />
+        <RelatedGuides guides={relatedGuides} />
+        <AdSlot placement="agent-detail" />
       </div>
 
       <section className="mt-10">

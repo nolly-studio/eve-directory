@@ -4,6 +4,7 @@
  *
  * Reads slugs from catalog/integrations.json and fetches:
  *   https://eve.dev/integrations/<slug>
+ *   https://eve.dev/docs/.../<slug>.md  (via each page's docs link)
  *
  * Usage:
  *   node scripts/scrape-integrations.mjs
@@ -35,9 +36,81 @@ const BASE_URL = "https://eve.dev";
  *   badge: string | null
  *   docsHref: string | null
  *   docsUrl: string | null
+ *   docsMarkdown: string | null
  *   sections: Section[]
  *   markdown: string
  * }} ScrapedIntegration */
+
+const DOCS_FOOTER_RE =
+  /\n---\s*\n+For a semantic overview of all documentation[\s\S]*$/;
+const DOCS_FRONTMATTER_RE = /^---\r?\n[\s\S]*?\r?\n---\r?\n+/;
+
+/**
+ * Strip agent-facing footer boilerplate and rewrite relative docs links to
+ * absolute eve.dev URLs so they work when mirrored on this site.
+ *
+ * @param {string} markdown
+ * @param {string | null} docsHref e.g. `/docs/channels/discord`
+ */
+function cleanDocsMarkdown(markdown, docsHref) {
+  let text = markdown.replaceAll("\r\n", "\n").trim();
+  text = text.replace(DOCS_FRONTMATTER_RE, "").trim();
+  text = text.replace(DOCS_FOOTER_RE, "").trim();
+
+  const docsDir = docsHref
+    ? path.posix.dirname(docsHref.replace(/\.md$/i, ""))
+    : "/docs";
+
+  text = text.replace(
+    /\[([^\]]+)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g,
+    (match, label, href) => {
+      if (/^(https?:|mailto:|#)/i.test(href)) {
+        return match;
+      }
+
+      const withoutMd = href.replace(/\.md$/i, "");
+      let resolvedPath;
+      if (withoutMd.startsWith("/")) {
+        resolvedPath = withoutMd;
+      } else {
+        resolvedPath = path.posix.normalize(
+          path.posix.join(docsDir, withoutMd)
+        );
+      }
+
+      if (!resolvedPath.startsWith("/")) {
+        resolvedPath = `/${resolvedPath}`;
+      }
+
+      return `[${label}](${BASE_URL}${resolvedPath})`;
+    }
+  );
+
+  return `${text}\n`;
+}
+
+/**
+ * @param {string} docsUrl
+ * @param {string | null} docsHref
+ * @returns {Promise<string | null>}
+ */
+async function fetchDocsMarkdown(docsUrl, docsHref) {
+  const url = `${docsUrl}.md`;
+  const response = await fetch(url, {
+    headers: {
+      accept: "text/markdown,text/plain,*/*",
+      "user-agent":
+        "eve-directory-scraper/1.0 (+https://github.com/nolly-studio/eve-directory)",
+    },
+    redirect: "follow",
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status} for ${url}`);
+  }
+
+  return cleanDocsMarkdown(await response.text(), docsHref);
+}
 
 function parseArgs(argv) {
   /** @type {{
@@ -410,6 +483,7 @@ function parseIntegrationPage(html, slug) {
     badge: header.badge,
     description: header.description,
     docsHref: header.docsHref,
+    docsMarkdown: null,
     docsUrl: header.docsHref ? `${BASE_URL}${header.docsHref}` : null,
     markdown: toMarkdown(header, sections),
     name: header.name,
@@ -440,7 +514,22 @@ async function scrapeSlug(slug) {
   }
 
   const html = await response.text();
-  return parseIntegrationPage(html, slug);
+  const detail = parseIntegrationPage(html, slug);
+
+  if (detail.docsUrl) {
+    try {
+      detail.docsMarkdown = await fetchDocsMarkdown(
+        detail.docsUrl,
+        detail.docsHref
+      );
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.warn(`    ⚠ docs markdown for ${slug}: ${message}`);
+      detail.docsMarkdown = null;
+    }
+  }
+
+  return detail;
 }
 
 /**
@@ -529,8 +618,13 @@ async function main() {
           (n, s) => n + s.blocks.filter((b) => b.type === "code").length,
           0
         );
+        const docsNote = detail.docsMarkdown
+          ? `, docs markdown (${detail.docsMarkdown.length} chars)`
+          : detail.docsUrl
+            ? ", docs markdown missing"
+            : "";
         console.log(
-          `  ✓ ${slug} — ${detail.sections.length} sections, ${codeCount} code blocks`
+          `  ✓ ${slug} — ${detail.sections.length} sections, ${codeCount} code blocks${docsNote}`
         );
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);

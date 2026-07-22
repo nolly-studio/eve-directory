@@ -20,7 +20,7 @@ vercel env pull
 
 ## 3. Channels
 
-Enabled channel files live under `agent/channels/`. Follow each integration's docs for tokens or Connect setup.
+Enabled channel files live under `agent/channels/`. For post-install Connect/env steps, see [After you install](https://www.evedirectory.com/docs/after-you-install) and [Integrations](https://www.evedirectory.com/docs/integrations). Framework APIs: [eve.dev](https://eve.dev/docs/channels).
 
 ## Verify
 

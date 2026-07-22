@@ -1,0 +1,49 @@
+---
+title: Contribute an agent
+description: Add a catalog listing under catalog/, register it, validate with Eve, and rebuild the shadcn registry.
+---
+
+Eve Directory is open source. Catalog content lives in the [eve-directory](https://github.com/nolly-studio/eve-directory) repo under `catalog/` — not in app UI code.
+
+## Add an agent
+
+1. Create `catalog/agents/<slug>/` as a nested Eve app (see an existing listing such as `competitive-intel-scout` for layout: `agent/`, `evals/`, `SETUP.md`, `package.json`).
+2. Add a listing entry to `catalog/registry.json` under `agents` (`name`, `slug`, `path`, `summary`, `version`, `license`, `category`, `integrations`).
+3. Inside the agent directory, validate:
+
+```bash
+npm install
+npx eve info
+```
+
+4. From the repo root, regenerate the install registry:
+
+```bash
+pnpm registry:build
+```
+
+5. Run catalog checks when you change listings:
+
+```bash
+pnpm exec node scripts/validate-catalog.mjs
+```
+
+## Add an extension
+
+1. Create `catalog/extensions/<slug>/` with a publishable `package/`, a `directory.json`, README, and preferably a `test-consumer/` that mounts the extension and runs evals.
+2. Register it under `extensions` in `catalog/registry.json` (include `npm` when published).
+3. Rebuild with `pnpm registry:build`.
+
+## Listing metadata
+
+Keep `integrations` as the short slugs users see on cards and `/integrations/[name]` filters (for example `slack`, `github`, `notion`). Prefer slugs that already exist in `catalog/integrations.json`.
+
+## Docs for consumers
+
+Ship a clear `SETUP.md` in the listing. Point channel/Connect steps at [After you install](/docs/after-you-install) and the matching [/docs/integrations/…](/docs/integrations) adaptation page when one exists. Link out to [eve.dev](https://eve.dev/docs/introduction) for framework APIs — do not duplicate Eve’s channel/connection guides in the catalog.
+
+## Related
+
+- [Compose vs clone](/docs/compose-vs-clone) (clone this repo)
+- [Registry & machine access](/docs/registry-and-llms)
+- [GitHub repo](https://github.com/nolly-studio/eve-directory)

@@ -34,6 +34,7 @@ function toListing(row: JoinedRow): CommunityAgentListing {
     authorImage: row.user.image,
     installCount: row.agent.installCount,
     instructions: row.agent.instructions,
+    files: row.agent.files ?? [],
     featured: row.agent.featured,
     createdAt: row.agent.createdAt.toISOString(),
     updatedAt: row.agent.updatedAt.toISOString(),

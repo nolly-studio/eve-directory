@@ -1,0 +1,53 @@
+---
+title: Linear (after install)
+description: Connect Linear via MCP (most listings) or the Linear Agent channel after installing from Eve Directory.
+---
+
+The **Linear** chip on listings usually means an MCP **connection**. A few starters use the Linear **channel** (Agent Session webhooks) instead. This page covers the directory post-install steps for both; framework details stay on eve.dev.
+
+Official setup: [Connections](https://eve.dev/docs/connections) · [Linear channel](https://eve.dev/docs/channels/linear) · [eve.dev/integrations](https://eve.dev/integrations)
+
+## Connection (MCP) — most catalog agents
+
+```ts title="agent/connections/linear.ts"
+import { connect } from "@vercel/connect/eve";
+import { defineMcpClientConnection } from "eve/connections";
+
+export default defineMcpClientConnection({
+  url: "https://mcp.linear.app/mcp",
+  description: "Linear workspace: issues, projects, cycles, and comments.",
+  auth: connect({ connector: "linear", principalType: "app" }),
+});
+```
+
+After install:
+
+```bash
+vercel link
+vercel connect create linear
+vercel env pull
+```
+
+Authorize the Connect client against the Linear workspace the agent should use. This is separate from the Linear **channel** below — MCP is for tools from other surfaces; the channel is for Agent Session inbox turns.
+
+## Channel — Linear Agent starters
+
+Eve’s preferred channel setup uses Connect + `connectLinearCredentials` (see [Linear channel](https://eve.dev/docs/channels/linear)). Some listings still document env vars (`LINEAR_AGENT_ACCESS_TOKEN`, `LINEAR_WEBHOOK_SECRET`) with a bare `linearChannel()`.
+
+After install, either:
+
+1. **Connect (preferred):** `vercel connect create linear --triggers`, re-attach the trigger to `/eve/v1/linear`, and swap the channel file to `connectLinearCredentials("linear/<your-uid>")`, or
+2. **BYO:** follow the listing `SETUP.md` and Eve’s bring-your-own App section for env + webhook URL.
+
+On this site, channel-oriented listings may also appear under the `linear-agent` integration filter.
+
+## Agents using Linear
+
+<AgentsByIntegration slug="linear" />
+
+## Related
+
+- [After you install](/docs/after-you-install)
+- [Integrations](/docs/integrations)
+- [Eve connections](https://eve.dev/docs/connections)
+- [Linear channel on Eve](https://eve.dev/docs/channels/linear)

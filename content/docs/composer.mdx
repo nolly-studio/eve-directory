@@ -1,0 +1,33 @@
+---
+title: Composer
+description: Pick agents and extensions in the browser, review secrets, and export a starter zip — no account required.
+---
+
+[Composer](/composer) builds a **multi-listing starter** when one `shadcn add` is not enough. You select catalog agents and extensions, review the composition (including required secrets), then download a zip.
+
+## How it works
+
+1. Open [/composer](/composer)
+2. Add agents and/or extensions from the catalog
+3. Review the composed tree and env/Connect requirements
+4. Export a zip and unpack it as your project root
+
+Selection is stored in the browser (`localStorage`) for now. No Eve Directory account is required.
+
+## When to use Composer vs CLI
+
+| Goal | Use |
+| --- | --- |
+| One agent into an existing Eve app | [shadcn CLI](/docs/install-with-shadcn) |
+| Several listings as a new starter | Composer |
+| Contribute to the catalog or run this site | [Clone the repo](/docs/compose-vs-clone) |
+
+## After export
+
+Treat the zip like any other installed starter: open `SETUP.md`, replace Connect UIDs and env values, then `npm install` and `npm run dev`. See [After you install](/docs/after-you-install).
+
+## Related
+
+- [Compose vs clone](/docs/compose-vs-clone)
+- [After you install](/docs/after-you-install)
+- [What is an extension?](/docs/extensions)

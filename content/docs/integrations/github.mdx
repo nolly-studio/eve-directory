@@ -1,0 +1,63 @@
+---
+title: GitHub (after install)
+description: Wire GitHub after installing a catalog agent — Connect (preferred) or bring-your-own GitHub App env vars.
+---
+
+Listings with the **GitHub** chip include `agent/channels/github.ts`. Eve’s preferred path is **Vercel Connect**; some catalog files still use bring-your-own App env vars. Pick one path and align the channel file with it.
+
+Official setup: [GitHub channel](https://eve.dev/docs/channels/github) · [eve.dev/integrations](https://eve.dev/integrations)
+
+## Prefer Connect (matches Eve docs)
+
+```bash
+vercel link
+vercel connect create github --triggers
+vercel connect detach <uid> --yes
+vercel connect attach <uid> --triggers --trigger-path /eve/v1/github --yes
+```
+
+Then point the channel at your UID (and set `botName` to the App’s mention name):
+
+```ts title="agent/channels/github.ts"
+import { connectGitHubCredentials } from "@vercel/connect/eve";
+import { githubChannel } from "eve/channels/github";
+
+export default githubChannel({
+  botName: "my-agent",
+  credentials: connectGitHubCredentials("github/my-agent"),
+});
+```
+
+Subscribe the App to the webhook events your agent needs (`issue_comment`, `pull_request_review_comment`, …) as described in the [official GitHub docs](https://eve.dev/docs/channels/github).
+
+## What many listings still ship (BYO App)
+
+```ts title="agent/channels/github.ts"
+import { githubChannel } from "eve/channels/github";
+
+export default githubChannel({
+  appId: () => process.env.GITHUB_APP_ID!,
+  privateKey: () => process.env.GITHUB_APP_PRIVATE_KEY!,
+  webhookSecret: () => process.env.GITHUB_WEBHOOK_SECRET!,
+});
+```
+
+If you keep this shape, create a GitHub App yourself, point the webhook at `/eve/v1/github`, and fill:
+
+```bash
+GITHUB_APP_ID=
+GITHUB_APP_PRIVATE_KEY=
+GITHUB_WEBHOOK_SECRET=
+```
+
+Do not commit App private keys. Event shapes, sandbox checkout, and delivery live in the [Eve GitHub channel docs](https://eve.dev/docs/channels/github) — this page is only the directory handoff.
+
+## Agents using GitHub
+
+<AgentsByIntegration slug="github" />
+
+## Related
+
+- [After you install](/docs/after-you-install)
+- [Integrations](/docs/integrations)
+- [GitHub on Eve](https://eve.dev/docs/channels/github)

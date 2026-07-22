@@ -1,29 +1,30 @@
 ---
 title: Integrations
-description: How Eve Directory labels channels and connections on agent listings — and where to read official setup docs.
+description: How Eve Directory labels channels and connections on listings — and thin after-install recipes that link out to Eve’s official docs.
 ---
 
 On listings, **integrations** are short slugs (for example `slack`, `github`, `linear`) for channels and connections the agent is built around. They power `/integrations/[name]` filters and chips on cards.
 
-## Official recipes
+## Official Eve docs
 
-Eve publishes install/quick-start recipes for first-party channels and connections at [eve.dev/integrations](https://eve.dev/integrations). Deep docs live under [Channels](https://eve.dev/docs/channels) and [Connections](https://eve.dev/docs/connections).
+Eve publishes install/quick-start recipes at [eve.dev/integrations](https://eve.dev/integrations). Deep docs live under [Channels](https://eve.dev/docs/channels) and [Connections](https://eve.dev/docs/connections). This site does **not** fork those guides.
 
-Typical channel file (from Eve’s docs style):
+## After-install recipes (this site)
 
-```ts title="agent/channels/slack.ts"
-import { connectSlackCredentials } from "@vercel/connect/eve";
-import { slackChannel } from "eve/channels/slack";
+When you install a catalog agent, you still need to wire **your** Connect clients or env secrets. These short pages cover that handoff only:
 
-export default slackChannel({
-  credentials: connectSlackCredentials("slack/my-agent"),
-});
-```
+- [Slack](/docs/integrations/slack) — swap the Connect UID in `agent/channels/slack.ts`
+- [GitHub](/docs/integrations/github) — GitHub App env vars
+- [Notion](/docs/integrations/notion) — `vercel connect create notion`
+- [Telegram](/docs/integrations/telegram) — BotFather token + webhook
+- [Linear](/docs/integrations/linear) — MCP Connect client (or Linear Agent channel)
+
+See also [After you install](/docs/after-you-install).
 
 ## On this site
 
-- Browse the [integrations directory](/integrations) or open `/integrations/<name>` for setup context + matching agents
-- Full framework setup always links out to Eve — we do not fork those docs
+- Browse the [integrations directory](/integrations) or open `/integrations/<name>` for matching agents
+- Full framework setup always links out to Eve
 
 ### Agents using Slack
 
@@ -34,4 +35,5 @@ Live catalog cards for the `slack` integration:
 ## Related
 
 - [What is Eve?](/docs/what-is-eve)
+- [After you install](/docs/after-you-install)
 - [Browse agents](/agents)

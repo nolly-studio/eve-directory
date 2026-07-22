@@ -10,12 +10,10 @@ interface FeaturedIntegration {
 
 interface HomeIntegrationsSectionProps {
   integrations: FeaturedIntegration[];
-  totalCount: number;
 }
 
 export function HomeIntegrationsSection({
   integrations,
-  totalCount,
 }: HomeIntegrationsSectionProps) {
   return (
     <section className="mx-auto max-w-6xl px-6 py-12 md:py-16 lg:py-20">
@@ -26,11 +24,7 @@ export function HomeIntegrationsSection({
             Wire in your tools
           </h2>
         </div>
-        <div className="col-span-full flex items-end justify-between gap-4 lg:col-span-5 lg:col-start-8">
-          <p className="text-copy-16 text-pretty text-gray-900">
-            <span className="tabular-nums">{totalCount}</span> official channels
-            and connections
-          </p>
+        <div className="col-span-full flex justify-end lg:col-span-5 lg:col-start-8">
           <ButtonLink href="/integrations" variant="ghost" size="sm">
             View all
           </ButtonLink>

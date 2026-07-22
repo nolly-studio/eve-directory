@@ -33,6 +33,7 @@ const categoryStyles: Record<string, CategoryStyle> = {
   channels: { icon: Message01Icon },
   connections: { icon: Plug01Icon },
   skills: { icon: Note01Icon },
+  examples: { icon: Message01Icon },
   tools: { icon: Wrench01Icon },
   subagents: { icon: RobotIcon },
   lib: { icon: SourceCodeIcon },
@@ -48,6 +49,7 @@ const agentCategoryOrder = [
   "channels",
   "connections",
   "skills",
+  "examples",
   "tools",
   "subagents",
   "lib",
@@ -203,11 +205,15 @@ export function FileExplorer({
   initialContent,
   initialPath,
   slug,
+  inlineFiles,
 }: {
   tree: FileTreeNode[];
   initialContent: string;
   initialPath: string;
-  slug: string;
+  /** Official agents fetch file content by slug; omit when inlineFiles is set. */
+  slug?: string;
+  /** DB-backed agents (community) resolve content from this map instead. */
+  inlineFiles?: Record<string, string>;
 }) {
   const paths = useMemo(() => flattenFileTree(tree), [tree]);
   const sections = useMemo(() => buildSections(paths), [paths]);
@@ -233,6 +239,12 @@ export function FileExplorer({
 
   async function loadFile(path: string) {
     setSelectedPath(path);
+
+    if (inlineFiles) {
+      setContent(inlineFiles[path] ?? "// File not found");
+      return;
+    }
+
     setLoading(true);
 
     try {
