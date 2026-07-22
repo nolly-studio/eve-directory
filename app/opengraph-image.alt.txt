@@ -1,0 +1,1 @@
+Eve Directory: Open registry of Eve agents and extensions. Inspect every file with no login. Compose a starter stack. Install via shadcn.

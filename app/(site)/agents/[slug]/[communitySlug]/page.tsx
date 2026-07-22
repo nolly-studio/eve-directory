@@ -71,9 +71,6 @@ export async function generateMetadata({
 
   return pageMetadata({
     description: agent.summary,
-    // Segment `opengraph-image.tsx` supplies the card; don't set images here
-    // or Next will skip attaching the file-based metadata.
-    images: null,
     pathname: `/agents/@${agent.handle}/${agent.slug}`,
     title: `${agent.name} · @${agent.handle}`,
   });

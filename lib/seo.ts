@@ -2,9 +2,14 @@ import type { Metadata } from "next";
 
 import { SITE, siteUrl } from "@/lib/site";
 
-/** Default site-wide OG/Twitter card (from `app/opengraph-image.tsx`). */
+/**
+ * Default site-wide OG/Twitter card.
+ * Sourced from the `app/opengraph-image.png` file convention — still set
+ * explicitly because page-level `openGraph` replaces the parent object and
+ * would otherwise drop the file-based image.
+ */
 export const DEFAULT_OG_IMAGE = {
-  url: "/opengraph-image",
+  url: "/opengraph-image.png",
   width: 1200,
   height: 630,
   alt: `${SITE.name}: ${SITE.description}`,
@@ -20,22 +25,16 @@ interface PageMetadataInput {
    * Open Graph / Twitter still include the site name when helpful.
    */
   absoluteTitle?: boolean;
-  /**
-   * Open Graph images. Defaults to the site-wide card.
-   * Pass `null` when the route has its own `opengraph-image.tsx` so Next can
-   * attach that file (page-level `openGraph` otherwise replaces the parent
-   * object and drops file-based images).
-   */
-  images?: typeof DEFAULT_OG_IMAGE | null;
+  /** Open Graph images. Defaults to the static site-wide card. */
+  images?: typeof DEFAULT_OG_IMAGE;
 }
 
 /**
  * Shared page metadata: unique title/description, self-canonical, OG/Twitter.
  * Relies on root `metadataBase` (www) to resolve relative canonicals + images.
  *
- * Always includes a default `og:image` unless `images: null`. Next.js replaces
- * nested `openGraph` wholesale per segment, so omitting images here would wipe
- * the root `opengraph-image` on every page that uses this helper.
+ * Always includes `og:image` — Next.js replaces nested `openGraph` wholesale
+ * per segment, so pages must set images explicitly.
  */
 export function pageMetadata({
   title,
@@ -60,13 +59,13 @@ export function pageMetadata({
       url,
       siteName: SITE.name,
       type: "website",
-      ...(images ? { images: [images] } : {}),
+      images: [images],
     },
     twitter: {
       card: "summary_large_image",
       title: ogTitle,
       description,
-      ...(images ? { images: [images.url] } : {}),
+      images: [images.url],
     },
   };
 }
