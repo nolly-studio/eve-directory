@@ -1,49 +1,97 @@
 ---
-title: Contribute an agent
-description: Add a catalog listing under catalog/, register it, validate with Eve, and rebuild the shadcn registry.
+title: Contribute
+description: Add a curated Eve app under catalog/, publish a community agent at /submit, or open a site PR. Validate with Eve and rebuild the shadcn registry.
 ---
 
-Eve Directory is open source. Catalog content lives in the [eve-directory](https://github.com/nolly-studio/eve-directory) repo under `catalog/` — not in app UI code.
+Add a curated listing under `catalog/`, publish a community agent at `/submit`, or open a pull request against the site. This guide walks the curated path end to end and tells you when to switch.
 
-## Add an agent
+Eve Directory is an open registry. Curated agents and extensions live in the [eve-directory](https://github.com/nolly-studio/eve-directory) repo under `catalog/`, not in app UI code. Community prompt agents are stored after GitHub sign-in and are not `registry.json` entries.
 
-1. Create `catalog/agents/<slug>/` as a nested Eve app (see an existing listing such as `competitive-intel-scout` for layout: `agent/`, `evals/`, `SETUP.md`, `package.json`).
-2. Add a listing entry to `catalog/registry.json` under `agents` (`name`, `slug`, `path`, `summary`, `version`, `license`, `category`, `integrations`).
-3. Inside the agent directory, validate:
+```text
+catalog/
+├── registry.json
+├── agents/<slug>/       # nested Eve app
+└── extensions/<slug>/
+```
+
+Start with that tree for curated work. Use [/submit](/submit) when you only need a community listing under `@handle/slug`.
+
+## Pick curated or community
+
+A curated catalog agent belongs in a git PR when the listing is a full Eve app (tools, evals, channels, `SETUP.md`). Switch to [/submit](/submit) once you need a prompt-style agent live under your GitHub handle without landing source in `catalog/`.
+
+| You need | Path |
+| --- | --- |
+| Official index + install from `/r/<slug>.json` | Curated PR under `catalog/` |
+| Prompt listing at `/agents/@handle/slug` | [/submit](/submit) after GitHub sign-in |
+| Site, docs, or tooling changes | PR; see [CONTRIBUTING.md](https://github.com/nolly-studio/eve-directory/blob/main/CONTRIBUTING.md) |
+
+## Add a curated agent
+
+Copy a known-good layout such as `approval-gate-starter` or `competitive-intel-scout` (`agent/`, `evals/`, `SETUP.md`, `package.json`).
+
+1. Create `catalog/agents/<slug>/` as a nested Eve app.
+2. Add a listing under `agents` in `catalog/registry.json`.
+
+A listing entry needs:
+
+- a `name` and `slug`: display title and URL segment. The slug must match the directory name.
+- a `path`: `agents/<slug>` relative to `catalog/`.
+- a `summary`: one sentence for cards and search.
+- a `version` and `license`: semver string and SPDX id (usually `MIT`).
+- a `category`: `{ "name", "slug" }` for `/categories/<slug>`.
+- an `integrations` array: short slugs on cards and `/integrations/[name]` filters. Prefer slugs that already exist in `catalog/integrations.json` (for example `slack`, `github`, `notion`).
+
+3. Inside the agent directory, validate discovery:
 
 ```bash
 npm install
 npx eve info
 ```
 
-4. From the repo root, regenerate the install registry:
+Eve prints the shape it found. Fix warnings before you open the PR. There is no separate registry inside the agent; the filesystem is the interface.
+
+4. From the repo root, regenerate install JSON and check the index:
 
 ```bash
 pnpm registry:build
+pnpm catalog:validate
 ```
 
-5. Run catalog checks when you change listings:
+`pnpm registry:build` writes `public/r/<slug>.json`, which is what `npx shadcn@latest add @evedirectory/<slug>` installs. `pnpm catalog:validate` checks registry-to-disk consistency, required files, and env hygiene. Commit the updated `public/r/` output when the build changes it.
 
-```bash
-pnpm exec node scripts/validate-catalog.mjs
-```
+## Ship SETUP.md for consumers
+
+Every curated agent should include `SETUP.md`. Point channel and Connect steps at [After you install](/docs/after-you-install) and the matching [/docs/integrations/…](/docs/integrations) page when one exists. Link [eve.dev](https://eve.dev/docs/introduction) for framework APIs. Do not duplicate Eve’s channel or connection guides in the catalog; that pairing drifts and becomes a maintenance trap.
 
 ## Add an extension
 
+Extensions are reusable packages, rather than full agent apps. See [What is an extension?](/docs/extensions) for the product distinction.
+
 1. Create `catalog/extensions/<slug>/` with a publishable `package/`, a `directory.json`, README, and preferably a `test-consumer/` that mounts the extension and runs evals.
-2. Register it under `extensions` in `catalog/registry.json` (include `npm` when published).
-3. Rebuild with `pnpm registry:build`.
+2. Register it under `extensions` in `catalog/registry.json` (include `npm` when the package is published).
+3. Rebuild and validate with `pnpm registry:build` and `pnpm catalog:validate`.
 
-## Listing metadata
+## Publish a community agent
 
-Keep `integrations` as the short slugs users see on cards and `/integrations/[name]` filters (for example `slack`, `github`, `notion`). Prefer slugs that already exist in `catalog/integrations.json`.
+Open [/submit](/submit), sign in with GitHub, and publish. Community agents install from `/r/@handle/slug.json` and appear at `/agents/@handle/slug`. They do not go through `catalog/registry.json` or `pnpm registry:build`.
 
-## Docs for consumers
+Use community for prompt-style listings. Open a curated PR when you want the agent in the official index with full source in git.
 
-Ship a clear `SETUP.md` in the listing. Point channel/Connect steps at [After you install](/docs/after-you-install) and the matching [/docs/integrations/…](/docs/integrations) adaptation page when one exists. Link out to [eve.dev](https://eve.dev/docs/introduction) for framework APIs — do not duplicate Eve’s channel/connection guides in the catalog.
+## Prompt for coding agents
 
-## Related
+```text
+Add a curated Eve Directory agent: create catalog/agents/<slug>/ as a nested
+Eve app (copy approval-gate-starter), register it in catalog/registry.json,
+run npm install && npx eve info inside the agent dir, then from the repo root
+run pnpm registry:build && pnpm catalog:validate. Include SETUP.md that links
+https://www.evedirectory.com/docs/after-you-install and eve.dev for framework
+APIs. Community prompt agents use https://www.evedirectory.com/submit instead.
+```
 
-- [Compose vs clone](/docs/compose-vs-clone) (clone this repo)
-- [Registry & machine access](/docs/registry-and-llms)
-- [GitHub repo](https://github.com/nolly-studio/eve-directory)
+## What to read next
+
+- [Compose vs clone](/docs/compose-vs-clone): when cloning the repo is the right move versus CLI install or Composer.
+- [Registry & machine access](/docs/registry-and-llms): `/r/<slug>.json`, `llms.txt`, and APIs coding agents call.
+- [After you install](/docs/after-you-install): what consumers do after `shadcn add`.
+- [GitHub CONTRIBUTING.md](https://github.com/nolly-studio/eve-directory/blob/main/CONTRIBUTING.md): PR checklist and local env for site work.

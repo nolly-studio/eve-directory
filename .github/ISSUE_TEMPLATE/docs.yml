@@ -1,0 +1,24 @@
+name: Docs improvement
+description: Gap or fix in README, CONTRIBUTING, or /docs guides
+title: "docs: "
+labels: ["documentation"]
+body:
+  - type: input
+    id: page
+    attributes:
+      label: Page or file
+      description: URL path or repo path
+      placeholder: /docs/contributing or README.md
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is wrong or missing
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested fix
+      description: Optional. A decision rule or the sentence you expected to find.

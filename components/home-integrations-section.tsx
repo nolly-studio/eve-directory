@@ -21,7 +21,7 @@ export function HomeIntegrationsSection({
         <div className="col-span-full lg:col-span-5">
           <StepMarker step={3} className="mb-3" />
           <h2 className="text-heading-32 font-semibold text-balance text-gray-1000 [--font-weight-semibold:450] lg:text-heading-40">
-            Wire in your tools
+            Filter by what you already run
           </h2>
         </div>
         <div className="col-span-full flex justify-end lg:col-span-5 lg:col-start-8">

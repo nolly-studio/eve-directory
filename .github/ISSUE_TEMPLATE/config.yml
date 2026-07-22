@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Contribute an agent
+    url: https://www.evedirectory.com/docs/contributing
+    about: Curated catalog PRs and community /submit path
+  - name: Security report
+    url: https://github.com/nolly-studio/eve-directory/blob/main/SECURITY.md
+    about: Report vulnerabilities privately (do not open a public issue)

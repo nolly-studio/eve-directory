@@ -7,7 +7,7 @@ export const DEFAULT_OG_IMAGE = {
   url: "/opengraph-image",
   width: 1200,
   height: 630,
-  alt: `${SITE.name} — ${SITE.description}`,
+  alt: `${SITE.name}: ${SITE.description}`,
 } as const;
 
 interface PageMetadataInput {

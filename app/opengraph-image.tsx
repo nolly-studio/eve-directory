@@ -6,7 +6,7 @@ import { ImageResponse } from "next/og";
 import { EVE_DIRECTORY_SLASH_PATH, EVE_ICON_PATHS } from "@/components/logo";
 import { SITE } from "@/lib/site";
 
-export const alt = `${SITE.name} — ${SITE.description}`;
+export const alt = `${SITE.name}: ${SITE.description}`;
 export const size = {
   width: 1200,
   height: 630,
@@ -146,7 +146,7 @@ export default async function Image() {
               color: ink,
             }}
           >
-            Eve agents & templates for Vercel Eve
+            {SITE.title}
           </div>
         </div>
 
@@ -162,7 +162,7 @@ export default async function Image() {
             color: muted,
           }}
         >
-          <span>Inspect · Compose · Export</span>
+          <span>Inspect. Compose. Export.</span>
           <span style={{ color: ink, fontWeight: 600 }}>eve/</span>
         </div>
       </div>

@@ -1,0 +1,50 @@
+name: New curated agent
+description: Propose or track adding a full Eve app under catalog/agents/
+title: "agent: "
+labels: ["catalog", "good first issue"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Prefer a pull request with the agent under `catalog/agents/<slug>/` when you already have source.
+        Use [/submit](https://www.evedirectory.com/submit) for prompt-style community listings instead.
+  - type: input
+    id: slug
+    attributes:
+      label: Proposed slug
+      description: URL segment and directory name (kebab-case)
+      placeholder: pr-review-sentinel
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: One sentence for the card and registry entry
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - Engineering
+        - QA
+        - Research
+        - Customer Success
+        - Sales
+        - Operations
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: integrations
+    attributes:
+      label: Integrations
+      description: Short slugs (prefer values in catalog/integrations.json)
+      placeholder: github, slack, notion
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Links to a prototype, required channels, or why this belongs in the curated index

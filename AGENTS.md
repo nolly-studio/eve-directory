@@ -20,6 +20,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - [Code Style & Patterns](docs/agents/code-style.md)
 - [Lessons Learned](docs/agents/lessons-learned.md)
 - [Design Language](DESIGN.md)
+- [CONTRIBUTING.md](CONTRIBUTING.md) (human + PR checklist; curated vs `/submit`)
 - Product roadmap: local only (`docs/plans/` — gitignored)
 
 ## Catalog

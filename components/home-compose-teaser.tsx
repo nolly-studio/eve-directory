@@ -11,7 +11,7 @@ interface HomeComposeTeaserProps {
 const STEPS = [
   {
     title: "Pick from the catalog",
-    body: "Add any agents and extensions to your stack — mix roles freely.",
+    body: "Add agents and extensions to your stack. Mix roles freely.",
   },
   {
     title: "Review before you commit",
@@ -69,12 +69,12 @@ export function HomeComposeTeaser({
           <div className="col-span-full lg:col-span-5">
             <StepMarker step={2} className="mb-3" />
             <h2 className="text-heading-32 font-semibold text-balance text-gray-1000 [--font-weight-semibold:450] lg:text-heading-40">
-              Compose a starter
+              Your starter is a zip
             </h2>
           </div>
           <p className="col-span-full text-copy-16 text-pretty text-gray-900 lg:col-span-5 lg:col-start-8">
-            Pick agents and extensions, review the graph and required secrets,
-            then export a runnable starter for your Eve project.
+            Pick agents and extensions. Review the graph and required secrets.
+            Export starter.zip for your Eve project.
           </p>
         </div>
         <div className="mt-10 grid grid-cols-12 items-center gap-x-6 gap-y-10">
@@ -97,9 +97,11 @@ export function HomeComposeTeaser({
               ))}
             </ol>
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <ButtonLink href="/composer">Open the composer</ButtonLink>
+              <ButtonLink href="/composer">
+                Compose your first starter today
+              </ButtonLink>
               <ButtonLink href="/docs/compose-vs-clone" variant="ghost">
-                Compose vs. clone
+                or compare compose vs. clone
               </ButtonLink>
             </div>
           </div>

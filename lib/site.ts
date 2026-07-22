@@ -2,7 +2,7 @@ export const SITE = {
   aisdkUrl:
     "https://aisdkagents.com?utm_source=evedirectory&utm_medium=web&utm_campaign=cta",
   description:
-    "Open registry of Eve agents and templates for Vercel Eve. Inspect every file with no login, compose a starter stack, install via shadcn.",
+    "Open registry of Eve agents and extensions. Inspect every file with no login. Compose a starter stack. Install via shadcn.",
   /** Apex hostname for display, email, and brand copy. */
   domain: "evedirectory.com",
   github: {
@@ -11,7 +11,7 @@ export const SITE = {
   },
   name: "Eve Directory",
   /** Default document title (home); inner pages use the `%s · name` template. */
-  title: "Eve agents & templates for Vercel Eve",
+  title: "The open registry for Eve agents",
 } as const;
 
 export interface NavLink {
@@ -26,10 +26,13 @@ export const NAV_LINKS: readonly NavLink[] = [
   { href: "/composer", label: "Composer" },
 ] as const;
 
-/** Footer links — primary nav, catalog hubs, plus legal. */
+/** Footer links: primary nav, catalog hubs, contribute, plus legal. */
 export const FOOTER_LINKS: readonly NavLink[] = [
   ...NAV_LINKS,
   { href: "/extensions", label: "Extensions" },
+  { href: "/docs", label: "Docs" },
+  { href: "/docs/contributing", label: "Contribute" },
+  { href: "/submit", label: "Submit" },
   { href: "/terms", label: "Terms" },
   { href: "/privacy", label: "Privacy" },
 ] as const;

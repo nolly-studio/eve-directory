@@ -46,7 +46,18 @@ export function SiteFooter() {
       <div className="border-t border-border px-6 py-4">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
           <p className="text-label-12 text-gray-700">
-            © 2026 {SITE.name}. Open source catalog.
+            © 2026 {SITE.name}.{" "}
+            <Link
+              href="/docs/contributing"
+              className="underline decoration-foreground/20 underline-offset-4 transition-colors duration-150 hover:decoration-foreground/60 motion-reduce:transition-none"
+              style={{
+                textDecorationThickness: "from-font",
+                textUnderlinePosition: "from-font",
+              }}
+            >
+              Open source
+            </Link>
+            .
           </p>
           <ThemeSwitcher />
         </div>

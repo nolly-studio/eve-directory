@@ -95,7 +95,7 @@ export default async function HomePage() {
           <div className="col-span-full lg:col-span-5">
             <StepMarker step={1} className="mb-3" />
             <h2 className="text-heading-32 font-semibold text-balance text-gray-1000 [--font-weight-semibold:450] lg:text-heading-40">
-              Featured agents
+              Inspect before you install
             </h2>
           </div>
           <div className="col-span-full flex justify-end lg:col-span-5 lg:col-start-8">

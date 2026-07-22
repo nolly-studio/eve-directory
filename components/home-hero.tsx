@@ -122,15 +122,15 @@ function humanTabs(agent: FeaturedAgent): PreviewTab[] {
       id: "install",
       label: "Install",
       codeTitle: "terminal",
-      code: `# Install an agent into your Eve project
+      code: `# One command. Files land in your eve project.
 npx shadcn@latest add @evedirectory/${agent.slug}
 
-# Review the generated files, then run
+# Review the files, then run
 npm run dev`,
       previewTitle: "your project",
       preview: (
         <>
-          <PreviewCaption>eve app — tools, connections, evals…</PreviewCaption>
+          <PreviewCaption>eve app: tools, connections, evals</PreviewCaption>
           <ul className="space-y-1">
             <FileRow name="agent/instructions.md" status="added" />
             <FileRow name="agent/tools/" status="added" />
@@ -138,7 +138,7 @@ npm run dev`,
             <FileRow name="evals/" status="added" />
           </ul>
           <p className="mt-auto text-copy-14 text-pretty text-gray-700">
-            Full source, no lock-in — every file is yours to edit.
+            Full source. Every file is yours to edit.
           </p>
         </>
       ),
@@ -163,7 +163,7 @@ See SETUP.md for Connect and channels.`,
           <PreviewCaption>Listing</PreviewCaption>
           <ListingMock agent={agent} />
           <p className="mt-auto text-copy-14 text-pretty text-gray-700">
-            Read every file in the browser before you install anything.
+            Read every file in the browser. Install only when you are ready.
           </p>
         </>
       ),
@@ -190,7 +190,7 @@ See SETUP.md for Connect and channels.`,
           <PreviewCaption>Export</PreviewCaption>
           <FileRow name="starter.zip" status="ready" />
           <p className="mt-auto text-copy-14 text-pretty text-gray-700">
-            Pick listings, download a runnable starter. No login, no gate.
+            Pick listings. Download a runnable starter. No login, no gate.
           </p>
         </>
       ),
@@ -263,7 +263,7 @@ ${SITE.description}
             <FileRow name="evals/" muted />
           </ul>
           <p className="mt-auto text-copy-14 text-pretty text-gray-700">
-            Read any catalog file raw — the same source the file explorer shows.
+            Read any catalog file raw. Same source the file explorer shows.
           </p>
         </>
       ),
@@ -281,15 +281,17 @@ export function HomeHero({ featuredAgent }: HomeHeroProps) {
 
   const lead =
     audience === "humans"
-      ? "Browse Eve agents and extensions with full source access. Compose a starter stack and export it—no login, no gate."
-      : "Machine-readable catalog, guides as Markdown, and APIs for search, file reads, and composer export.";
+      ? "Like shadcn/ui for Eve agents. Inspect every file before you install."
+      : "Catalog and guides as Markdown. Search, file reads, and composer export over HTTP.";
 
   const tabs =
     audience === "humans" ? humanTabs(featuredAgent) : agentTabs(featuredAgent);
 
   const footerHref = audience === "humans" ? "/agents" : "/agents.md";
   const footerLabel =
-    audience === "humans" ? "Browse all agents" : "Read agents.md";
+    audience === "humans"
+      ? "or browse the catalog first"
+      : "or read agents.md first";
 
   return (
     <section className="border-b border-border">
@@ -306,7 +308,7 @@ export function HomeHero({ featuredAgent }: HomeHeroProps) {
           className="mt-8 max-w-3xl animate-enter text-heading-40 font-semibold text-center text-balance text-gray-1000 [--font-weight-semibold:450] md:text-heading-64"
           style={{ "--stagger": 1 } as CSSProperties}
         >
-          Eve agents & templates for Vercel Eve
+          The open registry for Eve agents
         </h1>
 
         <p

@@ -1,0 +1,50 @@
+name: Bug report
+description: Something broken on the site, install path, or catalog packaging
+title: "bug: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Security issues: report privately per [SECURITY.md](https://github.com/nolly-studio/eve-directory/blob/main/SECURITY.md).
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: Expected vs actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. …
+        2. …
+        3. …
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Site UI
+        - shadcn install / public/r
+        - Composer export
+        - Auth / submit
+        - Catalog packaging
+        - Docs
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: slug
+    attributes:
+      label: Agent or extension slug (if relevant)
+      placeholder: pr-review-sentinel
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Browser, Node/pnpm versions, or CLI output
