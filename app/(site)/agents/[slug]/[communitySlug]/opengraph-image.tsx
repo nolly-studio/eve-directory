@@ -1,32 +1,20 @@
-import { readFile } from "node:fs/promises";
-import path from "node:path";
-
 import { ImageResponse } from "next/og";
 
 import { EVE_DIRECTORY_SLASH_PATH } from "@/components/logo";
 import { getCommunityAgent } from "@/lib/community/queries";
+import { loadGeistOgFonts } from "@/lib/og/fonts";
+import {
+  OG_HAIRLINE,
+  OG_INK,
+  OG_MUTED,
+  OG_PAPER,
+  OG_SIZE,
+} from "@/lib/og/tokens";
 import { SITE } from "@/lib/site";
 
 export const alt = `${SITE.name} community agent`;
-export const size = {
-  width: 1200,
-  height: 630,
-};
+export const size = OG_SIZE;
 export const contentType = "image/png";
-
-const ink = "#1A1917";
-const paper = "#F5F4F0";
-const muted = "#6E6B64";
-const hairline = "rgba(32, 28, 20, 0.08)";
-
-function loadGeist(weight: "Medium" | "SemiBold") {
-  return readFile(
-    path.join(
-      process.cwd(),
-      `node_modules/geist/dist/fonts/geist-sans/Geist-${weight}.ttf`
-    )
-  );
-}
 
 export default async function Image({
   params,
@@ -41,10 +29,7 @@ export default async function Image({
   const summary = agent?.summary ?? SITE.description;
   const author = agent ? `@${agent.handle}` : "@community";
 
-  const [geistMedium, geistSemiBold] = await Promise.all([
-    loadGeist("Medium"),
-    loadGeist("SemiBold"),
-  ]);
+  const fonts = await loadGeistOgFonts();
 
   return new ImageResponse(
     <div
@@ -53,8 +38,8 @@ export default async function Image({
         height: "100%",
         display: "flex",
         position: "relative",
-        backgroundColor: paper,
-        color: ink,
+        backgroundColor: OG_PAPER,
+        color: OG_INK,
         fontFamily: "Geist",
       }}
     >
@@ -64,8 +49,8 @@ export default async function Image({
           inset: 0,
           display: "flex",
           backgroundImage: `
-            linear-gradient(to right, ${hairline} 1px, transparent 1px),
-            linear-gradient(to bottom, ${hairline} 1px, transparent 1px)
+            linear-gradient(to right, ${OG_HAIRLINE} 1px, transparent 1px),
+            linear-gradient(to bottom, ${OG_HAIRLINE} 1px, transparent 1px)
           `,
           backgroundSize: "48px 48px",
         }}
@@ -82,7 +67,7 @@ export default async function Image({
           opacity: 0.09,
         }}
       >
-        <path d={EVE_DIRECTORY_SLASH_PATH} fill={ink} />
+        <path d={EVE_DIRECTORY_SLASH_PATH} fill={OG_INK} />
       </svg>
       <div
         style={{
@@ -99,7 +84,7 @@ export default async function Image({
           style={{
             display: "flex",
             fontSize: 22,
-            color: muted,
+            color: OG_MUTED,
             letterSpacing: "0.04em",
             textTransform: "uppercase",
           }}
@@ -123,7 +108,7 @@ export default async function Image({
             style={{
               display: "flex",
               fontSize: 28,
-              color: muted,
+              color: OG_MUTED,
               lineHeight: 1.35,
               maxWidth: 900,
             }}
@@ -131,17 +116,14 @@ export default async function Image({
             {summary.length > 160 ? `${summary.slice(0, 157)}…` : summary}
           </div>
         </div>
-        <div style={{ display: "flex", fontSize: 22, color: muted }}>
+        <div style={{ display: "flex", fontSize: 22, color: OG_MUTED }}>
           www.{SITE.domain}
         </div>
       </div>
     </div>,
     {
       ...size,
-      fonts: [
-        { name: "Geist", data: geistMedium, style: "normal", weight: 500 },
-        { name: "Geist", data: geistSemiBold, style: "normal", weight: 600 },
-      ],
+      fonts,
     }
   );
 }

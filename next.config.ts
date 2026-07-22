@@ -7,6 +7,11 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   reactStrictMode: true,
   skipTrailingSlashRedirect: true,
+  // Ensure colocated OG fonts ship with the image routes on Vercel.
+  outputFileTracingIncludes: {
+    "/opengraph-image": ["./lib/og/fonts/**/*"],
+    "/agents/[slug]/[communitySlug]/opengraph-image": ["./lib/og/fonts/**/*"],
+  },
   rewrites() {
     const posthogHost = process.env.NEXT_PUBLIC_POSTHOG_HOST;
 

@@ -1,38 +1,22 @@
-import { readFile } from "node:fs/promises";
-import path from "node:path";
-
 import { ImageResponse } from "next/og";
 
 import { EVE_DIRECTORY_SLASH_PATH, EVE_ICON_PATHS } from "@/components/logo";
+import { loadGeistOgFonts } from "@/lib/og/fonts";
+import {
+  OG_HAIRLINE,
+  OG_INK,
+  OG_MUTED,
+  OG_PAPER,
+  OG_SIZE,
+} from "@/lib/og/tokens";
 import { SITE } from "@/lib/site";
 
 export const alt = `${SITE.name}: ${SITE.description}`;
-export const size = {
-  width: 1200,
-  height: 630,
-};
+export const size = OG_SIZE;
 export const contentType = "image/png";
 
-/** Warm-paper tokens mirrored from globals.css (Satori has no oklch). */
-const ink = "#1A1917";
-const paper = "#F5F4F0";
-const muted = "#6E6B64";
-const hairline = "rgba(32, 28, 20, 0.08)";
-
-function loadGeist(weight: "Medium" | "SemiBold") {
-  return readFile(
-    path.join(
-      process.cwd(),
-      `node_modules/geist/dist/fonts/geist-sans/Geist-${weight}.ttf`
-    )
-  );
-}
-
 export default async function Image() {
-  const [geistMedium, geistSemiBold] = await Promise.all([
-    loadGeist("Medium"),
-    loadGeist("SemiBold"),
-  ]);
+  const fonts = await loadGeistOgFonts();
 
   return new ImageResponse(
     <div
@@ -41,26 +25,24 @@ export default async function Image() {
         height: "100%",
         display: "flex",
         position: "relative",
-        backgroundColor: paper,
-        color: ink,
+        backgroundColor: OG_PAPER,
+        color: OG_INK,
         fontFamily: "Geist",
       }}
     >
-      {/* Surface grid — same 48px rhythm as --surface-grid-size */}
       <div
         style={{
           position: "absolute",
           inset: 0,
           display: "flex",
           backgroundImage: `
-            linear-gradient(to right, ${hairline} 1px, transparent 1px),
-            linear-gradient(to bottom, ${hairline} 1px, transparent 1px)
+            linear-gradient(to right, ${OG_HAIRLINE} 1px, transparent 1px),
+            linear-gradient(to bottom, ${OG_HAIRLINE} 1px, transparent 1px)
           `,
           backgroundSize: "48px 48px",
         }}
       />
 
-      {/* Soft radial wash so the wordmark sits on a quiet field */}
       <div
         style={{
           position: "absolute",
@@ -71,7 +53,6 @@ export default async function Image() {
         }}
       />
 
-      {/* Oversized directory slash — atmosphere from the logo itself */}
       <svg
         aria-hidden="true"
         width="520"
@@ -84,7 +65,7 @@ export default async function Image() {
           opacity: 0.09,
         }}
       >
-        <path d={EVE_DIRECTORY_SLASH_PATH} fill={ink} />
+        <path d={EVE_DIRECTORY_SLASH_PATH} fill={OG_INK} />
       </svg>
 
       <div
@@ -106,7 +87,7 @@ export default async function Image() {
             fontSize: 22,
             fontWeight: 500,
             letterSpacing: "0.02em",
-            color: muted,
+            color: OG_MUTED,
           }}
         >
           <span>www.{SITE.domain}</span>
@@ -130,9 +111,9 @@ export default async function Image() {
             style={{ display: "flex" }}
           >
             {EVE_ICON_PATHS.map((d) => (
-              <path key={d} d={d} fill={ink} />
+              <path key={d} d={d} fill={OG_INK} />
             ))}
-            <path d={EVE_DIRECTORY_SLASH_PATH} fill={ink} opacity={0.48} />
+            <path d={EVE_DIRECTORY_SLASH_PATH} fill={OG_INK} opacity={0.48} />
           </svg>
 
           <div
@@ -143,7 +124,7 @@ export default async function Image() {
               fontWeight: 600,
               lineHeight: 1.2,
               letterSpacing: "-0.03em",
-              color: ink,
+              color: OG_INK,
             }}
           >
             {SITE.title}
@@ -155,34 +136,21 @@ export default async function Image() {
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            borderTop: `1px solid ${hairline}`,
+            borderTop: `1px solid ${OG_HAIRLINE}`,
             paddingTop: 28,
             fontSize: 22,
             fontWeight: 500,
-            color: muted,
+            color: OG_MUTED,
           }}
         >
           <span>Inspect. Compose. Export.</span>
-          <span style={{ color: ink, fontWeight: 600 }}>eve/</span>
+          <span style={{ color: OG_INK, fontWeight: 600 }}>eve/</span>
         </div>
       </div>
     </div>,
     {
       ...size,
-      fonts: [
-        {
-          name: "Geist",
-          data: geistMedium,
-          style: "normal",
-          weight: 500,
-        },
-        {
-          name: "Geist",
-          data: geistSemiBold,
-          style: "normal",
-          weight: 600,
-        },
-      ],
+      fonts,
     }
   );
 }
